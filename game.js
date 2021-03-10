@@ -15,7 +15,7 @@ function init() {
 
 function updateCharacter() {
     base_image = new Image();
-    base_image.src = 'img/2.Secuencias_Personaje-Pepe-corrección/1.IDLE/IDLE/I-1.png';
+    base_image.src = '../img/2.Secuencias_Personaje-Pepe-corrección/1.IDLE/IDLE/I-1.png';
     base_image.onload = function () {
         ctx.drawImage(base_image, character_x, 100, base_image.width * 0.3, base_image.height * 0.3);
     }
