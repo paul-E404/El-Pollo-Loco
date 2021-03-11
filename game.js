@@ -2,11 +2,16 @@ let canvas;
 let ctx;
 let character_x = 0;
 let character_y = 100;
-let bg_elements_x = 0;
+let bg_element_x = 0;
+let bg_element_y = 0;
 let isMovingRight = false;
 let isMovingLeft = false;
-let isJumping = false;
-let isFalling = false;
+let lastJumpStarted = 0;
+
+
+// ------------------- Game config
+//Kostanten werden groß und mit Unterstrich geschrieben. Eine Konstante ist eine Variable, die sich über das ganze Spiel nicht ändert.
+let JUMP_TIME = 300;
 
 //Zeichnet das Spielfeld (Startpunkt links oben)
 function init() {
@@ -28,46 +33,51 @@ function draw() {
 
 function updateCharacter() {
     base_image = new Image();
-    base_image.src = '../img/2.Secuencias_Personaje-Pepe-corrección/1.IDLE/IDLE/I-1.png';
+    base_image.src = 'img/character/idle/I-1.png';
     //base_image.complete: Gibt den Wert true zurück, wenn das Bild fertig geladen ist. Ansonsten false.
     if (base_image.complete) {
         ctx.drawImage(base_image, character_x, character_y, base_image.width * 0.3, base_image.height * 0.3);
     }
+
+    let timePassedSinceJump = new Date().getTime() - lastJumpStarted;
+    if (timePassedSinceJump < JUMP_TIME) {
+        character_y = character_y - 10;
+    } else {
+        //Check falling
+        if (character_y < 100) {
+            character_y = character_y + 10;
+        }
+    }
+
 }
 
 function drawBackground() {
-    ctx.fillStyle = "white";
-    //Startpunkt: (0,0); Breite; Höhe
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (isMovingRight == true) {
+        bg_element_x = bg_element_x - 5;
+    }
+    if (isMovingLeft == true) {
+        bg_element_x = bg_element_x + 5;
+    }
+    drawSky();
     drawGround();
 }
 
+function drawSky() {
+    addBackgroundImage('sky_image', 'img/bg/sky/sky.png', bg_element_x, bg_element_y, 1);
+}
+
 function drawGround() {
-    /* ctx.fillStyle = "rgb(251, 213, 101)";
-    ctx.fillRect(0, 400, canvas.width, canvas.height-400); */
+    addBackgroundImage('ground3_image', 'img/bg/ground3/1.png', bg_element_x, bg_element_y, 1);
+    addBackgroundImage('ground2_image', 'img/bg/ground2/1.png', bg_element_x, bg_element_y, 1);
+    addBackgroundImage('ground1_image', 'img/bg/ground1/1.png', bg_element_x, bg_element_y, 1);
+}
 
-    if (isMovingRight == true) {
-        bg_elements_x = bg_elements_x - 5;
+function addBackgroundImage(name, src, bg_element_x, bg_element_y, scale) {
+    name = new Image();
+    name.src = src;
+    if(name.complete) {
+        ctx.drawImage(name, bg_element_x, bg_element_y, canvas.width * scale, canvas.height * scale); 
     }
-    if (isMovingLeft == true) {
-        bg_elements_x = bg_elements_x + 5;
-    }
-    ground3_image = new Image();
-    ground3_image.src = '../img/5.Fondo/Capas/3.Fondo3/1.png';
-    if (ground3_image.complete) {
-        ctx.drawImage(ground3_image, bg_elements_x, 0, canvas.width, canvas.height);
-    }
-    ground2_image = new Image();
-    ground2_image.src = '../img/5.Fondo/Capas/2.Fondo2/1.png';
-    if (ground2_image.complete) {
-        ctx.drawImage(ground2_image, bg_elements_x, 0, canvas.width, canvas.height);
-    }
-    ground1_image = new Image();
-    ground1_image.src = '../img/5.Fondo/Capas/1.suelo-fondo1/1.png';
-    if (ground1_image.complete) {
-        ctx.drawImage(ground1_image, bg_elements_x, 0, canvas.width, canvas.height);
-    }
-
 }
 
 //Registriert wenn eine Taste gedrückt wird und kann dann eine Funktion aufrufen.
@@ -88,8 +98,13 @@ function listenForKeys() {
             isMovingLeft = true;
             character_x = character_x - 5;
         }
-        if ((key == "Space" || key == "ArrowUp") && isFalling == false) {
-            jump();
+
+        let timePassedSinceJump = new Date().getTime() - lastJumpStarted;
+        //Erst wenn die JUMP TIME vorüber ist, darf ein neuer Sprung begonnen werden.
+        //Daher muss die Zeit seit dem letzten Sprung größer als die Sprungzeit sein (also außerhalb dieser Zeit liegen).
+        //JUMP_TIME * 2, da wir JUMP_TIME hochspringen und JUMP_TIME runterfallen (ein Sprung).
+        if ((key == "Space" || key == "ArrowUp") && timePassedSinceJump > JUMP_TIME * 2) {
+            lastJumpStarted = new Date().getTime();         //Unix Timestamp
         }
     });
 
@@ -107,12 +122,4 @@ function listenForKeys() {
         }
     });
 
-    function jump() {
-        isJumping = true;
-        character_y = character_y - 10;
-        if(character_y < -50) {
-            isJumping = false;
-            isFalling = true;
-        }
-    }
 }
