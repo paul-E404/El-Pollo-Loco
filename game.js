@@ -10,6 +10,25 @@ let bg_element_y = 0;
 let isMovingRight = false;
 let isMovingLeft = false;
 let lastJumpStarted = 0;
+let currentCharacterImage = 'img/character/idle/I-1.png';
+
+let character_walk_right_images = [
+    'img/character/walk/Wr-21.png',
+    'img/character/walk/Wr-22.png',
+    'img/character/walk/Wr-23.png',
+    'img/character/walk/Wr-24.png',
+    'img/character/walk/Wr-25.png',
+    'img/character/walk/Wr-26.png',
+]
+
+let character_walk_left_images = [
+    'img/character/walk/Wl-21.png',
+    'img/character/walk/Wl-22.png',
+    'img/character/walk/Wl-23.png',
+    'img/character/walk/Wl-24.png',
+    'img/character/walk/Wl-25.png',
+    'img/character/walk/Wl-26.png',
+]
 
 
 // ------------------- Game config
@@ -21,9 +40,8 @@ let GAME_SPEED = 7;
 function init() {
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
-
+    checkForRunning();
     draw();
-
     listenForKeys();
 }
 
@@ -31,7 +49,6 @@ function draw() {
     //Verhindert dass die Hintergrundbilder mehrfach angezeigt werden. Kann ggf. am Ende entfernt werden.
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     drawBackground();
     updateCharacter();
     //requestAnimationFrame(function): Webbrowser nimmt sich immer genug Ressoucen von der Grafikkarte um diesen Frame zu aktualisieren
@@ -39,9 +56,46 @@ function draw() {
     requestAnimationFrame(draw);
 }
 
+function checkForRunning() {
+    setInterval(function () {
+        if (isMovingRight == true) {
+            let character_walk_images = character_walk_right_images;
+            showRunningImages(character_walk_images);
+        }
+        else if (isMovingLeft == true) {
+            let character_walk_images = character_walk_left_images;
+            showRunningImages(character_walk_images);
+        }
+    }, 100);
+}
+
+function showRunningImages(character_walk_images) {
+    if (currentCharacterImage == character_walk_images[0]) {
+        currentCharacterImage = character_walk_images[1];
+    }
+    else if (currentCharacterImage == character_walk_images[1]) {
+        currentCharacterImage = character_walk_images[2];
+    }
+    else if (currentCharacterImage == character_walk_images[2]) {
+        currentCharacterImage = character_walk_images[3];
+    }
+    else if (currentCharacterImage == character_walk_images[3]) {
+        currentCharacterImage = character_walk_images[4];
+    }
+    else if (currentCharacterImage == character_walk_images[4]) {
+        currentCharacterImage = character_walk_images[5];
+    }
+    else if (currentCharacterImage == character_walk_images[5]) {
+        currentCharacterImage = character_walk_images[0];
+    }
+    else {
+        currentCharacterImage = character_walk_images[0];
+    }
+}
+
 function updateCharacter() {
     base_image = new Image();
-    base_image.src = 'img/character/idle/I-1.png';
+    base_image.src = currentCharacterImage;
     //base_image.complete: Gibt den Wert true zurück, wenn das Bild fertig geladen ist. Ansonsten false.
     if (base_image.complete) {
         ctx.drawImage(base_image, character_x, character_y, base_image.width * 0.35, base_image.height * 0.35);
@@ -82,7 +136,7 @@ function drawSky() {
     }
     for (let i = 0; i < 10; i = i + 2) {
         addBackgroundImage('clouds1_image', 'img/bg/sky/clouds1.png', bg_sky_x, bg_element_y, i);
-        addBackgroundImage('clouds2_image', 'img/bg/sky/clouds2.png', bg_sky_x, bg_element_y, i+1);
+        addBackgroundImage('clouds2_image', 'img/bg/sky/clouds2.png', bg_sky_x, bg_element_y, i + 1);
     }
     /*     addBackgroundImage('sky_image', 'img/bg/sky/sky.png', bg_sky_x, bg_element_y, 0);
         addBackgroundImage('sky_image', 'img/bg/sky/sky.png', bg_sky_x, bg_element_y, 1);
