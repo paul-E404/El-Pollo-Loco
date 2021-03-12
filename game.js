@@ -1,8 +1,11 @@
 let canvas;
 let ctx;
-let character_x = 0;
-let character_y = 100;
-let bg_element_x = 0;
+let character_x = 100;
+let character_y = 45;
+let bg_sky_x = -270;
+let bg3_ground_x = -270;
+let bg2_ground_x = -270;
+let bg1_ground_x = -270;
 let bg_element_y = 0;
 let isMovingRight = false;
 let isMovingLeft = false;
@@ -12,6 +15,7 @@ let lastJumpStarted = 0;
 // ------------------- Game config
 //Kostanten werden groß und mit Unterstrich geschrieben. Eine Konstante ist eine Variable, die sich über das ganze Spiel nicht ändert.
 let JUMP_TIME = 300;
+let GAME_SPEED = 7;
 
 //Zeichnet das Spielfeld (Startpunkt links oben)
 function init() {
@@ -24,6 +28,10 @@ function init() {
 }
 
 function draw() {
+    //Verhindert dass die Hintergrundbilder mehrfach angezeigt werden. Kann ggf. am Ende entfernt werden.
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     drawBackground();
     updateCharacter();
     //requestAnimationFrame(function): Webbrowser nimmt sich immer genug Ressoucen von der Grafikkarte um diesen Frame zu aktualisieren
@@ -36,7 +44,7 @@ function updateCharacter() {
     base_image.src = 'img/character/idle/I-1.png';
     //base_image.complete: Gibt den Wert true zurück, wenn das Bild fertig geladen ist. Ansonsten false.
     if (base_image.complete) {
-        ctx.drawImage(base_image, character_x, character_y, base_image.width * 0.3, base_image.height * 0.3);
+        ctx.drawImage(base_image, character_x, character_y, base_image.width * 0.35, base_image.height * 0.35);
     }
 
     let timePassedSinceJump = new Date().getTime() - lastJumpStarted;
@@ -44,7 +52,7 @@ function updateCharacter() {
         character_y = character_y - 10;
     } else {
         //Check falling
-        if (character_y < 100) {
+        if (character_y < 45) {
             character_y = character_y + 10;
         }
     }
@@ -53,30 +61,67 @@ function updateCharacter() {
 
 function drawBackground() {
     if (isMovingRight == true) {
-        bg_element_x = bg_element_x - 5;
+        bg3_ground_x = bg3_ground_x - GAME_SPEED * 0.2;
+        bg2_ground_x = bg2_ground_x - GAME_SPEED * 0.4;
+        bg1_ground_x = bg1_ground_x - GAME_SPEED;
+        bg_sky_x = bg_sky_x - GAME_SPEED * 0.1;
     }
     if (isMovingLeft == true) {
-        bg_element_x = bg_element_x + 5;
+        bg3_ground_x = bg3_ground_x + GAME_SPEED * 0.5;
+        bg2_ground_x = bg2_ground_x + GAME_SPEED * 0.8;
+        bg1_ground_x = bg1_ground_x + GAME_SPEED;
+        bg_sky_x = bg_sky_x + GAME_SPEED * 0.1;
     }
     drawSky();
     drawGround();
 }
 
 function drawSky() {
-    addBackgroundImage('sky_image', 'img/bg/sky/sky.png', bg_element_x, bg_element_y, 1);
+    for (let i = 0; i < 10; i++) {
+        addBackgroundImage('sky_image', 'img/bg/sky/sky.png', bg_sky_x, bg_element_y, i);
+    }
+    for (let i = 0; i < 10; i = i + 2) {
+        addBackgroundImage('clouds1_image', 'img/bg/sky/clouds1.png', bg_sky_x, bg_element_y, i);
+        addBackgroundImage('clouds2_image', 'img/bg/sky/clouds2.png', bg_sky_x, bg_element_y, i+1);
+    }
+    /*     addBackgroundImage('sky_image', 'img/bg/sky/sky.png', bg_sky_x, bg_element_y, 0);
+        addBackgroundImage('sky_image', 'img/bg/sky/sky.png', bg_sky_x, bg_element_y, 1);
+        addBackgroundImage('sky_image', 'img/bg/sky/clouds1.png', bg_sky_x, bg_element_y, 0);
+        addBackgroundImage('sky_image', 'img/bg/sky/clouds2.png', bg_sky_x, bg_element_y, 1); */
 }
 
 function drawGround() {
-    addBackgroundImage('ground3_image', 'img/bg/ground3/1.png', bg_element_x, bg_element_y, 1);
-    addBackgroundImage('ground2_image', 'img/bg/ground2/1.png', bg_element_x, bg_element_y, 1);
-    addBackgroundImage('ground1_image', 'img/bg/ground1/1.png', bg_element_x, bg_element_y, 1);
+    for (let i = 0; i < 10; i = i + 2) {
+        addBackgroundImage('ground3.1_image', 'img/bg/ground3/1.png', bg3_ground_x, bg_element_y, i);
+        addBackgroundImage('ground3.2_image', 'img/bg/ground3/2.png', bg3_ground_x, bg_element_y, i + 1);
+    }
+    for (let i = 0; i < 10; i = i + 2) {
+        addBackgroundImage('ground2.1_image', 'img/bg/ground2/1.png', bg2_ground_x, bg_element_y, i);
+        addBackgroundImage('ground2.2_image', 'img/bg/ground2/2.png', bg2_ground_x, bg_element_y, i + 1);
+    }
+    for (let i = 0; i < 10; i = i + 2) {
+        addBackgroundImage('ground1.1_image', 'img/bg/ground1/1.png', bg1_ground_x, bg_element_y, i);
+        addBackgroundImage('ground1.2_image', 'img/bg/ground1/2.png', bg1_ground_x, bg_element_y, i + 1);
+    }
+    /*  addBackgroundImage('ground3.1_image', 'img/bg/ground3/1.png', bg3_ground_x, bg_element_y, 0);
+     addBackgroundImage('ground3.2_image', 'img/bg/ground3/2.png', bg3_ground_x, bg_element_y, 1);
+     addBackgroundImage('ground3.1_image', 'img/bg/ground3/1.png', bg3_ground_x, bg_element_y, 2);
+     addBackgroundImage('ground3.2_image', 'img/bg/ground3/2.png', bg3_ground_x, bg_element_y, 3);
+     addBackgroundImage('ground2.1_image', 'img/bg/ground2/1.png', bg2_ground_x, bg_element_y, 0);
+     addBackgroundImage('ground2.2_image', 'img/bg/ground2/2.png', bg2_ground_x, bg_element_y, 1);
+     addBackgroundImage('ground2.1_image', 'img/bg/ground2/1.png', bg2_ground_x, bg_element_y, 2);
+     addBackgroundImage('ground2.2_image', 'img/bg/ground2/2.png', bg2_ground_x, bg_element_y, 3);
+     addBackgroundImage('ground1.1_image', 'img/bg/ground1/1.png', bg1_ground_x, bg_element_y, 0);
+     addBackgroundImage('ground1.2_image', 'img/bg/ground1/2.png', bg1_ground_x, bg_element_y, 1);
+     addBackgroundImage('ground1.1_image', 'img/bg/ground1/1.png', bg1_ground_x, bg_element_y, 2);
+     addBackgroundImage('ground1.2_image', 'img/bg/ground1/2.png', bg1_ground_x, bg_element_y, 3); */
 }
 
 function addBackgroundImage(name, src, bg_element_x, bg_element_y, scale) {
     name = new Image();
     name.src = src;
-    if(name.complete) {
-        ctx.drawImage(name, bg_element_x, bg_element_y, canvas.width * scale, canvas.height * scale); 
+    if (name.complete) {
+        ctx.drawImage(name, bg_element_x + canvas.width * scale, bg_element_y, canvas.width, canvas.height);
     }
 }
 
@@ -92,11 +137,11 @@ function listenForKeys() {
         //Wenn die rechte Steuerungstaste gedrückt wird, möchten wir die Koordinaten von unserem character updaten
         if (key == "ArrowRight") {
             isMovingRight = true;
-            character_x = character_x + 5;
+            /* character_x = character_x + 5; */
         }
         if (key == "ArrowLeft") {
             isMovingLeft = true;
-            character_x = character_x - 5;
+            /* character_x = character_x - 5; */
         }
 
         let timePassedSinceJump = new Date().getTime() - lastJumpStarted;
@@ -110,15 +155,14 @@ function listenForKeys() {
 
     //Wenn die Taste losgelassen wird...
     document.addEventListener('keyup', function (e) {
-        let key = e.code; // "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
-        //Wenn die rechte Steuerungstaste gedrückt wird, möchten wir die Koordinaten von unserem character updaten
+        let key = e.code;
         if (key == "ArrowRight") {
             isMovingRight = false;
-            character_x = character_x + 5;
+            /* character_x = character_x + 5; */
         }
         if (key == "ArrowLeft") {
             isMovingLeft = false;
-            character_x = character_x - 5;
+            /* character_x = character_x - 5; */
         }
     });
 
