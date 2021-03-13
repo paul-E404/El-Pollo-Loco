@@ -10,7 +10,7 @@ let bg_element_y = 0;
 let cloud_offset = 0;
 let isMovingRight = false;
 let isMovingLeft = false;
-let isJumping = false;
+let lastMove = "right";             //left or right
 let lastJumpStarted = 0;
 let currentCharacterImage = 'img/character/idle/Ir-1.png';
 let character_walk_index = 0;
@@ -64,29 +64,13 @@ let character_walk_left_images = [
 let character_jump_right_images = [
     'img/character/jump/Jr-31.png',
     'img/character/jump/Jr-32.png',
-    'img/character/jump/Jr-33.png',
-    'img/character/jump/Jr-34.png'
+    'img/character/jump/Jr-33.png'
 ]
 
 let character_jump_left_images = [
     'img/character/jump/Jl-31.png',
     'img/character/jump/Jl-32.png',
-    'img/character/jump/Jl-33.png',
-    'img/character/jump/Jl-34.png'
-]
-
-let character_fall_right_images = [
-    'img/character/jump/Jr-35.png',
-    'img/character/jump/Jr-36.png',
-    'img/character/jump/Jr-37.png',
-    'img/character/jump/Jr-38.png'
-]
-
-let character_fall_left_images = [
-    'img/character/jump/Jl-35.png',
-    'img/character/jump/Jl-36.png',
-    'img/character/jump/Jl-37.png',
-    'img/character/jump/Jl-38.png'
+    'img/character/jump/Jl-33.png'
 ]
 
 let character_sleep_right_images = [
@@ -130,16 +114,19 @@ let character_hurt_left_images = [
 
 // ------------------- Game config
 //Kostanten werden groß und mit Unterstrich geschrieben. Eine Konstante ist eine Variable, die sich über das ganze Spiel nicht ändert.
-let JUMP_TIME = 300;
+let JUMP_TIME = 400;
 let GAME_SPEED = 7;
 let CLOUD_SPEED = 0.2;
+
+setInterval(function () {
+    console.log("is Falling: ", isFalling);
+}, 500);
 
 //Zeichnet das Spielfeld (Startpunkt links oben)
 function init() {
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
     checkForRunning();
-    checkForJumping();
     draw();
     listenForKeys();
 }
@@ -157,7 +144,6 @@ function draw() {
 
 function checkForRunning() {
     setInterval(function () {
-        /* console.log("checkForRunning() wird ausgeführt. isMovingRight: ", isMovingRight, "character_walk_index", character_walk_index); */
         if (isMovingRight == true) {
             let character_walk_images = character_walk_right_images;
             showRunningImages(character_walk_images);
@@ -165,21 +151,6 @@ function checkForRunning() {
         else if (isMovingLeft == true) {
             let character_walk_images = character_walk_left_images;
             showRunningImages(character_walk_images);
-        }
-    }, 100);
-}
-
-function checkForJumping() {
-    setInterval(function() {
-
-        if (isJumping == true) {
-            console.log("checkForJumping() wird ausgeführt. isJumping: ", isJumping, "character_jump_index", character_jump_index);
-            let character_jump_images = character_jump_right_images;
-            showJumpingImages(character_jump_images);
-            console.log("character_jump_images: ", character_jump_images);
-        }
-        else if (isJumping == false) {
-            console.log("checkForJumping() wird ausgeführt. isJumping: ", isJumping, "character_jump_index", character_jump_index);
         }
     }, 100);
 }
@@ -192,13 +163,6 @@ function showRunningImages(character_walk_images) {
     character_walk_index++;
 }
 
-function showJumpingImages(character_jump_images) {
-    console.log("showJumpingImages() wird ausgeführt. isJumping: ", isJumping);
-    let index = character_jump_index % character_jump_images.length;
-    currentCharacterImage = character_jump_images[index];
-    character_jump_index++;
-}
-
 function updateCharacter() {
     base_image = new Image();
     base_image.src = currentCharacterImage;
@@ -209,24 +173,17 @@ function updateCharacter() {
 
     let timePassedSinceJump = new Date().getTime() - lastJumpStarted;
     if (timePassedSinceJump < JUMP_TIME) {
-        isJumping = true;
         character_y = character_y - 10;
-    } else {
+    }
+    else if (timePassedSinceJump < JUMP_TIME * 2) {
         //Check falling
-        isJumping = false;
-        /* console.log("isJumping: ", isJumping); */
         if (character_y < 45) {
             character_y = character_y + 10;
         }
     }
-}
-
-function showJumpingImages() {
-
-}
-
-function showFallingImages() {
-
+    else {
+        isFalling = false;
+    }
 }
 
 function drawBackground() {
@@ -310,10 +267,12 @@ function listenForKeys() {
         //Wenn die rechte Steuerungstaste gedrückt wird, möchten wir die Koordinaten von unserem character updaten
         if (key == "ArrowRight") {
             isMovingRight = true;
+            lastMove = "right";
             /* character_x = character_x + 5; */
         }
         if (key == "ArrowLeft") {
             isMovingLeft = true;
+            lastMove = "left";
             /* character_x = character_x - 5; */
         }
 
@@ -323,7 +282,8 @@ function listenForKeys() {
         //JUMP_TIME * 2, da wir JUMP_TIME hochspringen und JUMP_TIME runterfallen (ein Sprung).
         if ((key == "Space" || key == "ArrowUp") && timePassedSinceJump > JUMP_TIME * 2) {
             lastJumpStarted = new Date().getTime();         //Unix Timestamp
-            /* console.log("isJumping: ", isJumping); */
+            checkJumpDirection();
+
         }
     });
 
@@ -340,4 +300,27 @@ function listenForKeys() {
         }
     });
 
+}
+
+function checkJumpDirection() {
+    if (lastMove == "right") {
+        let character_jump_images = character_jump_right_images;
+        animateJump(character_jump_images);
+    }
+    else {
+        let character_jump_images = character_jump_left_images;
+        animateJump(character_jump_images);
+    }
+}
+
+function animateJump(character_jump_images) {
+    setTimeout(function () {
+        currentCharacterImage = character_jump_images[0];
+    }, JUMP_TIME * 2 / (character_jump_images.length * 10) * 1);
+    setTimeout(function () {
+        currentCharacterImage = character_jump_images[1];
+    }, JUMP_TIME * 2 / (character_jump_images.length * 10) * 5);
+    setTimeout(function () {
+        currentCharacterImage = character_jump_images[2];
+    }, JUMP_TIME * 2 / (character_jump_images.length * 10) * 25);
 }
