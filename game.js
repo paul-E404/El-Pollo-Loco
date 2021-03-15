@@ -11,11 +11,12 @@ let cloud_offset = 0;
 let isMovingRight = false;
 let isMovingLeft = false;
 let lastMove = "right";             //left or right
-let lastJumpStarted = 0;
+let lastJumpStarted = new Date().getTime();
+let lastMoveFinished = new Date().getTime();
+let timePassedSinceJump;    //unter Vorbehalt. Ggf. wieder entfernen hier oben.  
 let currentCharacterImage = 'img/character/idle/Ir-1.png';
+let character_idle_index = 0;
 let character_walk_index = 0;
-let character_jump_index = 0;
-let character_fall_index = 0;
 
 let character_idle_right_images = [
     'img/character/idle/Ir-1.png',
@@ -118,18 +119,69 @@ let JUMP_TIME = 400;
 let GAME_SPEED = 7;
 let CLOUD_SPEED = 0.2;
 
-setInterval(function () {
-    console.log("is Falling: ", isFalling);
-}, 500);
 
 //Zeichnet das Spielfeld (Startpunkt links oben)
 function init() {
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
+    checkForRelaxing();
     checkForRunning();
     draw();
     listenForKeys();
 }
+
+function checkForRelaxing() {
+    setInterval(function () {
+        let currentTime = new Date().getTime();
+        let timePassedSinceLastMove = currentTime - lastMoveFinished;
+        console.log("timePassedSinceJump: ", timePassedSinceJump);
+        if(isMovingLeft == false && isMovingRight == false) {
+            if(timePassedSinceJump > JUMP_TIME * 3 && timePassedSinceJump <= JUMP_TIME * 20 || timePassedSinceLastMove > JUMP_TIME * 2 && timePassedSinceLastMove < JUMP_TIME * 20) {
+                checkRelaxingDirection();
+            }
+            else if (timePassedSinceJump > JUMP_TIME * 3 && timePassedSinceLastMove > JUMP_TIME * 20) {
+                checkSleepingDirection();
+            }
+        }
+    }, 300);
+}
+
+function checkRelaxingDirection() {
+    if (lastMove == "right") {
+        let character_idle_images = character_idle_right_images;
+        relax(character_idle_images);
+    }
+    else {
+        let character_idle_images = character_idle_left_images;
+        relax(character_idle_images);
+    }
+}
+
+function relax(character_idle_images) {
+    let index = character_idle_index % character_idle_images.length;
+    currentCharacterImage = character_idle_images[index];
+    character_idle_index++;
+}
+
+ 
+function checkSleepingDirection() {
+    if (lastMove == "right") {
+        let character_sleep_images = character_sleep_right_images;
+        sleep(character_sleep_images);
+    }
+    else {
+        let character_sleep_images = character_sleep_left_images;
+        sleep(character_sleep_images);
+    }
+}
+
+
+function sleep(character_sleep_images) {
+    let index = character_idle_index % character_sleep_images.length;
+    currentCharacterImage = character_sleep_images[index];
+    character_idle_index++;
+}
+
 
 function draw() {
     //Verhindert dass die Hintergrundbilder mehrfach angezeigt werden. Kann ggf. am Ende entfernt werden.
@@ -158,20 +210,24 @@ function checkForRunning() {
 function showRunningImages(character_walk_images) {
     //Modulorechnung sorgt dafür, dass der Index immer von 0 bis zur Länge des Arrays durch das Array iteriert.
     //Der Counter am Ende setzt den Index immer +1 nach oben.
-    let index = character_walk_index % character_walk_images.length;
-    currentCharacterImage = character_walk_images[index];
-    character_walk_index++;
+    //if(timePassedSinceJump > JUMP_TIME * 2): Damit sich Sprung und Laufanimation nicht überlagern.
+    if (timePassedSinceJump > JUMP_TIME * 2) {
+        let index = character_walk_index % character_walk_images.length;
+        currentCharacterImage = character_walk_images[index];
+        character_walk_index++;
+    }
+
 }
 
 function updateCharacter() {
-    base_image = new Image();
-    base_image.src = currentCharacterImage;
-    //base_image.complete: Gibt den Wert true zurück, wenn das Bild fertig geladen ist. Ansonsten false.
-    if (base_image.complete) {
-        ctx.drawImage(base_image, character_x, character_y, base_image.width * 0.35, base_image.height * 0.35);
+    character_image = new Image();
+    character_image.src = currentCharacterImage;
+    //character_image.complete: Gibt den Wert true zurück, wenn das Bild fertig geladen ist. Ansonsten false.
+    if (character_image.complete) {
+        ctx.drawImage(character_image, character_x, character_y, character_image.width * 0.35, character_image.height * 0.35);
     }
 
-    let timePassedSinceJump = new Date().getTime() - lastJumpStarted;
+    timePassedSinceJump = new Date().getTime() - lastJumpStarted;
     if (timePassedSinceJump < JUMP_TIME) {
         character_y = character_y - 10;
     }
@@ -180,9 +236,6 @@ function updateCharacter() {
         if (character_y < 45) {
             character_y = character_y + 10;
         }
-    }
-    else {
-        isFalling = false;
     }
 }
 
@@ -276,7 +329,7 @@ function listenForKeys() {
             /* character_x = character_x - 5; */
         }
 
-        let timePassedSinceJump = new Date().getTime() - lastJumpStarted;
+        timePassedSinceJump = new Date().getTime() - lastJumpStarted;
         //Erst wenn die JUMP TIME vorüber ist, darf ein neuer Sprung begonnen werden.
         //Daher muss die Zeit seit dem letzten Sprung größer als die Sprungzeit sein (also außerhalb dieser Zeit liegen).
         //JUMP_TIME * 2, da wir JUMP_TIME hochspringen und JUMP_TIME runterfallen (ein Sprung).
@@ -292,10 +345,12 @@ function listenForKeys() {
         let key = e.code;
         if (key == "ArrowRight") {
             isMovingRight = false;
+            lastMoveFinished = new Date().getTime();
             /* character_x = character_x + 5; */
         }
         if (key == "ArrowLeft") {
             isMovingLeft = false;
+            lastMoveFinished = new Date().getTime();
             /* character_x = character_x - 5; */
         }
     });
