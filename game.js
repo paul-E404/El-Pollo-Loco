@@ -10,109 +10,16 @@ let bg_element_y = 0;
 let cloud_offset = 0;
 let isMovingRight = false;
 let isMovingLeft = false;
-let lastMove = "right";             //left or right
+let lastMove = "right";
 let lastJumpStarted = new Date().getTime();
 let lastMoveFinished = new Date().getTime();
-let timePassedSinceJump;    //unter Vorbehalt. Ggf. wieder entfernen hier oben.  
+let timePassedSinceJump;   
 let currentCharacterImage = new Image;
 let character_idle_index = 0;
 let character_walk_index = 0;
 
-/* let character_idle_right_images = [
-    'img/character/idle/Ir-1.png',
-    'img/character/idle/Ir-2.png',
-    'img/character/idle/Ir-3.png',
-    'img/character/idle/Ir-4.png',
-    'img/character/idle/Ir-5.png',
-    'img/character/idle/Ir-6.png',
-    'img/character/idle/Ir-7.png',
-    'img/character/idle/Ir-8.png',
-    'img/character/idle/Ir-9.png',
-    'img/character/idle/Ir-10.png'
-]
 
-let character_idle_left_images = [
-    'img/character/idle/Il-1.png',
-    'img/character/idle/Il-2.png',
-    'img/character/idle/Il-3.png',
-    'img/character/idle/Il-4.png',
-    'img/character/idle/Il-5.png',
-    'img/character/idle/Il-6.png',
-    'img/character/idle/Il-7.png',
-    'img/character/idle/Il-8.png',
-    'img/character/idle/Il-9.png',
-    'img/character/idle/Il-10.png'
-]
-
-let character_walk_right_images = [
-    'img/character/walk/Wr-21.png',
-    'img/character/walk/Wr-22.png',
-    'img/character/walk/Wr-23.png',
-    'img/character/walk/Wr-24.png',
-    'img/character/walk/Wr-25.png',
-    'img/character/walk/Wr-26.png'
-]
-
-let character_walk_left_images = [
-    'img/character/walk/Wl-21.png',
-    'img/character/walk/Wl-22.png',
-    'img/character/walk/Wl-23.png',
-    'img/character/walk/Wl-24.png',
-    'img/character/walk/Wl-25.png',
-    'img/character/walk/Wl-26.png'
-]
-
-let character_jump_right_images = [
-    'img/character/jump/Jr-31.png',
-    'img/character/jump/Jr-32.png',
-    'img/character/jump/Jr-33.png'
-]
-
-let character_jump_left_images = [
-    'img/character/jump/Jl-31.png',
-    'img/character/jump/Jl-32.png',
-    'img/character/jump/Jl-33.png'
-]
-
-let character_sleep_right_images = [
-    'img/character/sleep/Sr-11.png',
-    'img/character/sleep/Sr-12.png',
-    'img/character/sleep/Sr-13.png',
-    'img/character/sleep/Sr-14.png',
-    'img/character/sleep/Sr-15.png',
-    'img/character/sleep/Sr-16.png',
-    'img/character/sleep/Sr-17.png',
-    'img/character/sleep/Sr-18.png',
-    'img/character/sleep/Sr-19.png',
-    'img/character/sleep/Sr-20.png'
-]
-
-let character_sleep_left_images = [
-    'img/character/sleep/Sl-11.png',
-    'img/character/sleep/Sl-12.png',
-    'img/character/sleep/Sl-13.png',
-    'img/character/sleep/Sl-14.png',
-    'img/character/sleep/Sl-15.png',
-    'img/character/sleep/Sl-16.png',
-    'img/character/sleep/Sl-17.png',
-    'img/character/sleep/Sl-18.png',
-    'img/character/sleep/Sl-19.png',
-    'img/character/sleep/Sl-20.png'
-]
-
-let character_hurt_right_images = [
-    'img/character/hurt/Hr-41.png',
-    'img/character/hurt/Hr-42.png',
-    'img/character/hurt/Hr-43.png'
-]
-
-let character_hurt_left_images = [
-    'img/character/hurt/Hl-41.png',
-    'img/character/hurt/Hl-42.png',
-    'img/character/hurt/Hl-43.png'
-] */
-
-//Objekt (Mihais Ansatz)
+//Image Object
 let characterImages = {
     walk: [
         ['img/character/walk/Wl-21.png',
@@ -190,6 +97,23 @@ let characterImages = {
     ]
 };
 
+//Image Object
+let backgroundImages = {
+    ground: [
+        'img/bg/ground3/1.png',
+        'img/bg/ground3/2.png',
+        'img/bg/ground2/1.png',
+        'img/bg/ground2/2.png',
+        'img/bg/ground1/1.png',
+        'img/bg/ground1/2.png'
+    ],
+    sky: [
+        'img/bg/sky/sky.png',
+        'img/bg/sky/clouds1.png',
+        'img/bg/sky/clouds2.png'
+    ]
+}
+
 //#############################################################################################
 
 //Ziel dieser Funktion ist es, jeden Pfadeintrag des Objektes characterImages durch das entsprechende Bildobjekt zu ersetzen und es dadurch vorzuladen.
@@ -197,19 +121,33 @@ let characterImages = {
 //x ist die Anzahl der Elemente im Objekt
 //y ist die Wahl zwischen left und right
 //z ist die Anzahl der Elemente in einem spezifischen Array, z.B. 6 Elemente im Array walk-left (da dort 6 Bilder vorhanden).
-function preloadImages() {
+function preloadImages(obj) {
 
-    for (let x = 0; x < Object.keys(characterImages).length; x++) {  
-        for(let y = 0; y < characterImages[Object.keys(characterImages)[x]].length; y++) {
-            for (let z = 0; z < characterImages[Object.keys(characterImages)[x]][y].length; z++) {
+    for (let x = 0; x < Object.keys(obj).length; x++) {  
+        for(let y = 0; y < obj[Object.keys(obj)[x]].length; y++) {
+            for (let z = 0; z < obj[Object.keys(obj)[x]][y].length; z++) {
                 //Catch every entry (img-path) in characterImages object
-                let path = characterImages[Object.keys(characterImages)[x]][y][z];
+                let path = obj[Object.keys(obj)[x]][y][z];
                 console.log("Der Pfad ist: ", path);
                 let image = new Image();
                 image.src = path;
                 //Save entries with img-Objects back to characterImages object
-                characterImages[Object.keys(characterImages)[x]][y][z] = image;
+                obj[Object.keys(obj)[x]][y][z] = image;
             }
+        }
+    }
+}
+
+function preloadBackgroundImages(obj) {
+    for (let x = 0; x < Object.keys(obj).length; x++) {  
+        for(let y = 0; y < obj[Object.keys(obj)[x]].length; y++) {
+            //Catch every entry (img-path) in backgroundImages object
+            let path = obj[Object.keys(obj)[x]][y];
+            console.log("Der Pfad für das Backgroundimage ist: ", path);
+            let image = new Image();
+            image.src = path;
+            //Save entries with img-Objects back to backgroundImages object
+            obj[Object.keys(obj)[x]][y] = image;
         }
     }
 }
@@ -221,38 +159,13 @@ let JUMP_TIME = 400;
 let GAME_SPEED = 7;
 let CLOUD_SPEED = 0.2;
 
-//Alte preloadFunktion. Kann gelöscht werden, sobald  die neue funktioniert.
-
-/* function preloadImages() {
-
-    for (let i = 0; i < imagePaths.length; i++) {
-        let image = new Image();
-        image.src = imagePaths[i];
-        imageCache.push(image); // push image-path to imageCache-array (which contains all image-paths)
-    }
-
-}
-
-function getImageFromCache(path) {
-
-    let image;
-
-    for (let i = 0; i < imageCache.length; i++) {
-        if (imageCache[i]['src'].endsWith(path) == true) {
-            image = imageCache[i];
-        };
-    }
-
-    return image;
-
-} */
-
 
 //Zeichnet das Spielfeld (Startpunkt links oben)
 function init() {
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
-    preloadImages();
+    preloadBackgroundImages(backgroundImages);
+    preloadImages(characterImages);
     checkForRelaxing();
     checkForRunning();
     draw();
@@ -391,34 +304,32 @@ function drawBackground() {
 
 function drawSky() {
     for (let i = 0; i < 10; i++) {
-        addBackgroundImage('sky_image', 'img/bg/sky/sky.png', bg_sky_x, bg_element_y, i);
+        addBackgroundImage(backgroundImages['sky'][0], bg_sky_x, bg_element_y, i);
     }
     for (let i = 0; i < 10; i = i + 2) {
-        addBackgroundImage('clouds1_image', 'img/bg/sky/clouds1.png', bg_sky_x - cloud_offset, bg_element_y, i);
-        addBackgroundImage('clouds2_image', 'img/bg/sky/clouds2.png', bg_sky_x - cloud_offset, bg_element_y, i + 1);
+        addBackgroundImage(backgroundImages['sky'][1], bg_sky_x - cloud_offset, bg_element_y, i);
+        addBackgroundImage(backgroundImages['sky'][2], bg_sky_x - cloud_offset, bg_element_y, i + 1);
     }
 }
 
 function drawGround() {
     for (let i = 0; i < 10; i = i + 2) {
-        addBackgroundImage('ground3.1_image', 'img/bg/ground3/1.png', bg3_ground_x, bg_element_y, i);
-        addBackgroundImage('ground3.2_image', 'img/bg/ground3/2.png', bg3_ground_x, bg_element_y, i + 1);
+        addBackgroundImage(backgroundImages['ground'][0], bg3_ground_x, bg_element_y, i);
+        addBackgroundImage(backgroundImages['ground'][1], bg3_ground_x, bg_element_y, i + 1);
     }
     for (let i = 0; i < 10; i = i + 2) {
-        addBackgroundImage('ground2.1_image', 'img/bg/ground2/1.png', bg2_ground_x, bg_element_y, i);
-        addBackgroundImage('ground2.2_image', 'img/bg/ground2/2.png', bg2_ground_x, bg_element_y, i + 1);
+        addBackgroundImage(backgroundImages['ground'][2], bg2_ground_x, bg_element_y, i);
+        addBackgroundImage(backgroundImages['ground'][3], bg2_ground_x, bg_element_y, i + 1);
     }
     for (let i = 0; i < 10; i = i + 2) {
-        addBackgroundImage('ground1.1_image', 'img/bg/ground1/1.png', bg1_ground_x, bg_element_y, i);
-        addBackgroundImage('ground1.2_image', 'img/bg/ground1/2.png', bg1_ground_x, bg_element_y, i + 1);
+        addBackgroundImage(backgroundImages['ground'][4], bg1_ground_x, bg_element_y, i);
+        addBackgroundImage(backgroundImages['ground'][5], bg1_ground_x, bg_element_y, i + 1);
     }
 }
 
-function addBackgroundImage(name, path, bg_element_x, bg_element_y, scale) {
-    name = new Image();
-    name.src = path;
-    if (name.complete) {
-        ctx.drawImage(name, bg_element_x + canvas.width * scale, bg_element_y, canvas.width, canvas.height);
+function addBackgroundImage(image, bg_element_x, bg_element_y, scale) {
+    if (image.complete) {
+        ctx.drawImage(image, bg_element_x + canvas.width * scale, bg_element_y, canvas.width, canvas.height);
     }
 }
 
