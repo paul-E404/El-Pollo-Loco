@@ -15,7 +15,6 @@ let isMovingLeft = false;
 let lastMove = "right";
 let lastJumpStarted = new Date().getTime();
 let lastMoveFinished = new Date().getTime();
-let timePassedSinceJump;
 let currentCharacterImage = new Image;
 let character_idle_index = 0;
 let character_walk_index = 0;
@@ -232,9 +231,9 @@ function checkForRelaxing() {
 
         let currentTime = new Date().getTime();
         let timePassedSinceLastMove = currentTime - lastMoveFinished;
-        let timeForRelax = timePassedSinceJump > JUMP_TIME * 3 && timePassedSinceJump <= JUMP_TIME * 20 || timePassedSinceLastMove > JUMP_TIME * 2 && timePassedSinceLastMove < JUMP_TIME * 20;
-        let timeForSleep = timePassedSinceJump > JUMP_TIME * 3 && timePassedSinceLastMove > JUMP_TIME * 20;
-
+        let timeForRelax = timePassedSinceLastMove > JUMP_TIME * 2 && timePassedSinceLastMove < JUMP_TIME * 20;
+        let timeForSleep = timePassedSinceLastMove > JUMP_TIME * 20;
+        
         if (isMovingLeft == false && isMovingRight == false) {
             if (timeForRelax == true) {
                 checkRelaxingDirection();
@@ -487,6 +486,9 @@ function keyUp() {
             isMovingLeft = false;
             lastMoveFinished = new Date().getTime();
             /* character_x = character_x - 5; */
+        }
+        if (key == "Space" || key == "ArrowUp") {
+            lastMoveFinished = new Date().getTime();
         }
     });
 }
