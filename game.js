@@ -18,6 +18,33 @@ let lastMoveFinished = new Date().getTime();
 let currentCharacterImage = new Image;
 let character_idle_index = 0;
 let character_walk_index = 0;
+let chickens;
+let chicken_y = 365;
+
+
+/*
+
+
+AUS DEM CALL MIT JUNUS ZUM THEMA ASYNCHRONE FUNKTIONEN
+
+
+function loadCache() {
+            return Promise(function (resolve, reject) {
+                // lade bild 1
+                // lade bild 2
+                resolve();
+            });
+            fetch()
+            backend.setItem()
+        }
+        async function init(){
+            loadCache();
+            movePepe();
+        }
+
+*/
+
+
 
 
 //Image Object with all character images
@@ -115,6 +142,22 @@ let backgroundImages = {
     ]
 }
 
+//Image Object with all chicken images
+let chickenImages = {
+    yellow: [
+        'img/enemies/chicken_yellow/CY1.png',
+        'img/enemies/chicken_yellow/CY2.png',
+        'img/enemies/chicken_yellow/CY3.png',
+        'img/enemies/chicken_yellow/CY-dead.png'
+    ],
+    brown: [
+        'img/enemies/chicken_brown/CB1.png',
+        'img/enemies/chicken_brown/CB2.png',
+        'img/enemies/chicken_brown/CB3.png',
+        'img/enemies/chicken_brown/CB-dead.png'
+    ]
+}
+
 
 //Ziel dieser Funktion ist es, jeden Pfadeintrag des Objektes characterImages durch das entsprechende Bildobjekt zu ersetzen und es dadurch vorzuladen.
 //Gibt jedes Element des Objekts "characterImages" aus, d.h. den Pfad.
@@ -128,7 +171,7 @@ let backgroundImages = {
  * Only for objects which contain two level of arrays.
  * @param  {obj} obj - An object which contains all image paths.
  */
-function preloadImages(obj) {
+function preloadCharakterImages(obj) {
 
     for (let x = 0; x < Object.keys(obj).length; x++) {
         for (let y = 0; y < obj[Object.keys(obj)[x]].length; y++) {
@@ -152,7 +195,7 @@ function preloadImages(obj) {
  * Only for objects which contain one level of arrays.
  * @param  {obj} obj - An object which contains all image paths.
  */
-function preloadBackgroundImages(obj) {
+function preloadOtherImages(obj) {
     for (let x = 0; x < Object.keys(obj).length; x++) {
         for (let y = 0; y < obj[Object.keys(obj)[x]].length; y++) {
             //Catch every entry (img-path) in backgroundImages object
@@ -180,11 +223,15 @@ let CLOUD_SPEED = 0.2;
 function init() {
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
-    preloadBackgroundImages(backgroundImages);
-    preloadImages(characterImages);
+    //Length of the playing field without first and last canvas width
+    preloadOtherImages(backgroundImages);
+    preloadCharakterImages(characterImages);
+    preloadOtherImages(chickenImages);
+    createChickenList();
     checkForRelaxing();
     checkForRunning();
     draw();
+    calculateChickenPosition();
     listenForKeys();
 }
 
@@ -233,7 +280,7 @@ function checkForRelaxing() {
         let timePassedSinceLastMove = currentTime - lastMoveFinished;
         let timeForRelax = timePassedSinceLastMove > JUMP_TIME * 2 && timePassedSinceLastMove < JUMP_TIME * 20;
         let timeForSleep = timePassedSinceLastMove > JUMP_TIME * 20;
-        
+
         if (isMovingLeft == false && isMovingRight == false) {
             if (timeForRelax == true) {
                 checkRelaxingDirection();
@@ -251,11 +298,11 @@ function checkForRelaxing() {
  */
 function checkRelaxingDirection() {
     if (lastMove == "right") {
-        let currentImages = characterImages['idle'][1];
+        let currentImages = characterImages.idle[1];
         relax(currentImages);
     }
     else {
-        let currentImages = characterImages['idle'][0];
+        let currentImages = characterImages.idle[0];
         relax(currentImages);
     }
 }
@@ -278,11 +325,11 @@ function relax(currentImages) {
  */
 function checkSleepingDirection() {
     if (lastMove == "right") {
-        let currentImages = characterImages['sleep'][1];
+        let currentImages = characterImages.sleep[1];
         sleep(currentImages);
     }
     else {
-        let currentImages = characterImages['sleep'][0];
+        let currentImages = characterImages.sleep[0];
         sleep(currentImages);
     }
 }
@@ -299,7 +346,6 @@ function sleep(currentImages) {
     character_idle_index++;
 }
 
-
 /**
  * Draws the current background, character images and object images depending on browserspeed.
  */
@@ -309,6 +355,7 @@ function draw() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     drawBackground();
     updateCharacter();
+    drawChicken();
     //requestAnimationFrame(function): webbrowser takes the ressources it needs from the graphic card in order to update the frame.
     //This is a less flickering alternative to setInterval.
     requestAnimationFrame(draw);
@@ -341,11 +388,8 @@ function checkCharacterJumpHeight() {
         character_y = character_y - 10;
     }
     //Check falling
-    else if (timePassedSinceJump <= JUMP_TIME * 2) {
-        //character must not fall deeper than 45
-        if (character_y < 45) {
-            character_y = character_y + 10;
-        }
+    else if (character_y < 45) {
+        character_y = character_y + 10;
     }
 }
 
@@ -386,11 +430,11 @@ function drawBackground() {
  */
 function drawSky() {
     for (let i = 0; i < 10; i++) {
-        addBackgroundImage(backgroundImages['sky'][0], bg_sky_x, bg_element_y, i);
+        addBackgroundImage(backgroundImages.sky[0], bg_sky_x, bg_element_y, i);
     }
     for (let i = 0; i < 10; i = i + 2) {
-        addBackgroundImage(backgroundImages['sky'][1], bg_sky_x - cloud_offset, bg_element_y, i);
-        addBackgroundImage(backgroundImages['sky'][2], bg_sky_x - cloud_offset, bg_element_y, i + 1);
+        addBackgroundImage(backgroundImages.sky[1], bg_sky_x - cloud_offset, bg_element_y, i);
+        addBackgroundImage(backgroundImages.sky[2], bg_sky_x - cloud_offset, bg_element_y, i + 1);
     }
 }
 
@@ -400,16 +444,16 @@ function drawSky() {
  */
 function drawGround() {
     for (let i = 0; i < 10; i = i + 2) {
-        addBackgroundImage(backgroundImages['ground'][0], bg3_ground_x, bg_element_y, i);
-        addBackgroundImage(backgroundImages['ground'][1], bg3_ground_x, bg_element_y, i + 1);
+        addBackgroundImage(backgroundImages.ground[0], bg3_ground_x, bg_element_y, i);
+        addBackgroundImage(backgroundImages.ground[1], bg3_ground_x, bg_element_y, i + 1);
     }
     for (let i = 0; i < 10; i = i + 2) {
-        addBackgroundImage(backgroundImages['ground'][2], bg2_ground_x, bg_element_y, i);
-        addBackgroundImage(backgroundImages['ground'][3], bg2_ground_x, bg_element_y, i + 1);
+        addBackgroundImage(backgroundImages.ground[2], bg2_ground_x, bg_element_y, i);
+        addBackgroundImage(backgroundImages.ground[3], bg2_ground_x, bg_element_y, i + 1);
     }
     for (let i = 0; i < 10; i = i + 2) {
-        addBackgroundImage(backgroundImages['ground'][4], bg1_ground_x, bg_element_y, i);
-        addBackgroundImage(backgroundImages['ground'][5], bg1_ground_x, bg_element_y, i + 1);
+        addBackgroundImage(backgroundImages.ground[4], bg1_ground_x, bg_element_y, i);
+        addBackgroundImage(backgroundImages.ground[5], bg1_ground_x, bg_element_y, i + 1);
     }
 }
 
@@ -422,6 +466,79 @@ function addBackgroundImage(image, bg_element_x, bg_element_y, scale) {
         ctx.drawImage(image, bg_element_x + canvas.width * scale, bg_element_y, canvas.width, canvas.height);
     }
 }
+
+
+function createChickenList() {
+    chickens = [
+        createChicken("yellow", 400, chicken_y, 0.4),
+        createChicken("brown", 600, chicken_y - 20, 0.45)
+    ];
+}
+
+function createChicken(type, position_x, position_y, scale) {
+    return {
+        "type": type,
+        "img": chickenImages[type][0],
+        "position_x": position_x,
+        "position_y": position_y,
+        "scale": scale, 
+        "speed": Math.random() * 5
+    };
+}
+
+function calculateChickenPosition() {
+    setInterval(function() {
+        for (let i = 0; i < chickens.length; i++) {
+            let chicken = chickens[i];
+            chicken.position_x = chicken.position_x - chicken.speed;
+            animateChicken(i);
+        }
+    }, 50);
+}
+
+function animateChicken(i) {
+    //follows
+}
+
+
+function drawChicken() {
+    for (let i = 0; i < chickens.length; i++) {
+        let chicken = chickens[i];
+        addObject(chicken.img, chicken.position_x, chicken.position_y, chicken.scale);
+    }
+}
+
+function addObject(image, start_x, start_y, scale) {
+    if(image.complete) {
+        ctx.drawImage(image, start_x, start_y, image.width * scale, image.height * scale);
+    }
+}
+
+
+
+/* function drawChicken() {
+    createChicken();
+}
+
+function createChicken() {
+    addObject(chickenImages['yellow'][0], 10);
+}
+
+function addObject(image, quantity) {
+
+    for (let i = 0; i < quantity; i++) {
+
+        let playing_field_length = canvas.width * 10;
+        let random_number = Math.floor((Math.random() * 100 + 1)); //Zufallszahl zw. 1 und 100
+        let random_position = playing_field_length / 100 * random_number;
+
+        if (image.complete) {
+            ctx.drawImage(image, random_position, chicken_y, image.width, image.height);
+            //console.log("Hühnchen gezeichnet!", "Zufallszahl: ", random_number, "Playing_Field_Length:", playing_field_length, "Zufallsposition: ", random_position);
+        }
+    }
+
+} */
 
 
 /**
@@ -499,11 +616,11 @@ function keyUp() {
  */
 function checkJumpDirection() {
     if (lastMove == "right") {
-        let currentImages = characterImages['jump'][1];
+        let currentImages = characterImages.jump[1];
         animateJump(currentImages);
     }
     else {
-        let currentImages = characterImages['jump'][0];
+        let currentImages = characterImages.jump[0];
         animateJump(currentImages);
     }
 }
