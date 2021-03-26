@@ -18,6 +18,7 @@ let lastMoveFinished = new Date().getTime();
 let currentCharacterImage = new Image;
 let character_idle_index = 0;
 let character_walk_index = 0;
+let chicken_image_index = 0;
 let chickens;
 let chicken_y = 365;
 
@@ -147,13 +148,17 @@ let chickenImages = {
     yellow: [
         'img/enemies/chicken_yellow/CY1.png',
         'img/enemies/chicken_yellow/CY2.png',
-        'img/enemies/chicken_yellow/CY3.png',
+        'img/enemies/chicken_yellow/CY3.png'
+    ],
+    yellow_dead: [
         'img/enemies/chicken_yellow/CY-dead.png'
     ],
     brown: [
         'img/enemies/chicken_brown/CB1.png',
         'img/enemies/chicken_brown/CB2.png',
-        'img/enemies/chicken_brown/CB3.png',
+        'img/enemies/chicken_brown/CB3.png'
+    ],
+    brown_dead: [
         'img/enemies/chicken_brown/CB-dead.png'
     ]
 }
@@ -228,10 +233,10 @@ function init() {
     preloadCharakterImages(characterImages);
     preloadOtherImages(chickenImages);
     createChickenList();
+    calculateChicken();
     checkForRelaxing();
     checkForRunning();
     draw();
-    calculateChickenPosition();
     listenForKeys();
 }
 
@@ -354,8 +359,8 @@ function draw() {
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     drawBackground();
-    updateCharacter();
     drawChicken();
+    updateCharacter();
     //requestAnimationFrame(function): webbrowser takes the ressources it needs from the graphic card in order to update the frame.
     //This is a less flickering alternative to setInterval.
     requestAnimationFrame(draw);
@@ -481,25 +486,52 @@ function createChicken(type, position_x, position_y, scale) {
         "img": chickenImages[type][0],
         "position_x": position_x,
         "position_y": position_y,
-        "scale": scale, 
+        "scale": scale,
         "speed": Math.random() * 5
     };
 }
 
-function calculateChickenPosition() {
-    setInterval(function() {
+function calculateChicken() {
+    setInterval(function () {
+        for (let i = 0; i < chickens.length; i++) {
+            //Positon
+            let chicken = chickens[i];
+            chicken.position_x = chicken.position_x - chicken.speed;
+        }
+    }, 50);
+    setInterval(function () {
+        for (let i = 0; i < chickens.length; i++) {
+            //Image
+            let type = chickens[i].type;
+            let index = chicken_image_index % chickenImages[type].length;    //without dead chicken image
+            chickens[i].img = chickenImages[type][index];
+            console.log("chicken_image_index: ", chicken_image_index, "chickens[i]: ", chickens[i], "chickens[i].img", chickens[i].img);
+        }
+        chicken_image_index++;
+    }, 200);
+}
+
+/* function calculateChickenPosition() {
+    setInterval(function () {
         for (let i = 0; i < chickens.length; i++) {
             let chicken = chickens[i];
             chicken.position_x = chicken.position_x - chicken.speed;
-            animateChicken(i);
         }
     }, 50);
 }
 
-function animateChicken(i) {
-    //follows
+function calculateChickenImage() {
+    setInterval(function () {
+        for (let i = 0; i < chickens.length; i++) {
+            let type = chickens[i].type;
+            let index = chicken_walk_index % chickenImages[type].length;    //without dead chicken image
+            chickens[i].img = chickenImages[type][index];
+            console.log("chicken_walk_index: ", chicken_walk_index, "chickens[i]: ", chickens[i], "chickens[i].img", chickens[i].img);
+        }
+        chicken_walk_index++;
+    }, 150)
 }
-
+ */
 
 function drawChicken() {
     for (let i = 0; i < chickens.length; i++) {
@@ -509,7 +541,7 @@ function drawChicken() {
 }
 
 function addObject(image, start_x, start_y, scale) {
-    if(image.complete) {
+    if (image.complete) {
         ctx.drawImage(image, start_x, start_y, image.width * scale, image.height * scale);
     }
 }
