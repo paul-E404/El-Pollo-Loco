@@ -18,34 +18,10 @@ let lastMoveFinished = new Date().getTime();
 let currentCharacterImage = new Image;
 let character_idle_index = 0;
 let character_walk_index = 0;
-let chicken_image_index = 0;
+/* let chicken_yellow_image_index = 0;
+let chicken_brown_image_index = 0; */
 let chickens;
 let chicken_y = 365;
-
-
-/*
-
-
-AUS DEM CALL MIT JUNUS ZUM THEMA ASYNCHRONE FUNKTIONEN
-
-
-function loadCache() {
-            return Promise(function (resolve, reject) {
-                // lade bild 1
-                // lade bild 2
-                resolve();
-            });
-            fetch()
-            backend.setItem()
-        }
-        async function init(){
-            loadCache();
-            movePepe();
-        }
-
-*/
-
-
 
 
 //Image Object with all character images
@@ -148,15 +124,17 @@ let chickenImages = {
     yellow: [
         'img/enemies/chicken_yellow/CY1.png',
         'img/enemies/chicken_yellow/CY2.png',
-        'img/enemies/chicken_yellow/CY3.png'
+        'img/enemies/chicken_yellow/CY3.png',
+        'img/enemies/chicken_yellow/CY2.png'
     ],
     yellow_dead: [
         'img/enemies/chicken_yellow/CY-dead.png'
     ],
     brown: [
-        'img/enemies/chicken_brown/CB1.png',
         'img/enemies/chicken_brown/CB2.png',
-        'img/enemies/chicken_brown/CB3.png'
+        'img/enemies/chicken_brown/CB1.png',
+        'img/enemies/chicken_brown/CB3.png',
+        'img/enemies/chicken_brown/CB1.png'
     ],
     brown_dead: [
         'img/enemies/chicken_brown/CB-dead.png'
@@ -205,7 +183,6 @@ function preloadOtherImages(obj) {
         for (let y = 0; y < obj[Object.keys(obj)[x]].length; y++) {
             //Catch every entry (img-path) in backgroundImages object
             let path = obj[Object.keys(obj)[x]][y];
-            console.log("Der Pfad für das Backgroundimage ist: ", path);
             let image = new Image();
             image.src = path;
             //Save entries with img-Objects back to backgroundImages object
@@ -217,9 +194,11 @@ function preloadOtherImages(obj) {
 
 // ------------------- Game config
 //Kostanten werden groß und mit Unterstrich geschrieben. Eine Konstante ist eine Variable, die sich über das ganze Spiel nicht ändert.
-let JUMP_TIME = 400;
-let GAME_SPEED = 7;
-let CLOUD_SPEED = 0.2;
+const PLAYING_FIELD_LENGTH = 15;
+const JUMP_TIME = 400;
+const GAME_SPEED = 7;
+const CLOUD_SPEED = 0.2;
+const MIN_CHICKEN_SPEED = 2;
 
 
 /**
@@ -233,7 +212,8 @@ function init() {
     preloadCharakterImages(characterImages);
     preloadOtherImages(chickenImages);
     createChickenList();
-    calculateChicken();
+    calculateChickenPosition();
+    calculateChickenImages();
     checkForRelaxing();
     checkForRunning();
     draw();
@@ -417,16 +397,38 @@ function drawBackground() {
         bg3_ground_x = bg3_ground_x - GAME_SPEED * 0.2;
         bg2_ground_x = bg2_ground_x - GAME_SPEED * 0.4;
         bg1_ground_x = bg1_ground_x - GAME_SPEED;
+        correctChickenPosition(isMovingRight);
         bg_sky_x = bg_sky_x - GAME_SPEED * 0.1;
     }
     if (isMovingLeft == true && wallLeft == false) {
         bg3_ground_x = bg3_ground_x + GAME_SPEED * 0.2;
         bg2_ground_x = bg2_ground_x + GAME_SPEED * 0.4;
         bg1_ground_x = bg1_ground_x + GAME_SPEED;
+        correctChickenPosition(isMovingLeft);
         bg_sky_x = bg_sky_x + GAME_SPEED * 0.1;
     }
     drawSky();
     drawGround();
+}
+
+/**
+ * Corrects the chickens' position when background is moving.
+ * 
+ * @param  {boolean} movingDirection - Moving direction of the character.
+ */
+function correctChickenPosition(movingDirection) {
+    if (isMovingRight) {
+        for (let i = 0; i < chickens.length; i++) {
+            let chicken = chickens[i];
+            chicken.position_x = chicken.position_x - GAME_SPEED;
+        }
+    }
+    else if (isMovingLeft) {
+        for (let i = 0; i < chickens.length; i++) {
+            let chicken = chickens[i];
+            chicken.position_x = chicken.position_x + GAME_SPEED;
+        }
+    }
 }
 
 
@@ -434,10 +436,10 @@ function drawBackground() {
  * Draws sky and clouds.
  */
 function drawSky() {
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < PLAYING_FIELD_LENGTH; i++) {
         addBackgroundImage(backgroundImages.sky[0], bg_sky_x, bg_element_y, i);
     }
-    for (let i = 0; i < 10; i = i + 2) {
+    for (let i = 0; i < PLAYING_FIELD_LENGTH; i = i + 2) {
         addBackgroundImage(backgroundImages.sky[1], bg_sky_x - cloud_offset, bg_element_y, i);
         addBackgroundImage(backgroundImages.sky[2], bg_sky_x - cloud_offset, bg_element_y, i + 1);
     }
@@ -448,15 +450,15 @@ function drawSky() {
  * Draws the three ground layers.
  */
 function drawGround() {
-    for (let i = 0; i < 10; i = i + 2) {
+    for (let i = 0; i < PLAYING_FIELD_LENGTH; i = i + 2) {
         addBackgroundImage(backgroundImages.ground[0], bg3_ground_x, bg_element_y, i);
         addBackgroundImage(backgroundImages.ground[1], bg3_ground_x, bg_element_y, i + 1);
     }
-    for (let i = 0; i < 10; i = i + 2) {
+    for (let i = 0; i < PLAYING_FIELD_LENGTH; i = i + 2) {
         addBackgroundImage(backgroundImages.ground[2], bg2_ground_x, bg_element_y, i);
         addBackgroundImage(backgroundImages.ground[3], bg2_ground_x, bg_element_y, i + 1);
     }
-    for (let i = 0; i < 10; i = i + 2) {
+    for (let i = 0; i < PLAYING_FIELD_LENGTH; i = i + 2) {
         addBackgroundImage(backgroundImages.ground[4], bg1_ground_x, bg_element_y, i);
         addBackgroundImage(backgroundImages.ground[5], bg1_ground_x, bg_element_y, i + 1);
     }
@@ -472,67 +474,123 @@ function addBackgroundImage(image, bg_element_x, bg_element_y, scale) {
     }
 }
 
-
+/**
+ * Creates an array with all chicken enemy objects in the game.
+ */
 function createChickenList() {
     chickens = [
-        createChicken("yellow", 400, chicken_y, 0.4),
-        createChicken("brown", 600, chicken_y - 20, 0.45)
+        createChicken("yellow", canvas.width + 400, chicken_y, 0.4, 0),
+        createChicken("yellow", canvas.width * 3 + 400, chicken_y, 0.4, 0),
+        createChicken("yellow", canvas.width * 3 + 800, chicken_y, 0.4, 0),
+        createChicken("yellow", canvas.width * 6 + 400, chicken_y, 0.4, -2),
+        createChicken("brown", canvas.width * 6 + 600, chicken_y - 25, 0.5, 5),
+        createChicken("yellow", canvas.width * 6 + 800, chicken_y, 0.4, 0),
+        createChicken("yellow", canvas.width * 9 + 400, chicken_y, 0.4, 0),
+        createChicken("brown", canvas.width * 9 + 600, chicken_y - 25, 0.5, 5),
+        createChicken("yellow", canvas.width * 9 + 800, chicken_y, 0.4, 0),
+        createChicken("yellow", canvas.width * 10 + 500, chicken_y, 0.4, 0),
+        createChicken("yellow", canvas.width * 11 + 100, chicken_y, 0.4, 5),
+        createChicken("yellow", canvas.width * 12 + 800, chicken_y, 0.4, 5),
+        createChicken("yellow", canvas.width * 13 + 300, chicken_y, 0.4, 5),
+        createChicken("yellow", canvas.width * 14 + 800, chicken_y, 0.4, 10),
+        createChicken("brown", canvas.width * 30 + 500, chicken_y - 50, 0.6, 20),
+        createChicken("brown", canvas.width * 40 + 500, chicken_y - 50, 0.6, 20),
+        createChicken("brown", canvas.width * 50 + 500, chicken_y - 60, 0.7, 25)
     ];
 }
 
-function createChicken(type, position_x, position_y, scale) {
+/**
+ * Creates a chicken enemy object.
+ * 
+ * @param  {string} type - The chicken's type.
+ * @param  {number} position_x - The chicken's horizontal position.
+ * @param  {number} position_y - The chicken's vertical position.
+ * @param  {number} scale - Factor for chicken's image.
+ * @param  {number} extra_speed - Variable summand for extra speed.
+ * @returns {Object} - Chicken enemy object.
+ */
+function createChicken(type, position_x, position_y, scale, extra_speed) {
     return {
         "type": type,
         "img": chickenImages[type][0],
         "position_x": position_x,
         "position_y": position_y,
         "scale": scale,
-        "speed": Math.random() * 5
+        "speed": MIN_CHICKEN_SPEED + Math.random() * 8 + extra_speed
     };
 }
 
-function calculateChicken() {
-    setInterval(function () {
-        for (let i = 0; i < chickens.length; i++) {
-            //Positon
-            let chicken = chickens[i];
-            chicken.position_x = chicken.position_x - chicken.speed;
-        }
-    }, 50);
-    setInterval(function () {
-        for (let i = 0; i < chickens.length; i++) {
-            //Image
-            let type = chickens[i].type;
-            let index = chicken_image_index % chickenImages[type].length;    //without dead chicken image
-            chickens[i].img = chickenImages[type][index];
-            console.log("chicken_image_index: ", chicken_image_index, "chickens[i]: ", chickens[i], "chickens[i].img", chickens[i].img);
-        }
-        chicken_image_index++;
-    }, 200);
-}
-
-/* function calculateChickenPosition() {
-    setInterval(function () {
-        for (let i = 0; i < chickens.length; i++) {
-            let chicken = chickens[i];
-            chicken.position_x = chicken.position_x - chicken.speed;
-        }
-    }, 50);
-}
-
-function calculateChickenImage() {
-    setInterval(function () {
-        for (let i = 0; i < chickens.length; i++) {
-            let type = chickens[i].type;
-            let index = chicken_walk_index % chickenImages[type].length;    //without dead chicken image
-            chickens[i].img = chickenImages[type][index];
-            console.log("chicken_walk_index: ", chicken_walk_index, "chickens[i]: ", chickens[i], "chickens[i].img", chickens[i].img);
-        }
-        chicken_walk_index++;
-    }, 150)
-}
+/**
+ * Changes the position of every chicken enemy regularly depending on its individual speed.
  */
+ function calculateChickenPosition() {
+    setInterval(function () {
+        for (let i = 0; i < chickens.length; i++) {
+            let chicken = chickens[i];
+            chicken.position_x = chicken.position_x - chicken.speed;
+        }
+    }, 50);
+}
 
+/**
+ * Separates yellow and brown chickens in two differenz arrays
+ */
+function calculateChickenImages() {
+    
+    let yellowChickens = [];
+    let brownChickens = [];
+
+    for (let i = 0; i < chickens.length; i++) {
+        let chicken = chickens[i];
+        if (chicken.type == 'yellow') {
+            yellowChickens.push(chicken);
+        }
+        else if (chicken.type == 'brown') {
+            brownChickens.push(chicken);
+        }
+    }
+
+    calculateYellowChickenImages(yellowChickens);
+    calculateBrownChickenImages(brownChickens);
+}
+
+/**
+ * Iterates through yellow chicken's images depending on its speed.
+ */
+function calculateYellowChickenImages(yellowChickens) {
+    for (let i = 0; i < yellowChickens.length; i++) {
+        let chicken_yellow_image_index = 0;
+        let yellowChicken = yellowChickens[i];
+        let chickenSpeed = Math.round(1000 / yellowChicken.speed);
+        console.log(chickenSpeed);
+        setInterval(function() {
+            let index = chicken_yellow_image_index % chickenImages.yellow.length;
+            yellowChicken.img = chickenImages.yellow[index];
+            chicken_yellow_image_index++;
+        }, chickenSpeed)
+    }
+}
+
+/**
+ * Iterates through brown chicken's images depending on its speed.
+ */
+function calculateBrownChickenImages(brownChickens) {
+    for (let i = 0; i < brownChickens.length; i++) {
+        let chicken_brown_image_index = 0;
+        let brownChicken = brownChickens[i];
+        let chickenSpeed = Math.round(1000 / brownChicken.speed);
+        console.log(chickenSpeed);
+        setInterval(function() {
+            let index = chicken_brown_image_index % chickenImages.brown.length;
+            brownChicken.img = chickenImages.brown[index];
+            chicken_brown_image_index++;
+        }, chickenSpeed)
+    }
+}
+
+/**
+ * Draws all chicken enemy objects.
+ */
 function drawChicken() {
     for (let i = 0; i < chickens.length; i++) {
         let chicken = chickens[i];
@@ -540,37 +598,19 @@ function drawChicken() {
     }
 }
 
+/**
+ * Collects all relevant informations for positioning a new image object.
+ * 
+ * @param  {Object} image - Image Object.
+ * @param  {number} start_x - Horizontal start position.
+ * @param  {number} start_y - Vertical start position.
+ * @param  {number} scale - Scale factor for image sizing.
+ */
 function addObject(image, start_x, start_y, scale) {
     if (image.complete) {
         ctx.drawImage(image, start_x, start_y, image.width * scale, image.height * scale);
     }
 }
-
-
-
-/* function drawChicken() {
-    createChicken();
-}
-
-function createChicken() {
-    addObject(chickenImages['yellow'][0], 10);
-}
-
-function addObject(image, quantity) {
-
-    for (let i = 0; i < quantity; i++) {
-
-        let playing_field_length = canvas.width * 10;
-        let random_number = Math.floor((Math.random() * 100 + 1)); //Zufallszahl zw. 1 und 100
-        let random_position = playing_field_length / 100 * random_number;
-
-        if (image.complete) {
-            ctx.drawImage(image, random_position, chicken_y, image.width, image.height);
-            //console.log("Hühnchen gezeichnet!", "Zufallszahl: ", random_number, "Playing_Field_Length:", playing_field_length, "Zufallsposition: ", random_position);
-        }
-    }
-
-} */
 
 
 /**
