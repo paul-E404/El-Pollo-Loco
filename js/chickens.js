@@ -109,12 +109,19 @@ function createChicken(type, position_x, position_y, scale, extra_speed) {
 
 /**
  * Changes the position of every chicken enemy regularly depending on its individual speed.
+ * Plays chickens sounds when chickens enter the visible canvas.
  */
  function calculateChickenPosition() {
     setInterval(function () {
         for (let i = 0; i < chickens.length; i++) {
             let chicken = chickens[i];
             chicken.position_x = chicken.position_x - chicken.speed;
+            if (chicken.position_x > 0 && chicken.position_x < canvas.width) {
+                AUDIO_CHICKEN_CROWD.play();
+                if(chicken.type == "brown") {
+                    AUDIO_CHICKEN_SINGLE.play();
+                }
+            }
         }
     }, 50);
 }

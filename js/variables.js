@@ -21,6 +21,19 @@ let character_walk_index = 0;
 let chickens;
 let chicken_y = 365;
 
+// ------------------- Game config
+//Kostanten werden groß und mit Unterstrich geschrieben. Eine Konstante ist eine Variable, die sich über das ganze Spiel nicht ändert.
+const PLAYING_FIELD_LENGTH = 15;
+const JUMP_TIME = 400;
+const GAME_SPEED = 7;
+const CLOUD_SPEED = 0.2;
+const MIN_CHICKEN_SPEED = 2;
+const AUDIO_CHARACTER_RUNNING = new Audio('audio/character_running.mp3');
+const AUDIO_CHARACTER_JUMPING = new Audio('audio/character_jumping.mp3');
+const AUDIO_CHARACTER_SNORING = new Audio('audio/character_snoring.mp3');
+const AUDIO_CHICKEN_CROWD = new Audio ('audio/chicken_crowd.mp3');
+const AUDIO_CHICKEN_SINGLE = new Audio ('audio/chicken_single.mp3');
+
 
 //Image Object with all character images
 let characterImages = {
@@ -138,11 +151,3 @@ let chickenImages = {
         'img/enemies/chicken_brown/CB-dead.png'
     ]
 }
-
-// ------------------- Game config
-//Kostanten werden groß und mit Unterstrich geschrieben. Eine Konstante ist eine Variable, die sich über das ganze Spiel nicht ändert.
-const PLAYING_FIELD_LENGTH = 15;
-const JUMP_TIME = 400;
-const GAME_SPEED = 7;
-const CLOUD_SPEED = 0.2;
-const MIN_CHICKEN_SPEED = 2;

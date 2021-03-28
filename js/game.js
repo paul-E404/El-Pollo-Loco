@@ -90,6 +90,8 @@ function keyDown() {
             lastJumpStarted = new Date().getTime();         //Unix Timestamp
             timePassedSinceLastMove = new Date().getTime();
             checkJumpDirection();
+            AUDIO_CHARACTER_JUMPING.play();
+            AUDIO_CHARACTER_SNORING.pause();
         }
     });
 }

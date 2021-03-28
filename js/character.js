@@ -1,15 +1,22 @@
 /**
- * Checks if the character is currently running to the right or to the left in order to prepair the correct images.
+ * Checks if the character is currently running to the right or to the left in order to prepair the correct images and sounds.
  */
  function checkForRunning() {
     setInterval(function () {
         if (isMovingRight == true) {
             let currentImages = characterImages.walk[1];
             showRunningImages(currentImages);
+            AUDIO_CHARACTER_RUNNING.play();
+            AUDIO_CHARACTER_SNORING.pause();
         }
         else if (isMovingLeft == true) {
             let currentImages = characterImages.walk[0];
             showRunningImages(currentImages);
+            AUDIO_CHARACTER_RUNNING.play();
+            AUDIO_CHARACTER_SNORING.pause();
+        }
+        else if (isMovingRight == false && isMovingLeft == false) {
+            AUDIO_CHARACTER_RUNNING.pause();
         }
     }, 100);
 }
@@ -48,8 +55,12 @@ function checkForRelaxing() {
                 checkRelaxingDirection();
             }
             else if (timeForSleep == true) {
+                AUDIO_CHARACTER_SNORING.play();
                 checkSleepingDirection();
             }
+            /* else if (timeForSleep == false) {
+                AUDIO_CHARACTER_SNORING.pause();
+            } */
         }
     }, 300);
 }
