@@ -8,15 +8,21 @@ function init() {
     //Length of the playing field without first and last canvas width
     preloadOtherImages(backgroundImages);
     preloadCharakterImages(characterImages);
+    preloadOtherImages(objectImages);
     preloadOtherImages(chickenImages);
     createChickenList();
     calculateChickenPosition();
     calculateChickenImages();
     checkForRelaxing();
     checkForRunning();
+    checkForCollision();
     draw();
     listenForKeys();
 }
+
+
+
+
 
 
 /**
@@ -27,6 +33,8 @@ function draw() {
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     drawBackground();
+    drawEnergyBar();
+    drawObjects();
     drawChicken();
     updateCharacter();
     //requestAnimationFrame(function): webbrowser takes the ressources it needs from the graphic card in order to update the frame.

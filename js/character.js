@@ -1,7 +1,7 @@
 /**
  * Checks if the character is currently running to the right or to the left in order to prepair the correct images and sounds.
  */
- function checkForRunning() {
+function checkForRunning() {
     setInterval(function () {
         if (isMovingRight == true) {
             let currentImages = characterImages.walk[1];
@@ -86,7 +86,7 @@ function checkRelaxingDirection() {
  * Calculation with modulo makes iteration from 0 to the length of the array possible
  * @param  {Object} currentImages - Relaxing images with right or left animation.
  */
- function relax(currentImages) {
+function relax(currentImages) {
     let index = character_idle_index % currentImages.length;
     currentCharacterImage = currentImages[index];
     character_idle_index++;
@@ -123,7 +123,7 @@ function sleep(currentImages) {
 /**
  * Draws the current character image.
  */
- function updateCharacter() {
+function updateCharacter() {
 
     let character_image = currentCharacterImage;
 
@@ -155,7 +155,7 @@ function checkCharacterJumpHeight() {
 /**
  * Decides which jump images are needed (right or left) depending on the direction of last move.
  */
- function checkJumpDirection() {
+function checkJumpDirection() {
     if (lastMove == "right") {
         let currentImages = characterImages.jump[1];
         animateJump(currentImages);
@@ -181,4 +181,74 @@ function animateJump(currentImages) {
     setTimeout(function () {
         currentCharacterImage = currentImages[2];
     }, JUMP_TIME * 2 / (currentImages.length * 10) * 25);
+}
+
+
+/**
+ * 
+ */
+function checkForCollision() {
+    let character_image_width = 140;
+    let character_image_width_half = character_image_width / 2;
+    let character_axis = character_x + character_image_width_half;
+    let collisionCounter = 0;
+    setInterval(function () {
+
+        //Collision with chicken
+        for (let i = 0; i < chickens.length; i++) {
+            let chicken = chickens[i];
+            if (chicken.position_x < (character_axis + character_image_width_half) && chicken.position_x > (character_axis - character_image_width_half)) {
+                if (character_y > -75) {
+                    console.log("KOLLISION! Nr. ", collisionCounter);
+                    checkCollisionDirection();
+                    //Prevent character from falling sleep
+                    lastMoveFinished = new Date().getTime();
+                    AUDIO_CHARACTER_SNORING.pause();
+                    collisionCounter++;
+                    reduceCharacterEnergy();
+                }
+
+            }
+        }
+
+        //Collision with bottles (collection)
+        for (let i = 0; i < placedBottles.length; i++) {
+            if (placedBottles[i] < (character_axis + character_image_width_half/3) && placedBottles[i] > (character_axis - character_image_width_half)) {
+                if (character_y > -40) {
+                    placedBottles.splice(i, 1);
+                    AUDIO_BOTTLE_COLLECT.play();
+                }
+            }
+        }
+
+    }, 100);
+}
+
+
+function checkCollisionDirection() {
+    if (lastMove == "right") {
+        let currentImages = characterImages.hurt[1];
+        collision(currentImages);
+    }
+    else {
+        let currentImages = characterImages.hurt[0];
+        collision(currentImages);
+    }
+}
+
+function collision(currentImages) {
+    let index = character_hurt_index % currentImages.length;
+    currentCharacterImage = currentImages[index];
+    character_hurt_index++;
+    AUDIO_CHARACTER_HURT.play();
+}
+
+
+function reduceCharacterEnergy() {
+    if (character_energy >= 5) {
+        character_energy = character_energy - 5;
+    } else {
+        console.log("Game Over!");
+    }
+
 }

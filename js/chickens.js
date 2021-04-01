@@ -4,13 +4,13 @@
  * @param  {boolean} movingDirection - Moving direction of the character.
  */
  function correctChickenPosition(movingDirection) {
-    if (isMovingRight) {
+    if (movingDirection == isMovingRight) {
         for (let i = 0; i < chickens.length; i++) {
             let chicken = chickens[i];
             chicken.position_x = chicken.position_x - GAME_SPEED;
         }
     }
-    else if (isMovingLeft) {
+    else if (movingDirection == isMovingLeft) {
         for (let i = 0; i < chickens.length; i++) {
             let chicken = chickens[i];
             chicken.position_x = chicken.position_x + GAME_SPEED;
@@ -20,48 +20,6 @@
 
 
 /**
- * Draws sky and clouds.
- */
-function drawSky() {
-    for (let i = 0; i < PLAYING_FIELD_LENGTH; i++) {
-        addBackgroundImage(backgroundImages.sky[0], bg_sky_x, bg_element_y, i);
-    }
-    for (let i = 0; i < PLAYING_FIELD_LENGTH; i = i + 2) {
-        addBackgroundImage(backgroundImages.sky[1], bg_sky_x - cloud_offset, bg_element_y, i);
-        addBackgroundImage(backgroundImages.sky[2], bg_sky_x - cloud_offset, bg_element_y, i + 1);
-    }
-}
-
-
-/**
- * Draws the three ground layers.
- */
-function drawGround() {
-    for (let i = 0; i < PLAYING_FIELD_LENGTH; i = i + 2) {
-        addBackgroundImage(backgroundImages.ground[0], bg3_ground_x, bg_element_y, i);
-        addBackgroundImage(backgroundImages.ground[1], bg3_ground_x, bg_element_y, i + 1);
-    }
-    for (let i = 0; i < PLAYING_FIELD_LENGTH; i = i + 2) {
-        addBackgroundImage(backgroundImages.ground[2], bg2_ground_x, bg_element_y, i);
-        addBackgroundImage(backgroundImages.ground[3], bg2_ground_x, bg_element_y, i + 1);
-    }
-    for (let i = 0; i < PLAYING_FIELD_LENGTH; i = i + 2) {
-        addBackgroundImage(backgroundImages.ground[4], bg1_ground_x, bg_element_y, i);
-        addBackgroundImage(backgroundImages.ground[5], bg1_ground_x, bg_element_y, i + 1);
-    }
-}
-
-
-/* 
-* Draws a background image.
-*/
-function addBackgroundImage(image, bg_element_x, bg_element_y, scale) {
-    if (image.complete) {
-        ctx.drawImage(image, bg_element_x + canvas.width * scale, bg_element_y, canvas.width, canvas.height);
-    }
-}
-
-/**
  * Creates an array with all chicken enemy objects in the game.
  */
 function createChickenList() {
@@ -69,7 +27,7 @@ function createChickenList() {
         createChicken("yellow", canvas.width + 400, chicken_y, 0.4, 0),
         createChicken("yellow", canvas.width * 3 + 400, chicken_y, 0.4, 0),
         createChicken("yellow", canvas.width * 3 + 800, chicken_y, 0.4, 0),
-        createChicken("yellow", canvas.width * 6 + 400, chicken_y, 0.4, -2),
+        createChicken("yellow", canvas.width * 6 + 400, chicken_y, 0.4, -1),
         createChicken("brown", canvas.width * 6 + 600, chicken_y - 25, 0.5, 5),
         createChicken("yellow", canvas.width * 6 + 800, chicken_y, 0.4, 0),
         createChicken("yellow", canvas.width * 9 + 400, chicken_y, 0.4, 0),
@@ -118,7 +76,10 @@ function createChicken(type, position_x, position_y, scale, extra_speed) {
             chicken.position_x = chicken.position_x - chicken.speed;
             if (chicken.position_x > 0 && chicken.position_x < canvas.width) {
                 AUDIO_CHICKEN_CROWD.play();
-                if(chicken.type == "brown") {
+                if(chicken.type == "brown" && chicken.scale == 0.7) {
+                    AUDIO_CHICKEN_SCREAM.play();
+                }
+                if(chicken.type == "brown" && chicken.scale !== 0.7) {
                     AUDIO_CHICKEN_SINGLE.play();
                 }
             }

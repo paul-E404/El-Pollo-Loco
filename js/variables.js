@@ -2,6 +2,7 @@ let canvas;
 let ctx;
 let character_x = 100;
 let character_y = 45;
+let character_energy = 100;
 let bg_sky_x = -270;
 let bg3_ground_x = -270;
 let bg2_ground_x = -270;
@@ -18,8 +19,10 @@ let lastMoveFinished = new Date().getTime();
 let currentCharacterImage = new Image;
 let character_idle_index = 0;
 let character_walk_index = 0;
+let character_hurt_index = 0;
 let chickens;
 let chicken_y = 365;
+let placedBottles = [2400, 5500, 7300, 9150, 10250];
 
 // ------------------- Game config
 //Kostanten werden groß und mit Unterstrich geschrieben. Eine Konstante ist eine Variable, die sich über das ganze Spiel nicht ändert.
@@ -31,8 +34,12 @@ const MIN_CHICKEN_SPEED = 2;
 const AUDIO_CHARACTER_RUNNING = new Audio('audio/character_running.mp3');
 const AUDIO_CHARACTER_JUMPING = new Audio('audio/character_jumping.mp3');
 const AUDIO_CHARACTER_SNORING = new Audio('audio/character_snoring.mp3');
+const AUDIO_CHARACTER_HURT = new Audio('audio/character_hurt.mp3')
+const AUDIO_CHARACTER_DEAD = new Audio('audio/character_dead.mp3');
 const AUDIO_CHICKEN_CROWD = new Audio ('audio/chicken_crowd.mp3');
 const AUDIO_CHICKEN_SINGLE = new Audio ('audio/chicken_single.mp3');
+const AUDIO_CHICKEN_SCREAM = new Audio ('audio/chicken_single_scream.mp3');
+const AUDIO_BOTTLE_COLLECT = new Audio ('audio/bottle_collect.mp3');
 
 
 //Image Object with all character images
@@ -149,5 +156,21 @@ let chickenImages = {
     ],
     brown_dead: [
         'img/enemies/chicken_brown/CB-dead.png'
+    ]
+}
+
+
+//Image Object with all object images
+let objectImages = {
+    display: [
+        'img/objects/heart.png',
+        'img/objects/coin.png',
+        'img/objects/bottle.png'
+    ],
+    bottles: [
+        'img/objects/bottle/bottle_up.png',
+        'img/objects/bottle/bottle_right.png',
+        'img/objects/bottle/bottle_down.png',
+        'img/objects/bottle/bottle_left.png'
     ]
 }
