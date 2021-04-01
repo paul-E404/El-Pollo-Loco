@@ -8,23 +8,22 @@ function drawEnergyBar() {
     ctx.globalAlpha = 1;
 }
 
-function drawObjects() {
+function drawDisplay() {
 
     let heart = objectImages.display[0];
     let coin = objectImages.display[1];
     let bottle = objectImages.display[2];
 
-    if (heart.complete) {
-        ctx.drawImage(heart, 10, 0, heart.width * 0.5, heart.height * 0.5);
-    }
-    if (coin.complete) {
-        ctx.drawImage(coin, 300, 15, coin.width * 0.4, coin.height * 0.4);
-    }
-    if (bottle.complete) {
-        ctx.drawImage(bottle, 400, 15, coin.width * 0.4, bottle.height * 0.4);
-    }
 
-    drawBottles();
+    addObject(heart, 10, 0, 0.5);
+    addObject(bottle, 280, 15, 0.4);
+
+    ctx.font = "28px sans-serif";
+    ctx.fillStyle = "brown";
+    ctx.fillText("x " + collectedBottles, 330, 58);
+
+    addObject(coin, 400, 15, 0.4);
+
 }
 
 
@@ -55,3 +54,9 @@ function correctBottlesPosition(movingDirection) {
     }
 }
 
+
+function drawThrownBottle() {
+    let timePassed = new Date().getTime() - bottleThrowStartTime;
+    let bottle_x;
+    let bottle_y;
+}

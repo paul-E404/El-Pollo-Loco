@@ -23,6 +23,8 @@ let character_hurt_index = 0;
 let chickens;
 let chicken_y = 365;
 let placedBottles = [2400, 5500, 7300, 9150, 10250];
+let collectedBottles = 0;
+let bottleThrowStartTime;
 
 // ------------------- Game config
 //Kostanten werden groß und mit Unterstrich geschrieben. Eine Konstante ist eine Variable, die sich über das ganze Spiel nicht ändert.

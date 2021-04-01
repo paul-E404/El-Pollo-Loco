@@ -216,6 +216,7 @@ function checkForCollision() {
             if (placedBottles[i] < (character_axis + character_image_width_half/3) && placedBottles[i] > (character_axis - character_image_width_half)) {
                 if (character_y > -40) {
                     placedBottles.splice(i, 1);
+                    collectedBottles++;
                     AUDIO_BOTTLE_COLLECT.play();
                 }
             }

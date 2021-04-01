@@ -34,9 +34,11 @@ function draw() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     drawBackground();
     drawEnergyBar();
-    drawObjects();
+    drawDisplay();
+    drawBottles();
     drawChicken();
     updateCharacter();
+    drawThrownBottle();
     //requestAnimationFrame(function): webbrowser takes the ressources it needs from the graphic card in order to update the frame.
     //This is a less flickering alternative to setInterval.
     requestAnimationFrame(draw);
@@ -100,6 +102,11 @@ function keyDown() {
             checkJumpDirection();
             AUDIO_CHARACTER_JUMPING.play();
             AUDIO_CHARACTER_SNORING.pause();
+        }
+
+        if (key == "KeyD") {
+            collectedBottles--;
+            bottleThrowStartTime = new Date().getTime();
         }
     });
 }
