@@ -30,7 +30,7 @@ function drawDisplay() {
 function drawBottles() {
     for (let i = 0; i < placedBottles.length; i++) {
         let bottle_x = placedBottles[i];
-        addObject(objectImages.bottles[0], bottle_x, 335, 0.3);
+        addObject(objectImages.bottles[1], bottle_x, 335, 0.3);
         //console.log(bottle_x);
     }
 }
@@ -56,7 +56,45 @@ function correctBottlesPosition(movingDirection) {
 
 
 function drawThrownBottle() {
-    let timePassed = new Date().getTime() - bottleThrowStartTime;
-    let bottle_x;
-    let bottle_y;
+
+    timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
+    let gravity = Math.pow(9.81, timePassedSinceThrow / 200);
+
+    throwBottle(timePassedSinceThrow, gravity);
+
+}
+
+function throwBottle(timePassedSinceThrow, gravity) {
+    if (lastMove == "left") {
+        let bottle_x = 170 - (timePassedSinceThrow * 0.8);
+        let bottle_y = character_y + 205 - (timePassedSinceThrow * 0.5) + gravity;
+        rotateBottle(bottle_x, bottle_y);
+        if (timePassedSinceThrow < 100) {
+            currentCharacterImage = characterImages.throw[0][0];
+        }
+    }
+    else if (lastMove == "right") {
+        let bottle_x = 170 + (timePassedSinceThrow * 0.8);
+        let bottle_y = character_y + 205 - (timePassedSinceThrow * 0.5) + gravity;
+        rotateBottle(bottle_x, bottle_y);
+        if (timePassedSinceThrow < 100) {
+            currentCharacterImage = characterImages.throw[1][0];
+        }
+    }
+}
+
+let counter = 0;
+
+function rotateBottle(bottle_x, bottle_y) {
+    let timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
+    if (timePassedSinceThrow <= THROW_TIME / 4) {
+        let index = bottle_rotate_index % objectImages.bottles.length;
+        console.log(objectImages.bottles[0]);
+        addObject(objectImages.bottles[index], bottle_x, bottle_y, 0.3);
+        bottle_rotate_index++;
+        counter++;
+    }
+    else {
+        addObject(objectImages.bottles[1], bottle_x, bottle_y, 0.3);
+    }
 }

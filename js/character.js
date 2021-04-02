@@ -58,9 +58,6 @@ function checkForRelaxing() {
                 AUDIO_CHARACTER_SNORING.play();
                 checkSleepingDirection();
             }
-            /* else if (timeForSleep == false) {
-                AUDIO_CHARACTER_SNORING.pause();
-            } */
         }
     }, 300);
 }
@@ -203,6 +200,7 @@ function checkForCollision() {
                     checkCollisionDirection();
                     //Prevent character from falling sleep
                     lastMoveFinished = new Date().getTime();
+                    console.log("timePassedSinceThrow", timePassedSinceThrow)
                     AUDIO_CHARACTER_SNORING.pause();
                     collisionCounter++;
                     reduceCharacterEnergy();

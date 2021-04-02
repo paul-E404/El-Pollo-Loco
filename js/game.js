@@ -37,8 +37,8 @@ function draw() {
     drawDisplay();
     drawBottles();
     drawChicken();
-    updateCharacter();
     drawThrownBottle();
+    updateCharacter();
     //requestAnimationFrame(function): webbrowser takes the ressources it needs from the graphic card in order to update the frame.
     //This is a less flickering alternative to setInterval.
     requestAnimationFrame(draw);
@@ -92,7 +92,7 @@ function keyDown() {
             /* character_x = character_x - 5; */
         }
 
-        timePassedSinceJump = new Date().getTime() - lastJumpStarted;
+        let timePassedSinceJump = new Date().getTime() - lastJumpStarted;
         //Erst wenn die JUMP TIME vorüber ist, darf ein neuer Sprung begonnen werden.
         //Daher muss die Zeit seit dem letzten Sprung größer als die Sprungzeit sein (also außerhalb dieser Zeit liegen).
         //JUMP_TIME * 2, da wir JUMP_TIME hochspringen und JUMP_TIME runterfallen (ein Sprung).
@@ -105,8 +105,12 @@ function keyDown() {
         }
 
         if (key == "KeyD") {
-            collectedBottles--;
-            bottleThrowStartTime = new Date().getTime();
+            let timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
+            //Ensures that a new throw can only be started when the old one has finished
+            if (timePassedSinceThrow > THROW_TIME) {
+                lastThrowStarted = new Date().getTime();
+                collectedBottles--;
+            }
         }
     });
 }
@@ -130,6 +134,9 @@ function keyUp() {
             /* character_x = character_x - 5; */
         }
         if (key == "Space" || key == "ArrowUp") {
+            lastMoveFinished = new Date().getTime();
+        }
+        if (key == "KeyD") {
             lastMoveFinished = new Date().getTime();
         }
     });
