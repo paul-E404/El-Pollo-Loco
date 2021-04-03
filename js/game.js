@@ -10,18 +10,18 @@ function init() {
     preloadCharakterImages(characterImages);
     preloadOtherImages(objectImages);
     preloadOtherImages(chickenImages);
+    preloadCharakterImages(bossImages);
     createChickenList();
     calculateChickenPosition();
     calculateChickenImages();
     checkForRelaxing();
     checkForRunning();
     checkForCollision();
+    bossWalking();
     draw();
     listenForKeys();
+    //startTitleSong();
 }
-
-
-
 
 
 
@@ -39,11 +39,18 @@ function draw() {
     drawChicken();
     drawThrownBottle();
     updateCharacter();
+    updateBoss();
     //requestAnimationFrame(function): webbrowser takes the ressources it needs from the graphic card in order to update the frame.
     //This is a less flickering alternative to setInterval.
     requestAnimationFrame(draw);
 }
 
+
+function startTitleSong() {
+    let titleSong = document.getElementById('mexican-song');
+    titleSong.play();
+    titleSong.loop = true;
+}
 
 /**
  * Collects all relevant informations for positioning a new image object.
@@ -105,11 +112,13 @@ function keyDown() {
         }
 
         if (key == "KeyD") {
-            let timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
-            //Ensures that a new throw can only be started when the old one has finished
-            if (timePassedSinceThrow > THROW_TIME) {
-                lastThrowStarted = new Date().getTime();
-                collectedBottles--;
+            if (collectedBottles > 0) {
+                //Ensures that a new throw can only be started when the old one has finished
+                if (timePassedSinceThrow > THROW_TIME) {
+                    let timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
+                    lastThrowStarted = new Date().getTime();
+                    collectedBottles--;
+                }
             }
         }
     });

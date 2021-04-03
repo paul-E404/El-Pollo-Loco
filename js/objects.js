@@ -30,7 +30,7 @@ function drawDisplay() {
 function drawBottles() {
     for (let i = 0; i < placedBottles.length; i++) {
         let bottle_x = placedBottles[i];
-        addObject(objectImages.bottles[1], bottle_x, 335, 0.3);
+        addObject(objectImages.bottles[1], bottle_x, 350, 0.25);
         //console.log(bottle_x);
     }
 }
@@ -66,19 +66,21 @@ function drawThrownBottle() {
 
 function throwBottle(timePassedSinceThrow, gravity) {
     if (lastMove == "left") {
-        let bottle_x = 170 - (timePassedSinceThrow * 0.8);
-        let bottle_y = character_y + 205 - (timePassedSinceThrow * 0.5) + gravity;
+        let bottle_x = 140 - (timePassedSinceThrow * 0.8);
+        let bottle_y = character_y + 140 - (timePassedSinceThrow * 0.5) + gravity;
         rotateBottle(bottle_x, bottle_y);
         if (timePassedSinceThrow < 100) {
             currentCharacterImage = characterImages.throw[0][0];
+            AUDIO_BOTTLE_THROW.play();
         }
     }
     else if (lastMove == "right") {
-        let bottle_x = 170 + (timePassedSinceThrow * 0.8);
-        let bottle_y = character_y + 205 - (timePassedSinceThrow * 0.5) + gravity;
+        let bottle_x = 140 + (timePassedSinceThrow * 0.8);
+        let bottle_y = character_y + 140 - (timePassedSinceThrow * 0.5) + gravity;
         rotateBottle(bottle_x, bottle_y);
         if (timePassedSinceThrow < 100) {
             currentCharacterImage = characterImages.throw[1][0];
+            AUDIO_BOTTLE_THROW.play();
         }
     }
 }
@@ -90,11 +92,11 @@ function rotateBottle(bottle_x, bottle_y) {
     if (timePassedSinceThrow <= THROW_TIME / 4) {
         let index = bottle_rotate_index % objectImages.bottles.length;
         console.log(objectImages.bottles[0]);
-        addObject(objectImages.bottles[index], bottle_x, bottle_y, 0.3);
+        addObject(objectImages.bottles[index], bottle_x, bottle_y, 0.25);
         bottle_rotate_index++;
         counter++;
     }
     else {
-        addObject(objectImages.bottles[1], bottle_x, bottle_y, 0.3);
+        addObject(objectImages.bottles[1], bottle_x, bottle_y, 0.25);
     }
 }

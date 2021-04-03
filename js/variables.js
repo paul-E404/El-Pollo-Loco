@@ -1,7 +1,7 @@
 let canvas;
 let ctx;
 let character_x = 100;
-let character_y = 45;
+let character_y = 100; //ehem. 45
 let character_energy = 100;
 let bg_sky_x = -270;
 let bg3_ground_x = -270;
@@ -22,10 +22,17 @@ let character_walk_index = 0;
 let character_hurt_index = 0;
 let chickens;
 let chicken_y = 365;
-let placedBottles = [2400, 5500, 7300, 9150, 10250];
-let collectedBottles = 0;
+let placedBottles = [2400, 3900, 5500, 6000, 7300, 8000, 9150, 10250];
+let collectedBottles = 100;
 let lastThrowStarted = new Date().getTime();
 let bottle_rotate_index = 0;
+let currentBossImage = new Image;
+let boss_x = 500;
+let boss_y = 105;
+let boss_walk_index = 0;
+let bossMovingLeft = true;
+let bossMovingRight = false;
+
 
 // ------------------- Game config
 //Kostanten werden groß und mit Unterstrich geschrieben. Eine Konstante ist eine Variable, die sich über das ganze Spiel nicht ändert.
@@ -36,6 +43,7 @@ const CLOUD_SPEED = 0.2;
 const MIN_CHICKEN_SPEED = 2;
 const THROW_TIME = 800;
 
+const AUDIO_MEXICAN_SONG = new Audio('audio/mexican_song.mp3');
 const AUDIO_CHARACTER_RUNNING = new Audio('audio/character_running.mp3');
 const AUDIO_CHARACTER_JUMPING = new Audio('audio/character_jumping.mp3');
 const AUDIO_CHARACTER_SNORING = new Audio('audio/character_snoring.mp3');
@@ -45,6 +53,7 @@ const AUDIO_CHICKEN_CROWD = new Audio('audio/chicken_crowd.mp3');
 const AUDIO_CHICKEN_SINGLE = new Audio('audio/chicken_single.mp3');
 const AUDIO_CHICKEN_SCREAM = new Audio('audio/chicken_single_scream.mp3');
 const AUDIO_BOTTLE_COLLECT = new Audio('audio/bottle_collect.mp3');
+const AUDIO_BOTTLE_THROW = new Audio('audio/bottle_throw.mp3');
 
 
 //Image Object with all character images
@@ -132,6 +141,23 @@ let characterImages = {
         ]
     ]
 };
+
+
+let bossImages = {
+    walk: [
+        ['img/enemies/boss/walk/Gl-1.png',
+            'img/enemies/boss/walk/Gl-2.png',
+            'img/enemies/boss/walk/Gl-3.png',
+            'img/enemies/boss/walk/Gl-4.png'
+        ],
+        ['img/enemies/boss/walk/Gr-1.png',
+            'img/enemies/boss/walk/Gr-2.png',
+            'img/enemies/boss/walk/Gr-3.png',
+            'img/enemies/boss/walk/Gr-4.png'
+        ]
+    ]
+}
+
 
 //Image Object with all background images
 let backgroundImages = {

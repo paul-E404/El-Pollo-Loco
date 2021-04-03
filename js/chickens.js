@@ -74,8 +74,11 @@ function createChicken(type, position_x, position_y, scale, extra_speed) {
         for (let i = 0; i < chickens.length; i++) {
             let chicken = chickens[i];
             chicken.position_x = chicken.position_x - chicken.speed;
+
             if (chicken.position_x > 0 && chicken.position_x < canvas.width) {
-                AUDIO_CHICKEN_CROWD.play();
+                if(chicken.type == "yellow") {
+                    AUDIO_CHICKEN_CROWD.play();
+                }
                 if(chicken.type == "brown" && chicken.scale == 0.7) {
                     AUDIO_CHICKEN_SCREAM.play();
                 }

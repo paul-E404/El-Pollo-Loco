@@ -128,7 +128,7 @@ function updateCharacter() {
 
     //character_image.complete: returns true if image has finished loading
     if (character_image.complete) {
-        ctx.drawImage(character_image, character_x, character_y, character_image.width * 0.35, character_image.height * 0.35);
+        ctx.drawImage(character_image, character_x, character_y, character_image.width * 0.30, character_image.height * 0.30);
     }
 }
 
@@ -143,7 +143,7 @@ function checkCharacterJumpHeight() {
         character_y = character_y - 10;
     }
     //Check falling
-    else if (character_y < 45) {
+    else if (character_y < 100) {           //ehem. 45
         character_y = character_y + 10;
     }
 }
@@ -185,24 +185,20 @@ function animateJump(currentImages) {
  * 
  */
 function checkForCollision() {
-    let character_image_width = 140;
+    let character_image_width = 100;
     let character_image_width_half = character_image_width / 2;
     let character_axis = character_x + character_image_width_half;
-    let collisionCounter = 0;
     setInterval(function () {
 
         //Collision with chicken
         for (let i = 0; i < chickens.length; i++) {
             let chicken = chickens[i];
             if (chicken.position_x < (character_axis + character_image_width_half) && chicken.position_x > (character_axis - character_image_width_half)) {
-                if (character_y > -75) {
-                    console.log("KOLLISION! Nr. ", collisionCounter);
+                if (character_y > 0) {
                     checkCollisionDirection();
                     //Prevent character from falling sleep
                     lastMoveFinished = new Date().getTime();
-                    console.log("timePassedSinceThrow", timePassedSinceThrow)
                     AUDIO_CHARACTER_SNORING.pause();
-                    collisionCounter++;
                     reduceCharacterEnergy();
                 }
 
