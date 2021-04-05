@@ -1,8 +1,6 @@
 let canvas;
 let ctx;
-let character_x = 100;
-let character_y = 100; //ehem. 45
-let character_energy = 100;
+
 let bg_sky_x = -270;
 let bg3_ground_x = -270;
 let bg2_ground_x = -270;
@@ -11,6 +9,10 @@ let bg_ground_x_min = -10;    //Verhindert, dass character unendlich nach links 
 let bg_ground_x_max;        //Verhindert, dass character unendlich nach rechts laufen kann
 let bg_element_y = 0;
 let cloud_offset = 0;
+
+let character_x = 100;
+let character_y = 100; //ehem. 45
+let character_energy = 100;
 let isMovingRight = false;
 let isMovingLeft = false;
 let lastMove = "right";
@@ -20,18 +22,30 @@ let currentCharacterImage = new Image;
 let character_idle_index = 0;
 let character_walk_index = 0;
 let character_hurt_index = 0;
+
 let chickens;
 let chicken_y = 365;
-let placedBottles = [2400, 3900, 5500, 6000, 7300, 8000, 9150, 10250];
+
+let placedBottles = [2400, 3900, 5500, 6000, 7300, 8000, 8500, 9150, 10250, 11000];
 let collectedBottles = 100;
 let lastThrowStarted = new Date().getTime();
+let thrown_bottle_x;
+let thrown_bottle_y;
 let bottle_rotate_index = 0;
+
 let currentBossImage = new Image;
 let boss_x = 500;
 let boss_y = 105;
+let boss_energy = 100;
 let boss_walk_index = 0;
+let boss_hit_index = 0;
 let bossMovingLeft = true;
 let bossMovingRight = false;
+let firstBossHit = false;
+let bossAlmostDead = false;
+let bossDead = false;
+let lastHitStarted = new Date().getTime();
+
 
 
 // ------------------- Game config
@@ -42,6 +56,7 @@ const GAME_SPEED = 7;
 const CLOUD_SPEED = 0.2;
 const MIN_CHICKEN_SPEED = 2;
 const THROW_TIME = 800;
+const BOSS_HIT_TIME = 500;
 
 const AUDIO_MEXICAN_SONG = new Audio('audio/mexican_song.mp3');
 const AUDIO_CHARACTER_RUNNING = new Audio('audio/character_running.mp3');
@@ -148,13 +163,35 @@ let bossImages = {
         ['img/enemies/boss/walk/Gl-1.png',
             'img/enemies/boss/walk/Gl-2.png',
             'img/enemies/boss/walk/Gl-3.png',
-            'img/enemies/boss/walk/Gl-4.png'
-        ],
+            'img/enemies/boss/walk/Gl-4.png'],
         ['img/enemies/boss/walk/Gr-1.png',
             'img/enemies/boss/walk/Gr-2.png',
             'img/enemies/boss/walk/Gr-3.png',
-            'img/enemies/boss/walk/Gr-4.png'
-        ]
+            'img/enemies/boss/walk/Gr-4.png']
+    ],
+    attack: [
+        ['img/enemies/boss/attack/Gl-13.png',
+            'img/enemies/boss/attack/Gl-14.png',
+            'img/enemies/boss/attack/Gl-15.png',
+            'img/enemies/boss/attack/Gl-16.png',
+            'img/enemies/boss/attack/Gl-17.png',
+            'img/enemies/boss/attack/Gl-18.png',
+            'img/enemies/boss/attack/Gl-19.png',
+            'img/enemies/boss/attack/Gl-20.png'],
+        ['img/enemies/boss/attack/Gr-13.png',
+            'img/enemies/boss/attack/Gr-14.png',
+            'img/enemies/boss/attack/Gr-15.png',
+            'img/enemies/boss/attack/Gr-16.png',
+            'img/enemies/boss/attack/Gr-17.png',
+            'img/enemies/boss/attack/Gr-18.png',
+            'img/enemies/boss/attack/Gr-19.png',
+            'img/enemies/boss/attack/Gr-20.png']
+    ],
+    hurt: [
+        ['img/enemies/boss/hurt/Gl-21.png',
+            'img/enemies/boss/hurt/Gl-22.png'],
+        ['img/enemies/boss/hurt/Gr-21.png',
+            'img/enemies/boss/hurt/Gr-22.png']
     ]
 }
 
@@ -204,7 +241,8 @@ let objectImages = {
     display: [
         'img/objects/heart.png',
         'img/objects/coin.png',
-        'img/objects/bottle.png'
+        'img/objects/bottle.png',
+        'img/objects/boss.png'
     ],
     bottles: [
         'img/objects/bottle/bottle_left.png',

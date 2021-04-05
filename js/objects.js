@@ -66,18 +66,18 @@ function drawThrownBottle() {
 
 function throwBottle(timePassedSinceThrow, gravity) {
     if (lastMove == "left") {
-        let bottle_x = 140 - (timePassedSinceThrow * 0.8);
-        let bottle_y = character_y + 140 - (timePassedSinceThrow * 0.5) + gravity;
-        rotateBottle(bottle_x, bottle_y);
+        thrown_bottle_x = 140 - (timePassedSinceThrow * 0.8);
+        thrown_bottle_y = character_y + 140 - (timePassedSinceThrow * 0.5) + gravity;
+        rotateBottle(thrown_bottle_x, thrown_bottle_y);
         if (timePassedSinceThrow < 100) {
             currentCharacterImage = characterImages.throw[0][0];
             AUDIO_BOTTLE_THROW.play();
         }
     }
     else if (lastMove == "right") {
-        let bottle_x = 140 + (timePassedSinceThrow * 0.8);
-        let bottle_y = character_y + 140 - (timePassedSinceThrow * 0.5) + gravity;
-        rotateBottle(bottle_x, bottle_y);
+        thrown_bottle_x = 140 + (timePassedSinceThrow * 0.8);
+        thrown_bottle_y = character_y + 140 - (timePassedSinceThrow * 0.5) + gravity;
+        rotateBottle(thrown_bottle_x, thrown_bottle_y);
         if (timePassedSinceThrow < 100) {
             currentCharacterImage = characterImages.throw[1][0];
             AUDIO_BOTTLE_THROW.play();
@@ -87,16 +87,17 @@ function throwBottle(timePassedSinceThrow, gravity) {
 
 let counter = 0;
 
-function rotateBottle(bottle_x, bottle_y) {
+function rotateBottle(thrown_bottle_x, thrown_bottle_y) {
     let timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
     if (timePassedSinceThrow <= THROW_TIME / 4) {
         let index = bottle_rotate_index % objectImages.bottles.length;
-        console.log(objectImages.bottles[0]);
-        addObject(objectImages.bottles[index], bottle_x, bottle_y, 0.25);
+        addObject(objectImages.bottles[index], thrown_bottle_x, thrown_bottle_y, 0.25);
         bottle_rotate_index++;
         counter++;
+        //console.log("thrown_bottle_x", thrown_bottle_x, "thrown_bottle_y", thrown_bottle_y);
+        //console.log("character_y", character_y);
     }
     else {
-        addObject(objectImages.bottles[1], bottle_x, bottle_y, 0.25);
+        addObject(objectImages.bottles[1], thrown_bottle_x, thrown_bottle_y, 0.25);
     }
 }

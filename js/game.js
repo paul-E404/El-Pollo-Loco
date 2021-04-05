@@ -17,7 +17,8 @@ function init() {
     checkForRelaxing();
     checkForRunning();
     checkForCollision();
-    bossWalking();
+    checkForThrownBottleHit();
+    bossAction();
     draw();
     listenForKeys();
     //startTitleSong();
@@ -37,9 +38,9 @@ function draw() {
     drawDisplay();
     drawBottles();
     drawChicken();
+    updateBoss();
     drawThrownBottle();
     updateCharacter();
-    updateBoss();
     //requestAnimationFrame(function): webbrowser takes the ressources it needs from the graphic card in order to update the frame.
     //This is a less flickering alternative to setInterval.
     requestAnimationFrame(draw);

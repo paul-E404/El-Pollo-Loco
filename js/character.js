@@ -190,7 +190,7 @@ function checkForCollision() {
     let character_axis = character_x + character_image_width_half;
     setInterval(function () {
 
-        //Collision with chicken
+        //Collision of character with chicken
         for (let i = 0; i < chickens.length; i++) {
             let chicken = chickens[i];
             if (chicken.position_x < (character_axis + character_image_width_half) && chicken.position_x > (character_axis - character_image_width_half)) {
@@ -205,9 +205,9 @@ function checkForCollision() {
             }
         }
 
-        //Collision with bottles (collection)
+        //Collision of character with bottles (collection)
         for (let i = 0; i < placedBottles.length; i++) {
-            if (placedBottles[i] < (character_axis + character_image_width_half/3) && placedBottles[i] > (character_axis - character_image_width_half)) {
+            if (placedBottles[i] < (character_axis + character_image_width_half / 3) && placedBottles[i] > (character_axis - character_image_width_half)) {
                 if (character_y > -40) {
                     placedBottles.splice(i, 1);
                     collectedBottles++;
@@ -215,6 +215,9 @@ function checkForCollision() {
                 }
             }
         }
+
+        //Collision of character with boss
+        //follows...
 
     }, 100);
 }
