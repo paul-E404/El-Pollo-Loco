@@ -23,61 +23,106 @@ function drawBossEnergy() {
     addObject(boss_icon, boss_x + 10, boss_y - 25, 0.45);
 }
 
+//Variable for clearing the setInterval(). Otherwise you cannot change the bossSpeed variable.
+let timer;
 
-function bossAction() {
-    if (firstBossHit == true) {
-        //change graphics to angry
-        //bigger walking interval
+function checkForBossAction() {
+
+    timer = setInterval(function () {
+        console.log("bossSpeed", bossSpeed);
+        console.log("firstBossHit", firstBossHit);
+        //Graphics change from walking to attacking as soon as the boss has been hit for the first time.
+        if (firstBossHit == true) {
+            bossAttacking();
+            //change graphics to angry
+            //bigger walking interval
+        }
+        else if (bossAlmostDead == true) {
+            //change graphics to totally angry
+            //biggest walking interval
+        }
+        else if (bossDead == true) {
+            //show dead image animation
+        }
+        else {
+            bossWalking();
+        }
+    }, bossSpeed);
+
+}
+
+function bossAttacking() {
+
+    //clear old setInterval() with old boss speed
+    clearInterval(timer);
+    //increase boss speed
+    bossSpeed = 250;
+    //start new interval
+    checkForBossAction();
+
+    let index = boss_attack_index % bossImages.attack[0].length;
+
+    if (boss_x >= 430 && bossMovingLeft == true) {
+        currentBossImage = bossImages.attack[0][index];
+        boss_x = boss_x - 10;
+        if (boss_x < 430) {
+            bossMovingLeft = false;
+            bossMovingRight = true;
+        }
     }
-    else if (bossAlmostDead == true) {
-        //change graphics to totally angry
-        //biggest walking interval
+    if (boss_x <= 570 && bossMovingRight == true) {
+        currentBossImage = bossImages.attack[1][index];
+        boss_x = boss_x + 10;
+        if (boss_x >= 575) {
+            bossMovingLeft = true;
+            bossMovingRight = false;
+        }
     }
-    else if (bossDead == true) {
-        //show dead image animation
+
+    if (index % 2 == 0) {
+        boss_y = boss_y + 5;
     }
     else {
-        bossWalking();
+        boss_y = boss_y - 5;
     }
+    boss_attack_index++;
 }
 
 
 function bossWalking() {
-    setInterval(function () {
-        let index = boss_walk_index % bossImages.walk[0].length;
-        currentTime = new Date().getTime();
-        let timePassedSinceLastHit = currentTime - lastHitStarted;
+  
+    let index = boss_walk_index % bossImages.walk[0].length;
+    currentTime = new Date().getTime();
+    let timePassedSinceLastHit = currentTime - lastHitStarted;
 
-        if (timePassedSinceLastHit > BOSS_HIT_TIME) {
-            if (boss_x >= 485 && bossMovingLeft == true) {
-                currentBossImage = bossImages.walk[0][index];
-                boss_x = boss_x - 5;
-                //console.log("boss_x: ", boss_x, "bossMovingLeft: ", bossMovingLeft, "bossMovingRight: ", bossMovingRight);
-                if (boss_x < 485) {
-                    bossMovingLeft = false;
-                    bossMovingRight = true;
-                }
+    if (timePassedSinceLastHit > BOSS_HIT_TIME) {
+        if (boss_x >= 485 && bossMovingLeft == true) {
+            currentBossImage = bossImages.walk[0][index];
+            boss_x = boss_x - 5;
+            //console.log("boss_x: ", boss_x, "bossMovingLeft: ", bossMovingLeft, "bossMovingRight: ", bossMovingRight);
+            if (boss_x < 485) {
+                bossMovingLeft = false;
+                bossMovingRight = true;
             }
-            if (boss_x <= 515 && bossMovingRight == true) {
-                currentBossImage = bossImages.walk[1][index];
-                boss_x = boss_x + 5;
-                if (boss_x == 520) {
-                    bossMovingLeft = true;
-                    bossMovingRight = false;
-                }
-            }
-    
-            if (index % 2 == 0) {
-                boss_y = boss_y + 5;
-            }
-            else {
-                boss_y = boss_y - 5;
-            }
-            boss_walk_index++;
         }
-        
+        if (boss_x <= 515 && bossMovingRight == true) {
+            currentBossImage = bossImages.walk[1][index];
+            boss_x = boss_x + 5;
+            if (boss_x == 520) {
+                bossMovingLeft = true;
+                bossMovingRight = false;
+            }
+        }
 
-    }, 500)
+        if (index % 2 == 0) {
+            boss_y = boss_y + 5;
+        }
+        else {
+            boss_y = boss_y - 5;
+        }
+        boss_walk_index++;
+    }
+
 }
 
 
@@ -105,7 +150,7 @@ function checkForThrownBottleHit() {
         let counter = 0;
         if (thrown_bottle_x_axis < (boss_x_axis + boss_image_width_half) && thrown_bottle_x_axis > (boss_x_axis - boss_image_width_half)) {
             if (thrown_bottle_y_axis < (boss_y_axis + boss_image_height_half) && thrown_bottle_y_axis > (boss_y_axis - boss_image_height_half / 2)) {
-                counter++; 
+                counter++;
                 console.log("Treffer! Nr.: ", counter);
                 //checkCollisionDirection();
                 //Prevent character from falling sleep
@@ -123,7 +168,12 @@ function checkForThrownBottleHit() {
 
 
 function reduceBossEnergy() {
-    if (boss_energy == 90) {
+
+    if (boss_energy >= 10) {
+        boss_energy = boss_energy - 10;
+    }
+
+    if (boss_energy < 100) {
         firstBossHit = true;
     }
     if (boss_energy == 20) {
@@ -133,9 +183,6 @@ function reduceBossEnergy() {
     else if (boss_energy == 0) {
         bossDead = true;
     }
-    if (boss_energy >= 10) {
-        boss_energy = boss_energy - 10;
-    }
 }
 
 
@@ -144,7 +191,7 @@ function checkBossHitDirection() {
     currentTime = new Date().getTime();
     let timePassedSinceLastHit = currentTime - lastHitStarted;
 
-    if(timePassedSinceLastHit <= BOSS_HIT_TIME) {
+    if (timePassedSinceLastHit <= BOSS_HIT_TIME) {
         if (bossMovingRight == true) {
             currentImages = bossImages.hurt[1];
             animateBossHit(currentImages);

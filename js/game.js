@@ -18,7 +18,7 @@ function init() {
     checkForRunning();
     checkForCollision();
     checkForThrownBottleHit();
-    bossAction();
+    checkForBossAction();
     draw();
     listenForKeys();
     //startTitleSong();
