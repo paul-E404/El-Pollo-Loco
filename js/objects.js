@@ -101,3 +101,9 @@ function rotateBottle(thrown_bottle_x, thrown_bottle_y) {
         addObject(objectImages.bottles[1], thrown_bottle_x, thrown_bottle_y, 0.25);
     }
 }
+
+
+
+function bottleBreaking() {
+    //follows...
+}

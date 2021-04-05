@@ -41,6 +41,7 @@ let bossSpeed = 500;
 let boss_walk_index = 0;
 let boss_hit_index = 0;
 let boss_attack_index = 0;
+let boss_angry_index = 0;
 let bossMovingLeft = true;
 let bossMovingRight = false;
 let firstBossHit = false;
@@ -171,6 +172,12 @@ let bossImages = {
             'img/enemies/boss/walk/Gr-3.png',
             'img/enemies/boss/walk/Gr-4.png']
     ],
+    hurt: [
+        ['img/enemies/boss/hurt/Gl-21.png',
+            'img/enemies/boss/hurt/Gl-22.png'],
+        ['img/enemies/boss/hurt/Gr-21.png',
+            'img/enemies/boss/hurt/Gr-22.png']
+    ],
     attack: [
         ['img/enemies/boss/attack/Gl-13.png',
             'img/enemies/boss/attack/Gl-14.png',
@@ -189,11 +196,23 @@ let bossImages = {
             'img/enemies/boss/attack/Gr-19.png',
             'img/enemies/boss/attack/Gr-20.png']
     ],
-    hurt: [
-        ['img/enemies/boss/hurt/Gl-21.png',
-            'img/enemies/boss/hurt/Gl-22.png'],
-        ['img/enemies/boss/hurt/Gr-21.png',
-            'img/enemies/boss/hurt/Gr-22.png']
+    angry: [
+        ['img/enemies/boss/angry/GAl-13.png',
+            'img/enemies/boss/angry/GAl-17.png',
+            'img/enemies/boss/angry/GAl-18.png',
+            'img/enemies/boss/angry/GAl-19.png'],
+        ['img/enemies/boss/angry/GAr-13.png',
+            'img/enemies/boss/angry/GAr-17.png',
+            'img/enemies/boss/angry/GAr-18.png',
+            'img/enemies/boss/angry/GAr-19.png']
+    ],
+    dead: [
+        ['img/enemies/boss/dead/Gl-24.png',
+            'img/enemies/boss/dead/Gl-25.png',
+            'img/enemies/boss/dead/Gl-26.png'],
+        ['img/enemies/boss/dead/Gr-24.png',
+            'img/enemies/boss/dead/Gr-25.png',
+            'img/enemies/boss/dead/Gr-26.png']
     ]
 }
 
