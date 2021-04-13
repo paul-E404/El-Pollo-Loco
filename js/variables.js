@@ -32,6 +32,8 @@ let lastThrowStarted = new Date().getTime();
 let thrown_bottle_x;
 let thrown_bottle_y;
 let bottle_rotate_index = 0;
+let broken_bottle_x;
+let broken_bottle_y;
 
 let currentBossImage = new Image;
 let boss_x = 500;
@@ -49,6 +51,8 @@ let bossAlmostDead = false;
 let bossDead = false;
 let lastHitStarted = new Date().getTime();
 
+let currentSauceImage = new Image;
+
 
 
 // ------------------- Game config
@@ -59,6 +63,7 @@ const GAME_SPEED = 7;
 const CLOUD_SPEED = 0.2;
 const MIN_CHICKEN_SPEED = 2;
 const THROW_TIME = 800;
+const BOTTLE_BREAK_TIME = 500;
 const BOSS_HIT_TIME = 500;
 
 const AUDIO_MEXICAN_SONG = new Audio('audio/mexican_song.mp3');
@@ -72,6 +77,7 @@ const AUDIO_CHICKEN_SINGLE = new Audio('audio/chicken_single.mp3');
 const AUDIO_CHICKEN_SCREAM = new Audio('audio/chicken_single_scream.mp3');
 const AUDIO_BOTTLE_COLLECT = new Audio('audio/bottle_collect.mp3');
 const AUDIO_BOTTLE_THROW = new Audio('audio/bottle_throw.mp3');
+const AUDIO_BOTTLE_BREAK = new Audio('audio/bottle_break.mp3');
 
 
 //Image Object with all character images
@@ -270,5 +276,13 @@ let objectImages = {
         'img/objects/bottle/bottle_up.png',
         'img/objects/bottle/bottle_right.png',
         'img/objects/bottle/bottle_down.png'
+    ],
+    sauce: [
+        'img/objects/sauce/sauce1.png',
+        'img/objects/sauce/sauce2.png',
+        'img/objects/sauce/sauce3.png',
+        'img/objects/sauce/sauce4.png',
+        'img/objects/sauce/sauce5.png',
+        'img/objects/sauce/sauce6.png'
     ]
 }

@@ -56,7 +56,6 @@ function correctBottlesPosition(movingDirection) {
 
 
 function drawThrownBottle() {
-
     timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
     let gravity = Math.pow(9.81, timePassedSinceThrow / 200);
 
@@ -103,7 +102,24 @@ function rotateBottle(thrown_bottle_x, thrown_bottle_y) {
 }
 
 
+function drawBrokenBottle() {
+    addObject(currentSauceImage, broken_bottle_x, broken_bottle_y, 0.25);
+}
 
-function bottleBreaking() {
-    //follows...
+
+function animateBottleBreak() {
+
+    AUDIO_BOTTLE_BREAK.play();
+
+    for (let i = 0; i < objectImages.sauce.length; i++) {
+        setTimeout(function () {
+            currentSauceImage = objectImages.sauce[i];
+        }, BOTTLE_BREAK_TIME / (objectImages.sauce.length + 2) * (i + 1));
+    }
+
+    //Finish animation: sauce disappears
+    setTimeout(function () {
+        currentSauceImage = new Image();
+    }, BOTTLE_BREAK_TIME / (objectImages.sauce.length + 2) * (objectImages.sauce.length + 1));
+
 }

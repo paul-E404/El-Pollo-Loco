@@ -40,7 +40,9 @@ function draw() {
     drawChicken();
     updateBoss();
     drawThrownBottle();
+    drawBrokenBottle();
     updateCharacter();
+    
     //requestAnimationFrame(function): webbrowser takes the ressources it needs from the graphic card in order to update the frame.
     //This is a less flickering alternative to setInterval.
     requestAnimationFrame(draw);
@@ -48,9 +50,9 @@ function draw() {
 
 
 function startTitleSong() {
-    let titleSong = document.getElementById('mexican-song');
-    titleSong.play();
-    titleSong.loop = true;
+    const AUDIO_MEXICAN_SONG = new Audio('audio/mexican_song.mp3');
+    AUDIO_MEXICAN_SONG.play();
+    AUDIO_MEXICAN_SONG.loop = true;
 }
 
 /**
@@ -116,7 +118,7 @@ function keyDown() {
             if (collectedBottles > 0) {
                 //Ensures that a new throw can only be started when the old one has finished
                 if (timePassedSinceThrow > THROW_TIME) {
-                    let timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
+                    //let timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
                     lastThrowStarted = new Date().getTime();
                     collectedBottles--;
                 }

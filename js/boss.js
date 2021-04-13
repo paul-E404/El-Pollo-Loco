@@ -50,7 +50,7 @@ function checkForBossAction() {
             else {
                 bossWalking();
             }
-            console.log("firstBossHit", firstBossHit, "bossAlmostDead", bossAlmostDead);
+            //console.log("firstBossHit", firstBossHit, "bossAlmostDead", bossAlmostDead);
 
         }
     }, bossSpeed);
@@ -210,10 +210,13 @@ function checkForThrownBottleHit() {
                 counter++;
 
                 //console.log("Treffer! Nr.: ", counter);
-
+                
                 reduceBossEnergy();
-                bottleBreaking(); //follows...
                 lastHitStarted = new Date().getTime();
+                broken_bottle_x = thrown_bottle_x;
+                broken_bottle_y = thrown_bottle_y;
+                console.log("broken_bottle_x", broken_bottle_x, "broken_bottle_y", broken_bottle_y);
+                animateBottleBreak();
                 checkBossHitDirection();
             }
         }
