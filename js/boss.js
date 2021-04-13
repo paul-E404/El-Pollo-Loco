@@ -1,3 +1,6 @@
+/**
+ * Draws the current boss images.
+ */
 function updateBoss() {
 
     let boss_image = currentBossImage;
@@ -5,12 +8,12 @@ function updateBoss() {
     if (boss_image.complete) {
         ctx.drawImage(boss_image, boss_x, boss_y, boss_image.width * 0.30, boss_image.height * 0.30);
     }
-
     drawBossEnergy();
-
 }
 
-
+/**
+ * Draws boss energy bar.
+ */
 function drawBossEnergy() {
     ctx.fillStyle = "rgba(255, 80, 0, 0.8)";
     ctx.fillRect(boss_x + 60, boss_y, 2 * boss_energy, 20);
@@ -28,11 +31,14 @@ function drawBossEnergy() {
 //Variable for clearing the setInterval(). Otherwise you cannot change the bossSpeed variable.
 let timer;
 
+/**
+ * Regulates boss action depending on its physical status.
+ */
 function checkForBossAction() {
 
     timer = setInterval(function () {
 
-        currentTime = new Date().getTime();
+        let currentTime = new Date().getTime();
         let timePassedSinceLastHit = currentTime - lastHitStarted;
 
         if (timePassedSinceLastHit > BOSS_HIT_TIME) {
@@ -50,18 +56,16 @@ function checkForBossAction() {
             else {
                 bossWalking();
             }
-            //console.log("firstBossHit", firstBossHit, "bossAlmostDead", bossAlmostDead);
-
         }
     }, bossSpeed);
 
 }
 
 
-
+/**
+ * Animates angry boss as soon as it has been hit for the first time.
+ */
 function bossAttack() {
-    console.log("bossAttack wird ausgeführt!");
-
     //clear old setInterval() with old boss speed
     clearInterval(timer);
     //increase boss speed
@@ -71,6 +75,20 @@ function bossAttack() {
 
     let index = boss_attack_index % bossImages.attack[0].length;
 
+    bossAttackLeft(index);
+    bossAttackRight(index);
+    bossMovingUpAndDown(index);
+
+    boss_attack_index++;
+}
+
+
+/**
+ * Animates angry boss as soon as it has been hit for the first time (left route).
+ * 
+ * @param  {number} index - Index of current bossImages array.
+ */
+function bossAttackLeft(index) {
     if (boss_x >= 430 && bossMovingLeft == true) {
         currentBossImage = bossImages.attack[0][index];
         boss_x = boss_x - 10;
@@ -79,6 +97,15 @@ function bossAttack() {
             bossMovingRight = true;
         }
     }
+}
+
+
+/**
+ * Animates angry boss as soon as it has been hit for the first time (right route).
+ * 
+ * @param  {number} index - Index of current bossImages array.
+ */
+function bossAttackRight(index) {
     if (boss_x <= 540 && bossMovingRight == true) {
         currentBossImage = bossImages.attack[1][index];
         boss_x = boss_x + 10;
@@ -87,20 +114,28 @@ function bossAttack() {
             bossMovingRight = false;
         }
     }
+}
 
+
+/**
+ * Let the boss move up and down alternately.
+ * 
+ * @param  {number} index - Index of current bossImages array.
+ */
+function bossMovingUpAndDown(index) {
     if (index % 2 == 0) {
         boss_y = boss_y + 5;
     }
     else {
         boss_y = boss_y - 5;
     }
-    boss_attack_index++;
 }
 
 
-
+/**
+ * Changes boss animation from angry to totally angry as soon as it has been hit for several times.
+ */
 function bossAttackFinal() {
-    console.log("bossAttackFinal wird ausgeführt!");
     //clear old setInterval() with old boss speed
     clearInterval(timer);
     //increase boss speed
@@ -110,6 +145,20 @@ function bossAttackFinal() {
 
     let index = boss_angry_index % bossImages.angry[0].length;
 
+    bossAttackFinalLeft(index);
+    bossAttackFinalRight(index);
+    bossMovingUpAndDown(index);
+
+    boss_angry_index++;
+}
+
+
+/**
+ * Animates totally angry boss (left route).
+ * 
+ * @param  {number} index - Index of current bossImages array.
+ */
+function bossAttackFinalLeft(index) {
     if (boss_x >= 280 && bossMovingLeft == true) {
         currentBossImage = bossImages.angry[0][index];
         boss_x = boss_x - 20;
@@ -118,6 +167,15 @@ function bossAttackFinal() {
             bossMovingRight = true;
         }
     }
+}
+
+
+/**
+ * Animates totally angry boss (right route).
+ * 
+ * @param  {number} index - Index of current bossImages array.
+ */
+function bossAttackFinalRight(index) {
     if (boss_x <= 540 && bossMovingRight == true) {
         currentBossImage = bossImages.angry[1][index];
         boss_x = boss_x + 20;
@@ -126,14 +184,6 @@ function bossAttackFinal() {
             bossMovingRight = false;
         }
     }
-
-    if (index % 2 == 0) {
-        boss_y = boss_y + 5;
-    }
-    else {
-        boss_y = boss_y - 5;
-    }
-    boss_angry_index++;
 }
 
 
@@ -143,24 +193,44 @@ function bossDying() {
 }
 
 
-
+/**
+ * Animates dafault boss movements.
+ */
 function bossWalking() {
-    console.log("bossWalking wird ausgeführt!");
 
     let index = boss_walk_index % bossImages.walk[0].length;
-    /*   currentTime = new Date().getTime();
-      let timePassedSinceLastHit = currentTime - lastHitStarted; */
 
-    /* if (timePassedSinceLastHit > BOSS_HIT_TIME) { */
+    bossWalkingLeft(index);
+    bossWalkingRight(index);
+    bossMovingUpAndDown(index);
+
+    boss_walk_index++;
+}
+
+
+/**
+ * Animates dafault boss movements (left route).
+ * 
+ * @param  {number} index - Index of current bossImages array.
+ */
+function bossWalkingLeft(index) {
     if (boss_x >= 485 && bossMovingLeft == true) {
         currentBossImage = bossImages.walk[0][index];
         boss_x = boss_x - 5;
-        //console.log("boss_x: ", boss_x, "bossMovingLeft: ", bossMovingLeft, "bossMovingRight: ", bossMovingRight);
         if (boss_x < 485) {
             bossMovingLeft = false;
             bossMovingRight = true;
         }
     }
+}
+
+
+/**
+ * Animates dafault boss movements (right route).
+ * 
+ * @param  {number} index - Index of current bossImages array.
+ */
+function bossWalkingRight(index) {
     if (boss_x <= 515 && bossMovingRight == true) {
         currentBossImage = bossImages.walk[1][index];
         boss_x = boss_x + 5;
@@ -169,24 +239,17 @@ function bossWalking() {
             bossMovingRight = false;
         }
     }
-
-    if (index % 2 == 0) {
-        boss_y = boss_y + 5;
-    }
-    else {
-        boss_y = boss_y - 5;
-    }
-    boss_walk_index++;
-    /*   } */
-
 }
 
 
-
-//Collision of thrown bottle with boss
+/**
+ * Checks axial collision of thrown bottle with boss.
+ */
 function checkForThrownBottleHit() {
 
     setInterval(function () {
+
+        //First step: calculate axes of boss and thrown bottle images for a central collision.
 
         let boss_image_width = 285;
         let boss_image_width_half = boss_image_width / 2;
@@ -204,18 +267,16 @@ function checkForThrownBottleHit() {
         let thrown_bottle_image_height_half = thrown_bottle_image_height / 2;
         let thrown_bottle_y_axis = thrown_bottle_y + thrown_bottle_image_height_half;
 
-        let counter = 0;
+        //let counter = 0;
+        //Second step: check for axial collision
         if (thrown_bottle_x_axis < (boss_x_axis + boss_image_width_half) && thrown_bottle_x_axis > (boss_x_axis - boss_image_width_half)) {
             if (thrown_bottle_y_axis < (boss_y_axis + boss_image_height_half) && thrown_bottle_y_axis > (boss_y_axis - boss_image_height_half / 2)) {
-                counter++;
-
+                //counter++;
                 //console.log("Treffer! Nr.: ", counter);
-                
                 reduceBossEnergy();
                 lastHitStarted = new Date().getTime();
                 broken_bottle_x = thrown_bottle_x;
                 broken_bottle_y = thrown_bottle_y;
-                console.log("broken_bottle_x", broken_bottle_x, "broken_bottle_y", broken_bottle_y);
                 animateBottleBreak();
                 checkBossHitDirection();
             }
@@ -224,17 +285,18 @@ function checkForThrownBottleHit() {
 }
 
 
-
+/**
+ * Reduces boss energy bar and accordingly changes boss status for checkForBossAction() function.
+ */
 function reduceBossEnergy() {
 
     if (boss_energy >= 10) {
         boss_energy = boss_energy - 10;
     }
-
     if (boss_energy < 100) {
         firstBossHit = true;
     }
-    if (boss_energy <= 30) {
+    if (boss_energy <= 40) {
         firstBossHit = false;
         bossAlmostDead = true;
     }
@@ -244,7 +306,9 @@ function reduceBossEnergy() {
 }
 
 
-
+/**
+ * Checks boss current direction when hit in order to show the correct images.
+ */
 function checkBossHitDirection() {
     currentTime = new Date().getTime();
     let timePassedSinceLastHit = currentTime - lastHitStarted;
@@ -263,25 +327,43 @@ function checkBossHitDirection() {
 }
 
 
-
+/**
+ * Animates boss when hit.
+ * 
+ * @param  {Object} currentImages - Boss hurt images with right or left direction.
+ */
 function animateBossHit(currentImages) {
+   /*  let index = 0;
+   for (let i = 1; i < 60; i = i + 10) {
+       console.log("aktuelles i: ", i);
+       setTimeout(function () {
+        currentBossImage = currentImages[index];
+    }, BOSS_HIT_TIME / (currentImages.length * 30) * i);
+    if(index == 0) {
+        index = 1;
+    } else if (index == 1) {
+        index = 0;
+    }
+    console.log("index", index);
+   } */
+
     setTimeout(function () {
         currentBossImage = currentImages[0];
     }, BOSS_HIT_TIME / (currentImages.length * 30) * 1);
     setTimeout(function () {
         currentBossImage = currentImages[1];
-    }, BOSS_HIT_TIME / (currentImages.length * 30) * 10);
+    }, BOSS_HIT_TIME / (currentImages.length * 30) * 11);
     setTimeout(function () {
         currentBossImage = currentImages[0];
-    }, BOSS_HIT_TIME / (currentImages.length * 30) * 20);
+    }, BOSS_HIT_TIME / (currentImages.length * 30) * 21);
     setTimeout(function () {
         currentBossImage = currentImages[1];
-    }, BOSS_HIT_TIME / (currentImages.length * 30) * 30);
+    }, BOSS_HIT_TIME / (currentImages.length * 30) * 31);
     setTimeout(function () {
         currentBossImage = currentImages[0];
-    }, BOSS_HIT_TIME / (currentImages.length * 30) * 40);
+    }, BOSS_HIT_TIME / (currentImages.length * 30) * 41);
     setTimeout(function () {
         currentBossImage = currentImages[1];
-    }, BOSS_HIT_TIME / (currentImages.length * 23) * 50);
+    }, BOSS_HIT_TIME / (currentImages.length * 30) * 51);
 
 }
