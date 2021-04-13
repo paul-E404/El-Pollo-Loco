@@ -53,7 +53,7 @@ function checkForBossAction() {
             else if (bossDead == true) {
                 bossDying();
             }
-            else {
+            else if (bossWalk == true) {
                 bossWalking();
             }
         }
@@ -66,6 +66,8 @@ function checkForBossAction() {
  * Animates angry boss as soon as it has been hit for the first time.
  */
 function bossAttack() {
+
+    console.log("bossAttack() wird ausgeführt");
     //clear old setInterval() with old boss speed
     clearInterval(timer);
     //increase boss speed
@@ -136,6 +138,8 @@ function bossMovingUpAndDown(index) {
  * Changes boss animation from angry to totally angry as soon as it has been hit for several times.
  */
 function bossAttackFinal() {
+
+    console.log("bossAttackFinal() wird ausgeführt");
     //clear old setInterval() with old boss speed
     clearInterval(timer);
     //increase boss speed
@@ -189,7 +193,61 @@ function bossAttackFinalRight(index) {
 
 
 function bossDying() {
-    //follows...
+
+
+    console.log("bossDying() wird ausgeführt");
+
+    //clear old setInterval() with old boss speed
+    clearInterval(timer);
+    //increase boss speed
+    bossSpeed = 50;
+    //start new interval
+    checkForBossAction();
+
+    /*     setTimeout(function() {
+            currentBossImage = bossImages.dead[0][0];
+            boss_y = boss_y - 100;
+        }, 1);
+        setTimeout(function() {
+            currentBossImage = bossImages.dead[0][1];
+            boss_y = boss_y - 50;
+        }, 500);
+        setTimeout(function() {
+            currentBossImage = bossImages.dead[0][2];
+        }, 1000);
+        setTimeout(function() {
+            boss_y = boss_y + 800;
+        }, 2000); */
+
+
+    if (bossFallingUp == true) {
+        if (boss_y <= 120) {
+            console.log("Falling up läuft!");
+            currentBossImage = bossImages.dead[0][0];
+            boss_y = boss_y - 10;
+            if (boss_y <= -90) {
+                console.log("Zweite If Abfrage von Falling up läuft!");
+                bossFallingUp = false;
+                bossFallingDown = true;
+            }
+        }
+
+    }
+
+    if (bossFallingDown == true) {
+        if (boss_y >= -100) {
+            console.log("Falling down läuft!");
+            currentBossImage = bossImages.dead[0][1];
+            boss_y = boss_y + 20;
+            //if boss is out of canvas viewport
+            if (boss_y >= 700) {
+                bossFallingUp = false;
+                bossFallingDown = false;
+                bossDead = false;
+            }
+        }
+    }
+
 }
 
 
@@ -197,6 +255,8 @@ function bossDying() {
  * Animates dafault boss movements.
  */
 function bossWalking() {
+
+    console.log("bossWalking() wird ausgeführt");
 
     let index = boss_walk_index % bossImages.walk[0].length;
 
@@ -293,16 +353,19 @@ function reduceBossEnergy() {
     if (boss_energy >= 10) {
         boss_energy = boss_energy - 10;
     }
-    if (boss_energy < 100) {
+    if (boss_energy < 100 && boss_energy > 40) {
+        bossWalk = false;
         firstBossHit = true;
     }
-    if (boss_energy <= 40) {
+    if (boss_energy <= 40 && boss_energy > 0) {
         firstBossHit = false;
         bossAlmostDead = true;
     }
     else if (boss_energy == 0) {
+        bossAlmostDead = false;
         bossDead = true;
     }
+    console.log("boss_energy", boss_energy);
 }
 
 
@@ -333,19 +396,19 @@ function checkBossHitDirection() {
  * @param  {Object} currentImages - Boss hurt images with right or left direction.
  */
 function animateBossHit(currentImages) {
-   /*  let index = 0;
-   for (let i = 1; i < 60; i = i + 10) {
-       console.log("aktuelles i: ", i);
-       setTimeout(function () {
-        currentBossImage = currentImages[index];
-    }, BOSS_HIT_TIME / (currentImages.length * 30) * i);
-    if(index == 0) {
-        index = 1;
-    } else if (index == 1) {
-        index = 0;
-    }
-    console.log("index", index);
-   } */
+    /*  let index = 0;
+    for (let i = 1; i < 60; i = i + 10) {
+        console.log("aktuelles i: ", i);
+        setTimeout(function () {
+         currentBossImage = currentImages[index];
+     }, BOSS_HIT_TIME / (currentImages.length * 30) * i);
+     if(index == 0) {
+         index = 1;
+     } else if (index == 1) {
+         index = 0;
+     }
+     console.log("index", index);
+    } */
 
     setTimeout(function () {
         currentBossImage = currentImages[0];

@@ -46,6 +46,9 @@ let boss_attack_index = 0;
 let boss_angry_index = 0;
 let bossMovingLeft = true;
 let bossMovingRight = false;
+let bossFallingUp = true;
+let bossFallingDown = false;
+let bossWalk = true;
 let firstBossHit = false;
 let bossAlmostDead = false;
 let bossDead = false;
@@ -65,6 +68,7 @@ const MIN_CHICKEN_SPEED = 2;
 const THROW_TIME = 800;
 const BOTTLE_BREAK_TIME = 500;
 const BOSS_HIT_TIME = 500;
+const BOSS_DYING_TIME = 800;
 
 const AUDIO_MEXICAN_SONG = new Audio('audio/mexican_song.mp3');
 const AUDIO_CHARACTER_RUNNING = new Audio('audio/character_running.mp3');
