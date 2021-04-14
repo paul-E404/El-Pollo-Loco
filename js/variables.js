@@ -47,7 +47,6 @@ let boss_angry_index = 0;
 let bossMovingLeft = true;
 let bossMovingRight = false;
 let bossFallingUp = true;
-let bossFallingDown = false;
 let bossWalk = true;
 let firstBossHit = false;
 let bossAlmostDead = false;

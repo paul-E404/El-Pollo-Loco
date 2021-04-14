@@ -191,11 +191,10 @@ function bossAttackFinalRight(index) {
 }
 
 
-
+/**
+ * Regulates boss dying animation (position and images).
+ */
 function bossDying() {
-
-
-    console.log("bossDying() wird ausgeführt");
 
     //clear old setInterval() with old boss speed
     clearInterval(timer);
@@ -204,51 +203,60 @@ function bossDying() {
     //start new interval
     checkForBossAction();
 
-    /*     setTimeout(function() {
-            currentBossImage = bossImages.dead[0][0];
-            boss_y = boss_y - 100;
-        }, 1);
-        setTimeout(function() {
-            currentBossImage = bossImages.dead[0][1];
-            boss_y = boss_y - 50;
-        }, 500);
-        setTimeout(function() {
-            currentBossImage = bossImages.dead[0][2];
-        }, 1000);
-        setTimeout(function() {
-            boss_y = boss_y + 800;
-        }, 2000); */
+    let timePassedSinceLastHit = new Date().getTime() - lastHitStarted;
+    let gravity = Math.pow(9.81, (timePassedSinceLastHit - BOSS_HIT_TIME) / 500);
 
+    //regulate vertical boss position
+    boss_y = boss_y - 25 + gravity;
 
-    if (bossFallingUp == true) {
-        if (boss_y <= 120) {
-            console.log("Falling up läuft!");
-            currentBossImage = bossImages.dead[0][0];
-            boss_y = boss_y - 10;
-            if (boss_y <= -90) {
-                console.log("Zweite If Abfrage von Falling up läuft!");
-                bossFallingUp = false;
-                bossFallingDown = true;
-            }
-        }
-
-    }
-
-    if (bossFallingDown == true) {
-        if (boss_y >= -100) {
-            console.log("Falling down läuft!");
-            currentBossImage = bossImages.dead[0][1];
-            boss_y = boss_y + 20;
-            //if boss is out of canvas viewport
-            if (boss_y >= 700) {
-                bossFallingUp = false;
-                bossFallingDown = false;
-                bossDead = false;
-            }
-        }
-    }
-
+    checkBossDyingDirection();
 }
+
+
+/**
+ * Chooses the correct images depending on the boss last move (left or right).
+ */
+function checkBossDyingDirection() {
+    if (bossMovingLeft == true) {
+        currentImages = bossImages.dead[0];
+    }
+    else if (bossMovingRight == true) {
+        currentImages = bossImages.dead[1];
+    }
+    showBossDyingImages(currentImages);
+}
+
+
+/**
+ * Shows the correct boss dead dying images.
+ * 
+ * @param  {Object} currentImages - Boss dying images with right or left direction.
+ */
+function showBossDyingImages(currentImages) {
+
+    //boss falling up
+    if (bossFallingUp == true) {
+        if (boss_y > 80) {
+            currentBossImage = currentImages[0];
+        }
+        if (boss_y <= 80 && boss_y > 40) {
+            currentBossImage = currentImages[1];
+        }
+        if (boss_y <= 40) {
+            bossFallingUp = false;
+        }
+    }
+
+    //boss falling down
+    if (bossFallingUp == false) {
+        currentBossImage = currentImages[2];
+        //stop bossDying() function
+        if (boss_y >= 800) {
+            bossDead = false;
+        }
+    }
+}
+
 
 
 /**
