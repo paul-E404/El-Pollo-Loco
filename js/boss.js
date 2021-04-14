@@ -203,8 +203,8 @@ function bossDying() {
     //start new interval
     checkForBossAction();
 
-    let timePassedSinceLastHit = new Date().getTime() - lastHitStarted;
-    let gravity = Math.pow(9.81, (timePassedSinceLastHit - BOSS_HIT_TIME) / 500);
+    let timePassed = new Date().getTime() - bossDyingStarted;
+    let gravity = Math.pow(9.81, (timePassed * 0.5) / 500);
 
     //regulate vertical boss position
     boss_y = boss_y - 25 + gravity;
@@ -317,7 +317,7 @@ function checkForThrownBottleHit() {
 
     setInterval(function () {
 
-        //First step: calculate axes of boss and thrown bottle images for a central collision.
+        //first step: calculate axes of boss and thrown bottle images for a central collision.
 
         let boss_image_width = 285;
         let boss_image_width_half = boss_image_width / 2;
@@ -335,20 +335,25 @@ function checkForThrownBottleHit() {
         let thrown_bottle_image_height_half = thrown_bottle_image_height / 2;
         let thrown_bottle_y_axis = thrown_bottle_y + thrown_bottle_image_height_half;
 
-        //let counter = 0;
-        //Second step: check for axial collision
-        if (thrown_bottle_x_axis < (boss_x_axis + boss_image_width_half) && thrown_bottle_x_axis > (boss_x_axis - boss_image_width_half)) {
-            if (thrown_bottle_y_axis < (boss_y_axis + boss_image_height_half) && thrown_bottle_y_axis > (boss_y_axis - boss_image_height_half / 2)) {
-                //counter++;
-                //console.log("Treffer! Nr.: ", counter);
-                reduceBossEnergy();
-                lastHitStarted = new Date().getTime();
-                broken_bottle_x = thrown_bottle_x;
-                broken_bottle_y = thrown_bottle_y;
-                animateBottleBreak();
-                checkBossHitDirection();
+        //second step: make sure that boss is not already dying
+        let timePassed = new Date().getTime() - bossDyingStarted;
+        if (timePassed > BOSS_DYING_TIME) {
+            //let counter = 0;
+            //third step: check for axial collision
+            if (thrown_bottle_x_axis < (boss_x_axis + boss_image_width_half) && thrown_bottle_x_axis > (boss_x_axis - boss_image_width_half)) {
+                if (thrown_bottle_y_axis < (boss_y_axis + boss_image_height_half) && thrown_bottle_y_axis > (boss_y_axis - boss_image_height_half / 2)) {
+                    //counter++;
+                    //console.log("Treffer! Nr.: ", counter);
+                    reduceBossEnergy();
+                    lastHitStarted = new Date().getTime();
+                    broken_bottle_x = thrown_bottle_x;
+                    broken_bottle_y = thrown_bottle_y;
+                    animateBottleBreak();
+                    checkBossHitDirection();
+                }
             }
         }
+
     }, 50);
 }
 
@@ -362,16 +367,23 @@ function reduceBossEnergy() {
         boss_energy = boss_energy - 10;
     }
     if (boss_energy < 100 && boss_energy > 40) {
+        AUDIO_BOSS_HIT.play();
         bossWalk = false;
         firstBossHit = true;
     }
     if (boss_energy <= 40 && boss_energy > 0) {
+        AUDIO_BOSS_ANGRY.play();
         firstBossHit = false;
         bossAlmostDead = true;
     }
     else if (boss_energy == 0) {
+        setTimeout(function() {
+            AUDIO_BOSS_DEAD.play();
+            AUDIO_EXPLOSION.play();
+        }, BOSS_HIT_TIME);
         bossAlmostDead = false;
         bossDead = true;
+        bossDyingStarted = new Date().getTime();
     }
     console.log("boss_energy", boss_energy);
 }

@@ -12,7 +12,7 @@ let cloud_offset = 0;
 
 let character_x = 100;
 let character_y = 100; //ehem. 45
-let character_energy = 100;
+let character_energy = 30;
 let isMovingRight = false;
 let isMovingLeft = false;
 let lastMove = "right";
@@ -22,6 +22,8 @@ let currentCharacterImage = new Image;
 let character_idle_index = 0;
 let character_walk_index = 0;
 let character_hurt_index = 0;
+let characterDead = false;
+let characterDyingStarted = new Date().getTime();
 
 let chickens;
 let chicken_y = 365;
@@ -52,6 +54,7 @@ let firstBossHit = false;
 let bossAlmostDead = false;
 let bossDead = false;
 let lastHitStarted = new Date().getTime();
+let bossDyingStarted = new Date().getTime();
 
 let currentSauceImage = new Image;
 
@@ -64,10 +67,11 @@ const JUMP_TIME = 400;
 const GAME_SPEED = 7;
 const CLOUD_SPEED = 0.2;
 const MIN_CHICKEN_SPEED = 2;
-const THROW_TIME = 800;
+const THROW_TIME = 1400;
 const BOTTLE_BREAK_TIME = 500;
 const BOSS_HIT_TIME = 500;
-const BOSS_DYING_TIME = 800;
+const BOSS_DYING_TIME = 2000;
+const CHARACTER_DYING_TIME = 500;
 
 const AUDIO_MEXICAN_SONG = new Audio('audio/mexican_song.mp3');
 const AUDIO_CHARACTER_RUNNING = new Audio('audio/character_running.mp3');
@@ -81,6 +85,10 @@ const AUDIO_CHICKEN_SCREAM = new Audio('audio/chicken_single_scream.mp3');
 const AUDIO_BOTTLE_COLLECT = new Audio('audio/bottle_collect.mp3');
 const AUDIO_BOTTLE_THROW = new Audio('audio/bottle_throw.mp3');
 const AUDIO_BOTTLE_BREAK = new Audio('audio/bottle_break.mp3');
+const AUDIO_BOSS_HIT = new Audio ('audio/boss_hit.mp3');
+const AUDIO_BOSS_ANGRY = new Audio ('audio/boss_angry.mp3');
+const AUDIO_BOSS_DEAD = new Audio ('audio/boss_dead.mp3');
+const AUDIO_EXPLOSION = new Audio ('audio/explosion.mp3');
 
 
 //Image Object with all character images
@@ -165,6 +173,24 @@ let characterImages = {
         ],
         [
             'img/character/throw/Tr-60.png'
+        ]
+    ],
+    dead: [
+        [
+            'img/character/dead/Dl-51.png',
+            'img/character/dead/Dl-52.png',
+            'img/character/dead/Dl-53.png',
+            'img/character/dead/Dl-54.png',
+            'img/character/dead/Dl-55.png',
+            'img/character/dead/Dl-56.png'
+        ],
+        [
+            'img/character/dead/Dr-51.png',
+            'img/character/dead/Dr-52.png',
+            'img/character/dead/Dr-53.png',
+            'img/character/dead/Dr-54.png',
+            'img/character/dead/Dr-55.png',
+            'img/character/dead/Dr-56.png'
         ]
     ]
 };

@@ -50,6 +50,7 @@ function checkForRelaxing() {
         let timeForRelax = timePassedSinceLastMove > JUMP_TIME * 2 && timePassedSinceLastMove < JUMP_TIME * 20;
         let timeForSleep = timePassedSinceLastMove > JUMP_TIME * 20;
 
+        /* if(characterDead == false) { */
         if (isMovingLeft == false && isMovingRight == false) {
             if (timeForRelax == true) {
                 checkRelaxingDirection();
@@ -59,6 +60,8 @@ function checkForRelaxing() {
                 checkSleepingDirection();
             }
         }
+        /* } */
+
     }, 300);
 }
 
@@ -143,7 +146,7 @@ function checkCharacterJumpHeight() {
         character_y = character_y - 10;
     }
     //Check falling
-    else if (character_y < 100) {           //ehem. 45
+    else if (character_y < 100 && characterDead == false) {
         character_y = character_y + 10;
     }
 }
@@ -188,38 +191,43 @@ function checkForCollision() {
     let character_image_width = 100;
     let character_image_width_half = character_image_width / 2;
     let character_axis = character_x + character_image_width_half;
-    setInterval(function () {
 
-        //Collision of character with chicken
-        for (let i = 0; i < chickens.length; i++) {
-            let chicken = chickens[i];
-            if (chicken.position_x < (character_axis + character_image_width_half) && chicken.position_x > (character_axis - character_image_width_half)) {
-                if (character_y > 0) {
-                    checkCollisionDirection();
-                    //Prevent character from falling sleep
-                    lastMoveFinished = new Date().getTime();
-                    AUDIO_CHARACTER_SNORING.pause();
-                    reduceCharacterEnergy();
-                }
+    //when character is dying he must no longer collide
+    if(characterDead != true) {
+        setInterval(function () {
 
-            }
-        }
-
-        //Collision of character with bottles (collection)
-        for (let i = 0; i < placedBottles.length; i++) {
-            if (placedBottles[i] < (character_axis + character_image_width_half / 3) && placedBottles[i] > (character_axis - character_image_width_half)) {
-                if (character_y > -40) {
-                    placedBottles.splice(i, 1);
-                    collectedBottles++;
-                    AUDIO_BOTTLE_COLLECT.play();
+            //Collision of character with chicken
+            for (let i = 0; i < chickens.length; i++) {
+                let chicken = chickens[i];
+                if (chicken.position_x < (character_axis + character_image_width_half) && chicken.position_x > (character_axis - character_image_width_half)) {
+                    if (character_y > 0) {
+                        checkCollisionDirection();
+                        //Prevent character from falling sleep
+                        lastMoveFinished = new Date().getTime();
+                        AUDIO_CHARACTER_SNORING.pause();
+                        reduceCharacterEnergy();
+                    }
+    
                 }
             }
-        }
-
-        //Collision of character with boss
-        //follows...
-
-    }, 100);
+    
+            //Collision of character with bottles (collection)
+            for (let i = 0; i < placedBottles.length; i++) {
+                if (placedBottles[i] < (character_axis + character_image_width_half / 3) && placedBottles[i] > (character_axis - character_image_width_half)) {
+                    if (character_y > -40) {
+                        placedBottles.splice(i, 1);
+                        collectedBottles++;
+                        AUDIO_BOTTLE_COLLECT.play();
+                    }
+                }
+            }
+    
+            //Collision of character with boss
+            //follows...
+    
+        }, 100);
+    }
+    
 }
 
 
@@ -243,10 +251,117 @@ function collision(currentImages) {
 
 
 function reduceCharacterEnergy() {
-    if (character_energy >= 5) {
+    if (character_energy >= 10) {
         character_energy = character_energy - 5;
-    } else {
+    } else if (character_energy > 0) {
+        character_energy = character_energy - 5;
+        characterDyingStarted = new Date().getTime();
+        characterDead = true;
+
+        checkDyingDirection();
+
         console.log("Game Over!");
     }
+
+}
+
+
+
+
+function checkForDying() {
+    setInterval(function () {
+        if (characterDead == true) {
+            characterDying();
+        }
+    }, 50);
+}
+
+function characterDying() {
+    /* console.log("characterDying() wurde aufgerufen!"); */
+
+    let timePassed = new Date().getTime() - characterDyingStarted;
+    let gravity = Math.pow(9.81, (timePassed * 0.5) / 200);
+
+    //regulate vertical character position
+    character_y = character_y - 20 + gravity;
+
+}
+
+
+function checkDyingDirection() {
+    let currentImages;
+    if (lastMove == 'left') {
+        currentImages = characterImages.dead[0];
+    }
+    else if (lastMove == 'right') {
+        currentImages = characterImages.dead[1];
+    }
+    // console.log("checkDyingDirection aufgerufen! currentImages: ", currentImages);
+    showDyingImages(currentImages);
+    // console.log("currentImages.length", currentImages.length);
+
+}
+
+
+function showDyingImages(currentImages) {
+  
+    console.log("showDyingImages() wurde aufgerufen!", currentImages);
+
+
+    /*     setTimeout(function () {
+            currentCharacterImage = currentImages[0];
+            console.log("Erstes Interval");
+            console.log("currentCharacterImage", currentCharacterImage);
+        }, 100);
+        setTimeout(function () {
+            currentCharacterImage = currentImages[1];
+            console.log("Zweites Interval");
+            console.log("currentCharacterImage", currentCharacterImage);
+        }, 300);
+        setTimeout(function () {
+            currentCharacterImage = currentImages[2];
+            console.log("Drittes Interval");
+            console.log("currentCharacterImage", currentCharacterImage);
+        }, 500);
+        setTimeout(function () {
+            currentCharacterImage = currentImages[3];
+            console.log("Viertes Interval");
+            console.log("currentCharacterImage", currentCharacterImage);
+        }, 700);
+        setTimeout(function () {
+            currentCharacterImage = currentImages[4];
+            console.log("Fünftes Interval");
+            console.log("currentCharacterImage", currentCharacterImage);
+        }, 900);
+        setTimeout(function () {
+            currentCharacterImage = currentImages[5];
+            console.log("Sechstes Interval");
+            console.log("currentCharacterImage", currentCharacterImage);
+        }, 1000);
+        setTimeout(function () {
+            currentCharacterImage = currentImages[6];
+            console.log("Siebtes Interval");
+            console.log("currentCharacterImage", currentCharacterImage);
+        }, 1100); */
+
+
+    setTimeout(function () {
+        currentCharacterImage = currentImages[2];
+    }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 1);
+    setTimeout(function () {
+        currentCharacterImage = currentImages[2];
+    }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 20);
+    setTimeout(function () {
+        currentCharacterImage = currentImages[2];
+    }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 40);
+    setTimeout(function () {
+        currentCharacterImage = currentImages[3];
+    }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 45);
+    setTimeout(function () {
+        currentCharacterImage = currentImages[4];
+    }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 50);
+    setTimeout(function () {
+        currentCharacterImage = currentImages[5];
+    }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 55);
 
 }

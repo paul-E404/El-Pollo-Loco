@@ -19,6 +19,7 @@ function init() {
     checkForCollision();
     checkForThrownBottleHit();
     checkForBossAction();
+    checkForDying();
     draw();
     listenForKeys();
     //startTitleSong();
