@@ -33,7 +33,7 @@
 
     else if (isMovingRight == true && reachedBoss == true && character_x < 660) {
         character_x = character_x + GAME_SPEED;
-        console.log(character_x);
+        //console.log(character_x);
     }
 
     if (isMovingLeft == true && wallLeft == false && reachedBoss == false) {

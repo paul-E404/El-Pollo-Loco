@@ -4,7 +4,7 @@ let ctx;
 let bg_sky_x = -270;
 let bg3_ground_x = -270;   //alle -270
 let bg2_ground_x = -270;
-let bg1_ground_x = -10000;
+let bg1_ground_x = -270;
 let bg_ground_x_min = -10;    //Verhindert, dass character unendlich nach links laufen kann
 let bg_ground_x_max;        //Verhindert, dass character unendlich nach rechts laufen kann
 let bg_element_y = 0;
@@ -13,8 +13,8 @@ let wallRight;
 let reachedBoss = false;
 
 let character_x = 100;
-let character_y = 100; //ehem. 45
-let character_energy = 300;
+let character_y = 100;
+let character_energy = 100;
 let isMovingRight = false;
 let isMovingLeft = false;
 let lastMove = "right";
@@ -40,7 +40,7 @@ let broken_bottle_x;
 let broken_bottle_y;
 
 let currentBossImage = new Image;
-let boss_x = 500;
+let boss_x = 500; //ehem. 500
 let boss_y = 105;
 let boss_energy = 100;
 let bossSpeed = 500;

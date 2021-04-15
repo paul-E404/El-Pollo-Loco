@@ -186,15 +186,17 @@ function animateJump(currentImages) {
  * 
  */
 function checkForCollision() {
-    let character_image_width = 100;
-    let character_image_width_half = character_image_width / 2;
-    let character_axis = character_x + character_image_width_half;
+
 
     let counter = 0;
 
     //when character is dying he must no longer collide
     if (characterDead != true) {
         setInterval(function () {
+
+            let character_image_width = 100;
+            let character_image_width_half = character_image_width / 2;
+            let character_axis = character_x + character_image_width_half;
 
             //Collision of character with chicken
             for (let i = 0; i < chickens.length; i++) {
@@ -223,17 +225,23 @@ function checkForCollision() {
             }
 
             //Collision of character with boss
-
-           /*  let boss_image_width = 100;
+            let boss_image_width = 285;
             let boss_image_width_half = boss_image_width / 2;
             let boss_axis = boss_x + boss_image_width_half;
 
-            if (boss_axis < (character_axis + character_image_width_half) && boss_axis > (character_axis - character_image_width_half)) {
-                if (character_y > 0 && character_y < 800) {
+            //console.log("boss_axis", boss_axis, "character_axis", character_axis);
+
+            if (character_axis < (boss_axis + boss_image_width_half) && character_axis > (boss_axis - boss_image_width_half)) {
+                if (boss_y > 0 && boss_y < 800) {
                     console.log("Kollision mit BOSS! Nr.:", counter);
-                    counter++
+                    counter++;
+                    checkCollisionDirection();
+                    //Prevent character from falling sleep
+                    lastMoveFinished = new Date().getTime();
+                    AUDIO_CHARACTER_SNORING.pause();
+                    reduceCharacterEnergy();
                 }
-            } */
+            }
 
         }, 100);
     }

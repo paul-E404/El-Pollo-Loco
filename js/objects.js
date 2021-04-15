@@ -62,14 +62,17 @@ function correctBottlesPosition(movingDirection) {
     }
 }
 
+
 /**
  * Draws the graph of the thrown bottle by simulating gravity.
  */
 function drawThrownBottle() {
+   
     timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
     let gravity = Math.pow(9.81, timePassedSinceThrow / 200);
 
     throwBottle(timePassedSinceThrow, gravity);
+    
 }
 
 
@@ -95,7 +98,7 @@ function throwBottle(timePassedSinceThrow, gravity) {
  * @param  {number} gravity - Additional vertical distance for the thrown bottle by simulating gravity.
  */
 function throwBottleToTheLeft(timePassedSinceThrow, gravity) {
-    thrown_bottle_x = 140 - (timePassedSinceThrow * 0.8);
+    thrown_bottle_x = character_x + 40 - (timePassedSinceThrow * 0.8);
     thrown_bottle_y = character_y + 140 - (timePassedSinceThrow * 0.5) + gravity;
     rotateBottle(thrown_bottle_x, thrown_bottle_y);
     if (timePassedSinceThrow < 100) {
@@ -111,7 +114,7 @@ function throwBottleToTheLeft(timePassedSinceThrow, gravity) {
  * @param  {number} gravity - Additional vertical distance for the thrown bottle by simulating gravity.
  */
 function throwBottleToTheRight(timePassedSinceThrow, gravity) {
-    thrown_bottle_x = 140 + (timePassedSinceThrow * 0.8);
+    thrown_bottle_x = character_x + 40 + (timePassedSinceThrow * 0.8);
     thrown_bottle_y = character_y + 140 - (timePassedSinceThrow * 0.5) + gravity;
     rotateBottle(thrown_bottle_x, thrown_bottle_y);
     if (timePassedSinceThrow < 100) {

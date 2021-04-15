@@ -94,17 +94,13 @@ function keyDown() {
         //e.key bedeutet, ich möchte von dem JSON Event des keys namens "code" den value und dieser ist "ArrowRight" etc.
         let key = e.code; // z.B. "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
 
-        if (character_x > -150 && character_x < canvas.width && character_y > 0 && character_y < canvas.height) {
-
             if (key == "ArrowRight") {
                 isMovingRight = true;
                 lastMove = "right";
-                /* character_x = character_x + 5; */
             }
             if (key == "ArrowLeft") {
                 isMovingLeft = true;
                 lastMove = "left";
-                /* character_x = character_x - 5; */
             }
 
             //Erst wenn die JUMP TIME vorüber ist, darf ein neuer Sprung begonnen werden.
@@ -116,7 +112,6 @@ function keyDown() {
                 AUDIO_CHARACTER_JUMPING.play();
                 AUDIO_CHARACTER_SNORING.pause();
             }
-        }
 
 
         if (key == "KeyD") {
