@@ -264,8 +264,6 @@ function showBossDyingImages(currentImages) {
  */
 function bossWalking() {
 
-    console.log("bossWalking() wird ausgeführt");
-
     let index = boss_walk_index % bossImages.walk[0].length;
 
     bossWalkingLeft(index);

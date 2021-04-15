@@ -38,6 +38,7 @@ let thrown_bottle_y;
 let bottle_rotate_index = 0;
 let broken_bottle_x;
 let broken_bottle_y;
+let bottleThrowingDirection;
 
 let currentBossImage = new Image;
 let boss_x = 500; //ehem. 500

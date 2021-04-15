@@ -121,6 +121,11 @@ function keyDown() {
                     //let timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
                     lastThrowStarted = new Date().getTime();
                     collectedBottles--;
+                    if (lastMove == 'left') {
+                        bottleThrowingDirection = 'left';
+                    } else if (lastMove == 'right') {
+                        bottleThrowingDirection = 'right';
+                    }
                 }
             }
         }

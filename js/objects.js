@@ -83,10 +83,10 @@ function drawThrownBottle() {
  * @param  {number} gravity - Additional vertical distance for the thrown bottle by simulating gravity.
  */
 function throwBottle(timePassedSinceThrow, gravity) {
-    if (lastMove == "left") {
+    if (bottleThrowingDirection == 'left') {
         throwBottleToTheLeft(timePassedSinceThrow, gravity);
     }
-    else if (lastMove == "right") {
+    else if (bottleThrowingDirection == 'right') {
         throwBottleToTheRight(timePassedSinceThrow, gravity);
     }
 }
