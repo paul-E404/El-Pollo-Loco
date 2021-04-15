@@ -50,7 +50,6 @@ function checkForRelaxing() {
         let timeForRelax = timePassedSinceLastMove > JUMP_TIME * 2 && timePassedSinceLastMove < JUMP_TIME * 20;
         let timeForSleep = timePassedSinceLastMove > JUMP_TIME * 20;
 
-        /* if(characterDead == false) { */
         if (isMovingLeft == false && isMovingRight == false) {
             if (timeForRelax == true) {
                 checkRelaxingDirection();
@@ -60,7 +59,6 @@ function checkForRelaxing() {
                 checkSleepingDirection();
             }
         }
-        /* } */
 
     }, 300);
 }
@@ -192,25 +190,27 @@ function checkForCollision() {
     let character_image_width_half = character_image_width / 2;
     let character_axis = character_x + character_image_width_half;
 
+    let counter = 0;
+
     //when character is dying he must no longer collide
-    if(characterDead != true) {
+    if (characterDead != true) {
         setInterval(function () {
 
             //Collision of character with chicken
             for (let i = 0; i < chickens.length; i++) {
                 let chicken = chickens[i];
                 if (chicken.position_x < (character_axis + character_image_width_half) && chicken.position_x > (character_axis - character_image_width_half)) {
-                    if (character_y > 0) {
+                    if (character_y > 0 && character_y < 800) {
                         checkCollisionDirection();
                         //Prevent character from falling sleep
                         lastMoveFinished = new Date().getTime();
                         AUDIO_CHARACTER_SNORING.pause();
                         reduceCharacterEnergy();
                     }
-    
+
                 }
             }
-    
+
             //Collision of character with bottles (collection)
             for (let i = 0; i < placedBottles.length; i++) {
                 if (placedBottles[i] < (character_axis + character_image_width_half / 3) && placedBottles[i] > (character_axis - character_image_width_half)) {
@@ -221,13 +221,23 @@ function checkForCollision() {
                     }
                 }
             }
-    
+
             //Collision of character with boss
-            //follows...
-    
+
+           /*  let boss_image_width = 100;
+            let boss_image_width_half = boss_image_width / 2;
+            let boss_axis = boss_x + boss_image_width_half;
+
+            if (boss_axis < (character_axis + character_image_width_half) && boss_axis > (character_axis - character_image_width_half)) {
+                if (character_y > 0 && character_y < 800) {
+                    console.log("Kollision mit BOSS! Nr.:", counter);
+                    counter++
+                }
+            } */
+
         }, 100);
     }
-    
+
 }
 
 
@@ -251,16 +261,24 @@ function collision(currentImages) {
 
 
 function reduceCharacterEnergy() {
-    if (character_energy >= 10) {
-        character_energy = character_energy - 5;
-    } else if (character_energy > 0) {
-        character_energy = character_energy - 5;
-        characterDyingStarted = new Date().getTime();
-        characterDead = true;
 
-        checkDyingDirection();
+    //prevents the dying animation from being shown more than once
+    if (characterDead == false) {
 
-        console.log("Game Over!");
+        //character is alive and can loose energy
+        if (character_energy > 0) {
+            character_energy = character_energy - 5;
+        }
+
+        //character dies
+        if (character_energy <= 0) {
+            characterDyingStarted = new Date().getTime();
+
+            characterDead = true;
+            checkDyingDirection();
+            lastJumpStarted = new Date().getTime();
+            collectedBottles = 0;
+        }
     }
 
 }
@@ -268,43 +286,55 @@ function reduceCharacterEnergy() {
 
 
 
+/**
+ * Checks regularly if the character is currently dead.
+ */
 function checkForDying() {
     setInterval(function () {
         if (characterDead == true) {
-            characterDying();
+            AUDIO_CHARACTER_DEAD.play();
+            calculateDyingPosition();
         }
     }, 50);
 }
 
-function characterDying() {
-    /* console.log("characterDying() wurde aufgerufen!"); */
+
+/**
+ * Regulates vertical position of character when he is dying, including gravity.
+ */
+function calculateDyingPosition() {
 
     let timePassed = new Date().getTime() - characterDyingStarted;
     let gravity = Math.pow(9.81, (timePassed * 0.5) / 200);
 
-    //regulate vertical character position
-    character_y = character_y - 20 + gravity;
+    character_y = character_y - 10 + gravity;
+
+    if (character_y > 800) {
+        characterDead = false;
+    }
 
 }
 
 
 function checkDyingDirection() {
+
     let currentImages;
+
     if (lastMove == 'left') {
         currentImages = characterImages.dead[0];
     }
     else if (lastMove == 'right') {
         currentImages = characterImages.dead[1];
     }
-    // console.log("checkDyingDirection aufgerufen! currentImages: ", currentImages);
+
     showDyingImages(currentImages);
-    // console.log("currentImages.length", currentImages.length);
+
 
 }
 
 
 function showDyingImages(currentImages) {
-  
+
     console.log("showDyingImages() wurde aufgerufen!", currentImages);
 
 
@@ -346,22 +376,23 @@ function showDyingImages(currentImages) {
 
 
     setTimeout(function () {
-        currentCharacterImage = currentImages[2];
+        currentCharacterImage = currentImages[0];
+
     }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 1);
     setTimeout(function () {
-        currentCharacterImage = currentImages[2];
+        currentCharacterImage = currentImages[1];
+
     }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 20);
     setTimeout(function () {
         currentCharacterImage = currentImages[2];
+
     }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 40);
     setTimeout(function () {
         currentCharacterImage = currentImages[3];
-    }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 45);
-    setTimeout(function () {
-        currentCharacterImage = currentImages[4];
+
     }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 50);
     setTimeout(function () {
-        currentCharacterImage = currentImages[5];
-    }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 55);
+        currentCharacterImage = currentImages[4];
+    }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 60);
 
 }

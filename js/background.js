@@ -9,29 +9,50 @@
 
     //Defines start and end of the area in which the character is able to move.
     let wallLeft = bg1_ground_x >= bg_ground_x_min;
-    let wallRight; //follows...
+    bg_ground_x_max = (PLAYING_FIELD_LENGTH - 3) * (-1000);
+    wallRight = bg1_ground_x <= bg_ground_x_max;
 
-    //Different background layers move at different speeds and in different directions depending on the character's movement.
-    if (isMovingRight == true) {
+    //when character reaches the end of the game the background should stop moving
+    if (wallRight == true) {
+        reachedBoss = true;
+    }
+
+    //Different background layers move at different speeds and in different directions depending on the character's moving direction.
+    if (isMovingRight == true && wallRight == false && reachedBoss == false) {
         bg3_ground_x = bg3_ground_x - GAME_SPEED * 0.2;
         bg2_ground_x = bg2_ground_x - GAME_SPEED * 0.4;
         bg1_ground_x = bg1_ground_x - GAME_SPEED;
 
+        //console.log("bg1_ground_x", bg1_ground_x, "bg2_ground_x", bg2_ground_x, "bg3_ground_x", bg3_ground_x);
         correctChickenPosition(isMovingRight);
         correctBottlesPosition(isMovingRight);
 
         bg_sky_x = bg_sky_x - GAME_SPEED * 0.1;
+
     }
-    if (isMovingLeft == true && wallLeft == false) {
+
+    else if (isMovingRight == true && reachedBoss == true && character_x < 660) {
+        character_x = character_x + GAME_SPEED;
+        console.log(character_x);
+    }
+
+    if (isMovingLeft == true && wallLeft == false && reachedBoss == false) {
         bg3_ground_x = bg3_ground_x + GAME_SPEED * 0.2;
         bg2_ground_x = bg2_ground_x + GAME_SPEED * 0.4;
         bg1_ground_x = bg1_ground_x + GAME_SPEED;
+
+        //console.log("bg1_ground_x", bg1_ground_x, "bg2_ground_x", bg2_ground_x, "bg3_ground_x", bg3_ground_x);
 
         correctChickenPosition(isMovingLeft);
         correctBottlesPosition(isMovingLeft);
         
         bg_sky_x = bg_sky_x + GAME_SPEED * 0.1;
     }
+
+    else if (isMovingLeft == true && reachedBoss == true && character_x > -25) {
+        character_x = character_x - GAME_SPEED;
+    }
+
     drawSky();
     drawGround();
 }

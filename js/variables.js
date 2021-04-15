@@ -2,17 +2,19 @@ let canvas;
 let ctx;
 
 let bg_sky_x = -270;
-let bg3_ground_x = -270;
+let bg3_ground_x = -270;   //alle -270
 let bg2_ground_x = -270;
-let bg1_ground_x = -270;
+let bg1_ground_x = -10000;
 let bg_ground_x_min = -10;    //Verhindert, dass character unendlich nach links laufen kann
 let bg_ground_x_max;        //Verhindert, dass character unendlich nach rechts laufen kann
 let bg_element_y = 0;
 let cloud_offset = 0;
+let wallRight;
+let reachedBoss = false;
 
 let character_x = 100;
 let character_y = 100; //ehem. 45
-let character_energy = 30;
+let character_energy = 300;
 let isMovingRight = false;
 let isMovingLeft = false;
 let lastMove = "right";
@@ -29,7 +31,7 @@ let chickens;
 let chicken_y = 365;
 
 let placedBottles = [2400, 3900, 5500, 6000, 7300, 8000, 8500, 9150, 10250, 11000];
-let collectedBottles = 100;
+let collectedBottles = 20;
 let lastThrowStarted = new Date().getTime();
 let thrown_bottle_x;
 let thrown_bottle_y;
@@ -181,16 +183,14 @@ let characterImages = {
             'img/character/dead/Dl-52.png',
             'img/character/dead/Dl-53.png',
             'img/character/dead/Dl-54.png',
-            'img/character/dead/Dl-55.png',
-            'img/character/dead/Dl-56.png'
+            'img/character/dead/Dl-55.png'
         ],
         [
             'img/character/dead/Dr-51.png',
             'img/character/dead/Dr-52.png',
             'img/character/dead/Dr-53.png',
             'img/character/dead/Dr-54.png',
-            'img/character/dead/Dr-55.png',
-            'img/character/dead/Dr-56.png'
+            'img/character/dead/Dr-55.png'
         ]
     ]
 };

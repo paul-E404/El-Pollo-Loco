@@ -43,7 +43,7 @@ function draw() {
     drawThrownBottle();
     drawBrokenBottle();
     updateCharacter();
-    
+
     //requestAnimationFrame(function): webbrowser takes the ressources it needs from the graphic card in order to update the frame.
     //This is a less flickering alternative to setInterval.
     requestAnimationFrame(draw);
@@ -90,30 +90,34 @@ function listenForKeys() {
 function keyDown() {
     //If a special key is pressed
     document.addEventListener('keydown', function (e) {
+
         //e.key bedeutet, ich möchte von dem JSON Event des keys namens "code" den value und dieser ist "ArrowRight" etc.
         let key = e.code; // z.B. "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
-        if (key == "ArrowRight") {
-            isMovingRight = true;
-            lastMove = "right";
-            /* character_x = character_x + 5; */
-        }
-        if (key == "ArrowLeft") {
-            isMovingLeft = true;
-            lastMove = "left";
-            /* character_x = character_x - 5; */
+
+        if (character_x > -150 && character_x < canvas.width && character_y > 0 && character_y < canvas.height) {
+
+            if (key == "ArrowRight") {
+                isMovingRight = true;
+                lastMove = "right";
+                /* character_x = character_x + 5; */
+            }
+            if (key == "ArrowLeft") {
+                isMovingLeft = true;
+                lastMove = "left";
+                /* character_x = character_x - 5; */
+            }
+
+            //Erst wenn die JUMP TIME vorüber ist, darf ein neuer Sprung begonnen werden.
+            //Daher muss die Zeit seit dem letzten Sprung größer als die Sprungzeit sein (also außerhalb dieser Zeit liegen).
+            //JUMP_TIME * 2, da wir JUMP_TIME hochspringen und JUMP_TIME runterfallen (ein Sprung).
+            if ((key == "Space" || key == "ArrowUp") && timePassedSinceJump > JUMP_TIME * 2) {
+                lastJumpStarted = new Date().getTime();         //Unix Timestamp
+                checkJumpDirection();
+                AUDIO_CHARACTER_JUMPING.play();
+                AUDIO_CHARACTER_SNORING.pause();
+            }
         }
 
-        let timePassedSinceJump = new Date().getTime() - lastJumpStarted;
-        //Erst wenn die JUMP TIME vorüber ist, darf ein neuer Sprung begonnen werden.
-        //Daher muss die Zeit seit dem letzten Sprung größer als die Sprungzeit sein (also außerhalb dieser Zeit liegen).
-        //JUMP_TIME * 2, da wir JUMP_TIME hochspringen und JUMP_TIME runterfallen (ein Sprung).
-        if ((key == "Space" || key == "ArrowUp") && timePassedSinceJump > JUMP_TIME * 2) {
-            lastJumpStarted = new Date().getTime();         //Unix Timestamp
-            timePassedSinceLastMove = new Date().getTime();
-            checkJumpDirection();
-            AUDIO_CHARACTER_JUMPING.play();
-            AUDIO_CHARACTER_SNORING.pause();
-        }
 
         if (key == "KeyD") {
             if (collectedBottles > 0) {

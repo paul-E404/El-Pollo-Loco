@@ -377,7 +377,7 @@ function reduceBossEnergy() {
         bossAlmostDead = true;
     }
     else if (boss_energy == 0) {
-        setTimeout(function() {
+        setTimeout(function () {
             AUDIO_BOSS_DEAD.play();
             AUDIO_EXPLOSION.play();
         }, BOSS_HIT_TIME);
