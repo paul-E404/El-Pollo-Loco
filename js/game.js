@@ -40,16 +40,22 @@ function draw() {
     drawBottles();
     drawChicken();
     let timePassed = new Date().getTime() - timeWhenBossReached;
-    if (reachedBoss == true && timePassed > BOSS_INTRO_PLAYING_TIME) {
+    if (reachedBoss == true && timePassed > BOSS_INTRO_PLAYING_TIME && gameLost == false) {
         updateBoss();
     }
     drawThrownBottle();
     drawBrokenBottle();
     updateCharacter();
 
-    if (gameWon == true && timeForEndscreen == true) {
-        drawScreen('won');
+    if (timeForEndscreen == true) {
+        if (gameWon == true) {
+            drawScreen('won');
+        }
+        else if (gameLost == true) {
+            drawScreen('lost');
+        }
     }
+
 
     //requestAnimationFrame(function): webbrowser takes the ressources it needs from the graphic card in order to update the frame.
     //This is a less flickering alternative to setInterval.
@@ -58,23 +64,23 @@ function draw() {
 
 
 function startTitleSong() {
-    AUDIO_MEXICAN_SONG.volume = 0.5;
+    AUDIO_MEXICAN_SONG.volume = 0.3;
     AUDIO_MEXICAN_SONG.play();
     AUDIO_MEXICAN_SONG.loop = true;
 }
 
 function startBossMusic() {
- 
-    AUDIO_BOSS_MUSIC_INTRO.volume = 0.7;
-    AUDIO_BOSS_MUSIC.volume = 0.5;
+
+    AUDIO_BOSS_MUSIC_INTRO.volume = 0.4;
+    AUDIO_BOSS_MUSIC.volume = 0.4;
 
     AUDIO_BOSS_MUSIC_INTRO.play();
 
-    setTimeout(function() {
+    setTimeout(function () {
         AUDIO_BOSS_MUSIC_INTRO.pause();
         AUDIO_BOSS_MUSIC.play();
         AUDIO_BOSS_MUSIC.loop = true;
-        
+
     }, BOSS_INTRO_PLAYING_TIME);
 }
 
@@ -113,44 +119,49 @@ function keyDown() {
     //If a special key is pressed
     document.addEventListener('keydown', function (e) {
 
-        //e.key bedeutet, ich möchte von dem JSON Event des keys namens "code" den value und dieser ist "ArrowRight" etc.
-        let key = e.code; // z.B. "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
+        //user can no longer make any movements when game is lost
+        if (gameLost != true) {
+            //e.key bedeutet, ich möchte von dem JSON Event des keys namens "code" den value und dieser ist "ArrowRight" etc.
+            let key = e.code; // z.B. "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
 
-        if (key == "ArrowRight") {
-            isMovingRight = true;
-            lastMove = "right";
-        }
-        if (key == "ArrowLeft") {
-            isMovingLeft = true;
-            lastMove = "left";
-        }
+            if (key == "ArrowRight") {
+                isMovingRight = true;
+                lastMove = "right";
+            }
+            if (key == "ArrowLeft") {
+                isMovingLeft = true;
+                lastMove = "left";
+            }
 
-        //Erst wenn die JUMP TIME vorüber ist, darf ein neuer Sprung begonnen werden.
-        //Daher muss die Zeit seit dem letzten Sprung größer als die Sprungzeit sein (also außerhalb dieser Zeit liegen).
-        //JUMP_TIME * 2, da wir JUMP_TIME hochspringen und JUMP_TIME runterfallen (ein Sprung).
-        if ((key == "Space" || key == "ArrowUp") && timePassedSinceJump > JUMP_TIME * 2) {
-            lastJumpStarted = new Date().getTime();         //Unix Timestamp
-            checkJumpDirection();
-            AUDIO_CHARACTER_JUMPING.play();
-            AUDIO_CHARACTER_SNORING.pause();
-        }
+            //Erst wenn die JUMP TIME vorüber ist, darf ein neuer Sprung begonnen werden.
+            //Daher muss die Zeit seit dem letzten Sprung größer als die Sprungzeit sein (also außerhalb dieser Zeit liegen).
+            //JUMP_TIME * 2, da wir JUMP_TIME hochspringen und JUMP_TIME runterfallen (ein Sprung).
+            if ((key == "Space" || key == "ArrowUp") && timePassedSinceJump > JUMP_TIME * 2) {
+                lastJumpStarted = new Date().getTime();         //Unix Timestamp
+                checkJumpDirection();
+                AUDIO_CHARACTER_JUMPING.play();
+                AUDIO_CHARACTER_SNORING.pause();
+            }
 
 
-        if (key == "KeyD") {
-            if (collectedBottles > 0) {
-                //Ensures that a new throw can only be started when the old one has finished
-                if (timePassedSinceThrow > THROW_TIME) {
-                    //let timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
-                    lastThrowStarted = new Date().getTime();
-                    collectedBottles--;
-                    if (lastMove == 'left') {
-                        bottleThrowingDirection = 'left';
-                    } else if (lastMove == 'right') {
-                        bottleThrowingDirection = 'right';
+            if (key == "KeyD") {
+                if (collectedBottles > 0) {
+                    //Ensures that a new throw can only be started when the old one has finished
+                    if (timePassedSinceThrow > THROW_TIME) {
+                        //let timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
+                        lastThrowStarted = new Date().getTime();
+                        collectedBottles--;
+                        if (lastMove == 'left') {
+                            bottleThrowingDirection = 'left';
+                        } else if (lastMove == 'right') {
+                            bottleThrowingDirection = 'right';
+                        }
                     }
                 }
             }
         }
+
+
     });
 }
 
@@ -183,26 +194,51 @@ function keyUp() {
 
 
 
-function finishLevel() {
+function finishGameWon() {
     setTimeout(function () {
         AUDIO_BOSS_DEAD.play();
         AUDIO_EXPLOSION.play();
         chickens = [];
     }, BOSS_HIT_TIME);
-    
+
     setTimeout(function () {
         AUDIO_MEXICAN_SONG.play();
-    }, BOSS_DYING_TIME) 
+    }, BOSS_DYING_TIME)
 
-    setTimeout(function() {
+    setTimeout(function () {
         timeForEndscreen = true;
     }, BOSS_DYING_TIME + 3000);
 }
 
+function finishGameLost() {
+
+    AUDIO_MEXICAN_SONG.pause();
+    AUDIO_BOSS_MUSIC_INTRO.pause();
+    AUDIO_BOSS_MUSIC.pause();
+    chickens = [];
+    AUDIO_CHICKEN_CROWD.pause();
+
+    setTimeout(function () {
+        AUDIO_GAME_LOST.play();
+    }, CHARACTER_DYING_TIME + 1000)
+    setTimeout(function() {
+        timeForEndscreen = true;
+    }, CHARACTER_DYING_TIME + 4000);
+    setTimeout(function() {
+        AUDIO_GAME_LOST_MUSIC.volume = 0.7;
+        AUDIO_GAME_LOST_MUSIC.play();
+        AUDIO_GAME_LOST_MUSIC.loop = true;
+    }, CHARACTER_DYING_TIME + 5000)
+}
+
 
 function drawScreen(status) {
+    let image;
     if (status == 'won') {
-        let image = backgroundImages['screens'][1];
-        addBackgroundImage(image, 0, 0, 0);
+        image = backgroundImages['screens'][1];
     }
+    else if (status == 'lost') {
+        image = backgroundImages['screens'][2];
+    }
+    addBackgroundImage(image, 0, 0, 0);
 }

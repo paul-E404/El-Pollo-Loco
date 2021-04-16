@@ -388,7 +388,7 @@ function reduceBossEnergy() {
         bossDead = true;
         bossAlmostDead = false;
         bossDyingStarted = new Date().getTime();
-        finishLevel();
+        finishGameWon();
     }
 }
 

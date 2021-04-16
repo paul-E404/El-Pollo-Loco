@@ -293,6 +293,8 @@ function reduceCharacterEnergy() {
             checkDyingDirection();
             lastJumpStarted = new Date().getTime();
             collectedBottles = 0;
+            gameLost = true;
+            finishGameLost();
         }
     }
 

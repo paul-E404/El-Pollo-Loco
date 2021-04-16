@@ -64,6 +64,7 @@ let bossDyingStarted = new Date().getTime();
 let currentSauceImage = new Image;
 
 let gameWon = false;
+let gameLost = false;
 let timeForEndscreen = false;
 
 
@@ -85,6 +86,8 @@ const BOSS_INTRO_PLAYING_TIME = 9000;
 const AUDIO_MEXICAN_SONG = new Audio('audio/mexican_song.mp3');
 const AUDIO_BOSS_MUSIC_INTRO = new Audio ('audio/boss_music_intro.mp3');
 const AUDIO_BOSS_MUSIC = new Audio ('audio/boss_music2.mp3');
+const AUDIO_GAME_LOST_MUSIC = new Audio ('audio/game_lost_music.mp3');
+
 const AUDIO_CHARACTER_RUNNING = new Audio('audio/character_running.mp3');
 const AUDIO_CHARACTER_JUMPING = new Audio('audio/character_jumping.mp3');
 const AUDIO_CHARACTER_SNORING = new Audio('audio/character_snoring.mp3');
@@ -100,6 +103,7 @@ const AUDIO_BOSS_HIT = new Audio ('audio/boss_hit.mp3');
 const AUDIO_BOSS_ANGRY = new Audio ('audio/boss_angry.mp3');
 const AUDIO_BOSS_DEAD = new Audio ('audio/boss_dead.mp3');
 const AUDIO_EXPLOSION = new Audio ('audio/explosion.mp3');
+const AUDIO_GAME_LOST = new Audio ('audio/game_lost.mp3');
 
 
 //Image Object with all character images
@@ -280,7 +284,7 @@ let backgroundImages = {
     screens: [
         'img/bg/screens/startscreen.png',
         'img/bg/screens/gameover.png',
-        'img/bg/screens/you_won.png'
+        'img/bg/screens/you_lost.png'
     ]
 }
 
