@@ -22,7 +22,7 @@ function init() {
     checkForDying();
     draw();
     listenForKeys();
-    //startTitleSong();
+    startTitleSong();
 }
 
 
@@ -32,19 +32,24 @@ function init() {
  */
 function draw() {
     //Verhindert dass die Hintergrundbilder mehrfach angezeigt werden. Kann ggf. am Ende entfernt werden.
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    /* ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height); */
     drawBackground();
     drawEnergyBar();
     drawDisplay();
     drawBottles();
     drawChicken();
-    if (reachedBoss == true) {
+    let timePassed = new Date().getTime() - timeWhenBossReached;
+    if (reachedBoss == true && timePassed > BOSS_INTRO_PLAYING_TIME) {
         updateBoss();
     }
     drawThrownBottle();
     drawBrokenBottle();
     updateCharacter();
+
+    if (gameWon == true && timeForEndscreen == true) {
+        drawScreen('won');
+    }
 
     //requestAnimationFrame(function): webbrowser takes the ressources it needs from the graphic card in order to update the frame.
     //This is a less flickering alternative to setInterval.
@@ -53,14 +58,16 @@ function draw() {
 
 
 function startTitleSong() {
-    const AUDIO_MEXICAN_SONG = new Audio('audio/mexican_song.mp3');
-    AUDIO_MEXICAN_SONG.volume = 0.3;
+    AUDIO_MEXICAN_SONG.volume = 0.5;
     AUDIO_MEXICAN_SONG.play();
     AUDIO_MEXICAN_SONG.loop = true;
 }
 
 function startBossMusic() {
  
+    AUDIO_BOSS_MUSIC_INTRO.volume = 0.7;
+    AUDIO_BOSS_MUSIC.volume = 0.5;
+
     AUDIO_BOSS_MUSIC_INTRO.play();
 
     setTimeout(function() {
@@ -68,7 +75,7 @@ function startBossMusic() {
         AUDIO_BOSS_MUSIC.play();
         AUDIO_BOSS_MUSIC.loop = true;
         
-    }, 9000);
+    }, BOSS_INTRO_PLAYING_TIME);
 }
 
 /**
@@ -175,3 +182,27 @@ function keyUp() {
 }
 
 
+
+function finishLevel() {
+    setTimeout(function () {
+        AUDIO_BOSS_DEAD.play();
+        AUDIO_EXPLOSION.play();
+        chickens = [];
+    }, BOSS_HIT_TIME);
+    
+    setTimeout(function () {
+        AUDIO_MEXICAN_SONG.play();
+    }, BOSS_DYING_TIME) 
+
+    setTimeout(function() {
+        timeForEndscreen = true;
+    }, BOSS_DYING_TIME + 3000);
+}
+
+
+function drawScreen(status) {
+    if (status == 'won') {
+        let image = backgroundImages['screens'][1];
+        addBackgroundImage(image, 0, 0, 0);
+    }
+}

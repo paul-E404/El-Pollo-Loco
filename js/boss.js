@@ -51,7 +51,9 @@ function checkForBossAction() {
                 bossAttackFinal();
             }
             else if (bossDead == true) {
+                AUDIO_BOSS_MUSIC.pause();
                 bossDying();
+                gameWon = true;
             }
             else if (bossWalk == true) {
                 bossWalking();
@@ -333,8 +335,9 @@ function checkForThrownBottleHit() {
         let thrown_bottle_image_height_half = thrown_bottle_image_height / 2;
         let thrown_bottle_y_axis = thrown_bottle_y + thrown_bottle_image_height_half;
 
+        let timePassed = new Date().getTime() - timeWhenBossReached;
 
-        if (reachedBoss == true) {
+        if (reachedBoss == true && timePassed > BOSS_INTRO_PLAYING_TIME) {
             //second step: make sure that boss is not already dying
             let timePassed = new Date().getTime() - bossDyingStarted;
             if (timePassed > BOSS_DYING_TIME) {
@@ -384,13 +387,9 @@ function reduceBossEnergy() {
         AUDIO_BOSS_ANGRY.pause();
         bossDead = true;
         bossAlmostDead = false;
-        setTimeout(function () {
-            AUDIO_BOSS_DEAD.play();
-            AUDIO_EXPLOSION.play();
-        }, BOSS_HIT_TIME);
         bossDyingStarted = new Date().getTime();
+        finishLevel();
     }
-    console.log("boss_energy", boss_energy);
 }
 
 

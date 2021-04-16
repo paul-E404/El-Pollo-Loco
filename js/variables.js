@@ -32,7 +32,7 @@ let characterDyingStarted = new Date().getTime();
 let chickens;
 let chicken_y = 365;
 
-let placedBottles = [2400, 3900, 5500, 6000, 7300, 8000, 8500, 9150, 10250, 11000];
+let placedBottles = [2400, 3900, 5500, 6000, 6500, 7300, 7500, 8000, 8500, 8750, 9150, 10250, 10500, 10790, 11000];
 let collectedBottles = 20;
 let lastThrowStarted = new Date().getTime();
 let thrown_bottle_x;
@@ -63,6 +63,9 @@ let bossDyingStarted = new Date().getTime();
 
 let currentSauceImage = new Image;
 
+let gameWon = false;
+let timeForEndscreen = false;
+
 
 
 // ------------------- Game config
@@ -75,8 +78,9 @@ const MIN_CHICKEN_SPEED = 2;
 const THROW_TIME = 1400;
 const BOTTLE_BREAK_TIME = 500;
 const BOSS_HIT_TIME = 500;
-const BOSS_DYING_TIME = 2000;
+const BOSS_DYING_TIME = 4000;
 const CHARACTER_DYING_TIME = 500;
+const BOSS_INTRO_PLAYING_TIME = 9000;
 
 const AUDIO_MEXICAN_SONG = new Audio('audio/mexican_song.mp3');
 const AUDIO_BOSS_MUSIC_INTRO = new Audio ('audio/boss_music_intro.mp3');
@@ -272,6 +276,11 @@ let backgroundImages = {
         'img/bg/sky/clouds1.png',
         'img/bg/sky/clouds2.png',
         'img/bg/sky/storm.jpg'
+    ],
+    screens: [
+        'img/bg/screens/startscreen.png',
+        'img/bg/screens/gameover.png',
+        'img/bg/screens/you_won.png'
     ]
 }
 

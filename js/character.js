@@ -230,18 +230,22 @@ function checkForCollision() {
             let boss_axis = boss_x + boss_image_width_half;
 
             //console.log("boss_axis", boss_axis, "character_axis", character_axis);
-
-            if (character_axis < (boss_axis + boss_image_width_half) && character_axis > (boss_axis - boss_image_width_half)) {
-                if (boss_y > 0 && boss_y < 800 && character_y > 0 && character_y < 500) {
-                    console.log("Kollision mit BOSS! Nr.:", counter);
-                    counter++;
-                    checkCollisionDirection();
-                    //Prevent character from falling sleep
-                    lastMoveFinished = new Date().getTime();
-                    AUDIO_CHARACTER_SNORING.pause();
-                    reduceCharacterEnergy();
+            let timePassed = new Date().getTime() - timeWhenBossReached;
+            if (timePassed > BOSS_INTRO_PLAYING_TIME) {
+                
+                if (character_axis < (boss_axis + boss_image_width_half) && character_axis > (boss_axis - boss_image_width_half)) {
+                    if (boss_y > 0 && boss_y < 800 && character_y > 0 && character_y < 500) {
+                        console.log("Kollision mit BOSS! Nr.:", counter);
+                        counter++;
+                        checkCollisionDirection();
+                        //Prevent character from falling sleep
+                        lastMoveFinished = new Date().getTime();
+                        AUDIO_CHARACTER_SNORING.pause();
+                        reduceCharacterEnergy();
+                    }
                 }
             }
+
 
         }, 100);
     }

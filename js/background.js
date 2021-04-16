@@ -17,6 +17,7 @@
         bossMusicStarted = true;
         reachedBoss = true;
         timeWhenBossReached = new Date().getTime();
+        AUDIO_MEXICAN_SONG.pause();
         startBossMusic();
     }
 
@@ -65,7 +66,7 @@
  */
  function drawSky() {
     for (let i = 0; i < PLAYING_FIELD_LENGTH; i++) {
-        if (reachedBoss == false) {
+        if (reachedBoss == false || gameWon == true) {
             addBackgroundImage(backgroundImages.sky[0], bg_sky_x, bg_element_y, i);
         }
         else if (reachedBoss == true) {
