@@ -333,24 +333,28 @@ function checkForThrownBottleHit() {
         let thrown_bottle_image_height_half = thrown_bottle_image_height / 2;
         let thrown_bottle_y_axis = thrown_bottle_y + thrown_bottle_image_height_half;
 
-        //second step: make sure that boss is not already dying
-        let timePassed = new Date().getTime() - bossDyingStarted;
-        if (timePassed > BOSS_DYING_TIME) {
-            //let counter = 0;
-            //third step: check for axial collision
-            if (thrown_bottle_x_axis < (boss_x_axis + boss_image_width_half) && thrown_bottle_x_axis > (boss_x_axis - boss_image_width_half)) {
-                if (thrown_bottle_y_axis < (boss_y_axis + boss_image_height_half) && thrown_bottle_y_axis > (boss_y_axis - boss_image_height_half / 2)) {
-                    //counter++;
-                    //console.log("Treffer! Nr.: ", counter);
-                    reduceBossEnergy();
-                    lastHitStarted = new Date().getTime();
-                    broken_bottle_x = thrown_bottle_x;
-                    broken_bottle_y = thrown_bottle_y;
-                    animateBottleBreak();
-                    checkBossHitDirection();
+
+        if (reachedBoss == true) {
+            //second step: make sure that boss is not already dying
+            let timePassed = new Date().getTime() - bossDyingStarted;
+            if (timePassed > BOSS_DYING_TIME) {
+                //let counter = 0;
+                //third step: check for axial collision
+                if (thrown_bottle_x_axis < (boss_x_axis + boss_image_width_half) && thrown_bottle_x_axis > (boss_x_axis - boss_image_width_half)) {
+                    if (thrown_bottle_y_axis < (boss_y_axis + boss_image_height_half) && thrown_bottle_y_axis > (boss_y_axis - boss_image_height_half / 2)) {
+                        //counter++;
+                        //console.log("Treffer! Nr.: ", counter);
+                        reduceBossEnergy();
+                        lastHitStarted = new Date().getTime();
+                        broken_bottle_x = thrown_bottle_x;
+                        broken_bottle_y = thrown_bottle_y;
+                        animateBottleBreak();
+                        checkBossHitDirection();
+                    }
                 }
             }
         }
+
 
     }, 50);
 }
@@ -370,17 +374,20 @@ function reduceBossEnergy() {
         firstBossHit = true;
     }
     if (boss_energy <= 40 && boss_energy > 0) {
+        AUDIO_BOSS_HIT.pause();
         AUDIO_BOSS_ANGRY.play();
+
         firstBossHit = false;
         bossAlmostDead = true;
     }
     else if (boss_energy == 0) {
+        AUDIO_BOSS_ANGRY.pause();
+        bossDead = true;
+        bossAlmostDead = false;
         setTimeout(function () {
             AUDIO_BOSS_DEAD.play();
             AUDIO_EXPLOSION.play();
         }, BOSS_HIT_TIME);
-        bossAlmostDead = false;
-        bossDead = true;
         bossDyingStarted = new Date().getTime();
     }
     console.log("boss_energy", boss_energy);

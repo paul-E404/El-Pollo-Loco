@@ -4,13 +4,15 @@ let ctx;
 let bg_sky_x = -270;
 let bg3_ground_x = -270;   //alle -270
 let bg2_ground_x = -270;
-let bg1_ground_x = -270;
+let bg1_ground_x = -11000;
 let bg_ground_x_min = -10;    //Verhindert, dass character unendlich nach links laufen kann
 let bg_ground_x_max;        //Verhindert, dass character unendlich nach rechts laufen kann
 let bg_element_y = 0;
 let cloud_offset = 0;
 let wallRight;
 let reachedBoss = false;
+let timeWhenBossReached = new Date().getTime();
+let bossMusicStarted = false;
 
 let character_x = 100;
 let character_y = 100;
@@ -41,7 +43,7 @@ let broken_bottle_y;
 let bottleThrowingDirection;
 
 let currentBossImage = new Image;
-let boss_x = 500; //ehem. 500
+let boss_x = 500;
 let boss_y = 105;
 let boss_energy = 100;
 let bossSpeed = 500;
@@ -77,6 +79,8 @@ const BOSS_DYING_TIME = 2000;
 const CHARACTER_DYING_TIME = 500;
 
 const AUDIO_MEXICAN_SONG = new Audio('audio/mexican_song.mp3');
+const AUDIO_BOSS_MUSIC_INTRO = new Audio ('audio/boss_music_intro.mp3');
+const AUDIO_BOSS_MUSIC = new Audio ('audio/boss_music2.mp3');
 const AUDIO_CHARACTER_RUNNING = new Audio('audio/character_running.mp3');
 const AUDIO_CHARACTER_JUMPING = new Audio('audio/character_jumping.mp3');
 const AUDIO_CHARACTER_SNORING = new Audio('audio/character_snoring.mp3');
@@ -266,7 +270,8 @@ let backgroundImages = {
     sky: [
         'img/bg/sky/sky.png',
         'img/bg/sky/clouds1.png',
-        'img/bg/sky/clouds2.png'
+        'img/bg/sky/clouds2.png',
+        'img/bg/sky/storm.jpg'
     ]
 }
 

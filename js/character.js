@@ -232,7 +232,7 @@ function checkForCollision() {
             //console.log("boss_axis", boss_axis, "character_axis", character_axis);
 
             if (character_axis < (boss_axis + boss_image_width_half) && character_axis > (boss_axis - boss_image_width_half)) {
-                if (boss_y > 0 && boss_y < 800) {
+                if (boss_y > 0 && boss_y < 800 && character_y > 0 && character_y < 500) {
                     console.log("Kollision mit BOSS! Nr.:", counter);
                     counter++;
                     checkCollisionDirection();
@@ -264,7 +264,10 @@ function collision(currentImages) {
     let index = character_hurt_index % currentImages.length;
     currentCharacterImage = currentImages[index];
     character_hurt_index++;
-    AUDIO_CHARACTER_HURT.play();
+    //a dead character can no longer scream when hit
+    if (characterDead != true) {
+        AUDIO_CHARACTER_HURT.play();
+    }
 }
 
 

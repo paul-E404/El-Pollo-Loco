@@ -39,7 +39,9 @@ function draw() {
     drawDisplay();
     drawBottles();
     drawChicken();
-    updateBoss();
+    if (reachedBoss == true) {
+        updateBoss();
+    }
     drawThrownBottle();
     drawBrokenBottle();
     updateCharacter();
@@ -52,8 +54,21 @@ function draw() {
 
 function startTitleSong() {
     const AUDIO_MEXICAN_SONG = new Audio('audio/mexican_song.mp3');
+    AUDIO_MEXICAN_SONG.volume = 0.3;
     AUDIO_MEXICAN_SONG.play();
     AUDIO_MEXICAN_SONG.loop = true;
+}
+
+function startBossMusic() {
+ 
+    AUDIO_BOSS_MUSIC_INTRO.play();
+
+    setTimeout(function() {
+        AUDIO_BOSS_MUSIC_INTRO.pause();
+        AUDIO_BOSS_MUSIC.play();
+        AUDIO_BOSS_MUSIC.loop = true;
+        
+    }, 9000);
 }
 
 /**
@@ -94,24 +109,24 @@ function keyDown() {
         //e.key bedeutet, ich möchte von dem JSON Event des keys namens "code" den value und dieser ist "ArrowRight" etc.
         let key = e.code; // z.B. "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
 
-            if (key == "ArrowRight") {
-                isMovingRight = true;
-                lastMove = "right";
-            }
-            if (key == "ArrowLeft") {
-                isMovingLeft = true;
-                lastMove = "left";
-            }
+        if (key == "ArrowRight") {
+            isMovingRight = true;
+            lastMove = "right";
+        }
+        if (key == "ArrowLeft") {
+            isMovingLeft = true;
+            lastMove = "left";
+        }
 
-            //Erst wenn die JUMP TIME vorüber ist, darf ein neuer Sprung begonnen werden.
-            //Daher muss die Zeit seit dem letzten Sprung größer als die Sprungzeit sein (also außerhalb dieser Zeit liegen).
-            //JUMP_TIME * 2, da wir JUMP_TIME hochspringen und JUMP_TIME runterfallen (ein Sprung).
-            if ((key == "Space" || key == "ArrowUp") && timePassedSinceJump > JUMP_TIME * 2) {
-                lastJumpStarted = new Date().getTime();         //Unix Timestamp
-                checkJumpDirection();
-                AUDIO_CHARACTER_JUMPING.play();
-                AUDIO_CHARACTER_SNORING.pause();
-            }
+        //Erst wenn die JUMP TIME vorüber ist, darf ein neuer Sprung begonnen werden.
+        //Daher muss die Zeit seit dem letzten Sprung größer als die Sprungzeit sein (also außerhalb dieser Zeit liegen).
+        //JUMP_TIME * 2, da wir JUMP_TIME hochspringen und JUMP_TIME runterfallen (ein Sprung).
+        if ((key == "Space" || key == "ArrowUp") && timePassedSinceJump > JUMP_TIME * 2) {
+            lastJumpStarted = new Date().getTime();         //Unix Timestamp
+            checkJumpDirection();
+            AUDIO_CHARACTER_JUMPING.play();
+            AUDIO_CHARACTER_SNORING.pause();
+        }
 
 
         if (key == "KeyD") {

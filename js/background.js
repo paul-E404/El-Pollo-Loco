@@ -13,8 +13,11 @@
     wallRight = bg1_ground_x <= bg_ground_x_max;
 
     //when character reaches the end of the game the background should stop moving
-    if (wallRight == true) {
+    if (wallRight == true && bossMusicStarted == false) {
+        bossMusicStarted = true;
         reachedBoss = true;
+        timeWhenBossReached = new Date().getTime();
+        startBossMusic();
     }
 
     //Different background layers move at different speeds and in different directions depending on the character's moving direction.
@@ -62,7 +65,12 @@
  */
  function drawSky() {
     for (let i = 0; i < PLAYING_FIELD_LENGTH; i++) {
-        addBackgroundImage(backgroundImages.sky[0], bg_sky_x, bg_element_y, i);
+        if (reachedBoss == false) {
+            addBackgroundImage(backgroundImages.sky[0], bg_sky_x, bg_element_y, i);
+        }
+        else if (reachedBoss == true) {
+            addBackgroundImage(backgroundImages.sky[3], 0, 0, i);
+        }
     }
     for (let i = 0; i < PLAYING_FIELD_LENGTH; i = i + 2) {
         addBackgroundImage(backgroundImages.sky[1], bg_sky_x - cloud_offset, bg_element_y, i);
