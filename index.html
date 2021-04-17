@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
 
     <script src="js/game.js"></script>
     <script src="js/variables.js"></script>
@@ -17,10 +22,33 @@
 
     <title>El Pollo Loco</title>
 </head>
-<body onload="init();">
-    <h1>El Pollo Loco!</h1>
 
-    <canvas id="canvas" width="805" height="500"></canvas>
+<body onload="init();">
+
+    <img class="background-image" src="img/background_dessert.jpg" alt="background-dessert">
+
+    <div class="content">
+        <div class="canvas-box">
+            <div class="controls">
+                <img class="control-icon" src="img/arrow_left.png" alt="arrow-left">
+                <img class="control-icon" src="img/arrow_right.png" alt="arrow-right">
+                <span>WALK</span>
+                <img class="control-icon" src="img/arrow_up.png" alt="arrow-up">
+                <img class="control-icon" src="img/space_button.png" alt="space-button">
+                <span>JUMP</span>
+                <img class="control-icon" src="img/d_button.png" alt="d-button">
+                <span>THROW BOTTLE</span>
+
+            </div>
+            <canvas id="canvas" width="805" height="500"></canvas>
+            <img class="startScreen" src="img/bg/screens/startscreen.png" alt="startscreen">
+        </div>
+    </div>
+
+    <!-- <a href="https://www.vecteezy.com/free-vector/desert">Desert Vectors by Vecteezy</a>
+    <a href="https://www.vecteezy.com/free-vector/nature">Nature Vectors by Vecteezy</a>
+<a href="https://www.vecteezy.com/free-vector/desert">Desert Vectors by Vecteezy</a> -->
 
 </body>
+
 </html>
