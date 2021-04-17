@@ -90,7 +90,7 @@ function startTitleSong() {
 
 function startBossMusic() {
 
-    AUDIO_BOSS_MUSIC_INTRO.volume = 0.4;
+    AUDIO_BOSS_MUSIC_INTRO.volume = 0.8;
     AUDIO_BOSS_MUSIC.volume = 0.4;
 
     AUDIO_BOSS_MUSIC_INTRO.play();
@@ -250,7 +250,7 @@ function finishGameLost() {
     }, CHARACTER_DYING_TIME + 4000);
 
     setTimeout(function() {
-        AUDIO_GAME_LOST_MUSIC.volume = 0.7;
+        AUDIO_GAME_LOST_MUSIC.volume = 0.9;
         AUDIO_GAME_LOST_MUSIC.play();
         AUDIO_GAME_LOST_MUSIC.loop = true;
     }, CHARACTER_DYING_TIME + 5000);

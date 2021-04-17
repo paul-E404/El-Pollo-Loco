@@ -33,8 +33,8 @@ let characterDyingStarted = new Date().getTime();
 let chickens;
 let chicken_y = 365;
 
-let placedBottles = [2400, 3900, 5500, 6000, 6500, 7300, 7500, 8000, 8500, 860, 9150, 10250, 10300, 10350, 10500];
-let collectedBottles = 20;
+let placedBottles = [2400, 3900, 5500, 6000, 6500, 7300, 7500, 8000, 8500, 8060, 9150, 9450, 9700, 10350, 10500];
+let collectedBottles = 15;
 let lastThrowStarted = new Date().getTime();
 let thrown_bottle_x;
 let thrown_bottle_y;
@@ -316,7 +316,6 @@ let chickenImages = {
 let objectImages = {
     display: [
         'img/objects/heart.png',
-        'img/objects/coin.png',
         'img/objects/bottle.png',
         'img/objects/boss.png'
     ],

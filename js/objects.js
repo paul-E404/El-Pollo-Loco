@@ -18,8 +18,7 @@ function drawEnergyBar() {
 function drawDisplay() {
 
     let heart = objectImages.display[0];
-    let coin = objectImages.display[1];
-    let bottle = objectImages.display[2];
+    let bottle = objectImages.display[1];
 
 
     addObject(heart, 10, 0, 0.5);
@@ -28,8 +27,6 @@ function drawDisplay() {
     ctx.font = "28px sans-serif";
     ctx.fillStyle = "brown";
     ctx.fillText("x " + collectedBottles, 330, 58);
-
-    addObject(coin, 400, 15, 0.4);
 }
 
 

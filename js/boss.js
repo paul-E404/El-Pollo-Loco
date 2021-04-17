@@ -23,7 +23,7 @@ function drawBossEnergy() {
     ctx.fillRect(boss_x + 55, boss_y - 5, 210, 30);
     ctx.globalAlpha = 1;
 
-    let boss_icon = objectImages.display[3];
+    let boss_icon = objectImages.display[2];
     addObject(boss_icon, boss_x + 10, boss_y - 25, 0.45);
 }
 
@@ -368,8 +368,8 @@ function checkForThrownBottleHit() {
  */
 function reduceBossEnergy() {
 
-    if (boss_energy >= 10) {
-        boss_energy = boss_energy - 10;
+    if (boss_energy >= 5) {
+        boss_energy = boss_energy - 5;
     }
     if (boss_energy < 100 && boss_energy > 40) {
         AUDIO_BOSS_HIT.play();

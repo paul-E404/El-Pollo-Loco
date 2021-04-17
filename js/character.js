@@ -207,6 +207,12 @@ function checkForCollision() {
                         //Prevent character from falling sleep
                         lastMoveFinished = new Date().getTime();
                         AUDIO_CHARACTER_SNORING.pause();
+                        if(chicken.type == "brown" && chicken.scale == 0.7) {
+                            console.log("Sonderfall erreicht!");
+                            //reduce extra energy
+                            character_energy = character_energy - 20;
+                            reduceCharacterEnergy();
+                        }
                         reduceCharacterEnergy();
                     }
 
