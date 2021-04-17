@@ -5,7 +5,7 @@ let ctx;
 let bg_sky_x = -270;
 let bg3_ground_x = -270;   //alle -270
 let bg2_ground_x = -270;
-let bg1_ground_x = -11000;
+let bg1_ground_x = -270;
 let bg_ground_x_min = -10;    //Verhindert, dass character unendlich nach links laufen kann
 let bg_ground_x_max;        //Verhindert, dass character unendlich nach rechts laufen kann
 let bg_element_y = 0;

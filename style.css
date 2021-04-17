@@ -116,7 +116,7 @@ body {
     cursor: pointer;
 }
 
-.game-description {
+.game-info {
     position: absolute;
     height: 40px;
     width: 809px;
@@ -129,4 +129,11 @@ body {
     justify-content: space-evenly;
     align-items: center;
     font-size: 1.4em;
+}
+
+.bottom-link {
+    position: absolute;
+    bottom: 16px;
+    color: black;
+    text-decoration: none;
 }

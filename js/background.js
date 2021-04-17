@@ -19,6 +19,7 @@
         timeWhenBossReached = new Date().getTime();
         AUDIO_MEXICAN_SONG.pause();
         startBossMusic();
+        document.getElementById('game-info-text').innerHTML = 'Trow bottles by pressing D!';
     }
 
     //Different background layers move at different speeds and in different directions depending on the character's moving direction.

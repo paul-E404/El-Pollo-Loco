@@ -239,6 +239,7 @@ function finishGameWon() {
 
     setTimeout(function () {
         timeForEndscreen = true;
+        document.getElementById('game-info-text').innerHTML = 'Congratulations! You won!';
     }, BOSS_DYING_TIME + 3000);
 
     setTimeout(function () {
@@ -263,9 +264,10 @@ function finishGameLost() {
     }, CHARACTER_DYING_TIME + 1000)
 
     setTimeout(function () {
-        //It is necessary to pause AUDIO_BOSS_MUSIC several times for the case character is dying when
+        //It is necessary to pause AUDIO_BOSS_MUSIC several times for the case character is dying when boss has already been reached.
         AUDIO_BOSS_MUSIC.pause();
         timeForEndscreen = true;
+        document.getElementById('game-info-text').innerHTML = 'Try it again!';
     }, CHARACTER_DYING_TIME + 4000);
 
     setTimeout(function () {
