@@ -50,15 +50,18 @@ function checkForRelaxing() {
         let timeForRelax = timePassedSinceLastMove > JUMP_TIME * 2 && timePassedSinceLastMove < JUMP_TIME * 20;
         let timeForSleep = timePassedSinceLastMove > JUMP_TIME * 20;
 
-        if (isMovingLeft == false && isMovingRight == false) {
-            if (timeForRelax == true) {
-                checkRelaxingDirection();
-            }
-            else if (timeForSleep == true) {
-                AUDIO_CHARACTER_SNORING.play();
-                checkSleepingDirection();
+        if (gameLost != true) {
+            if (isMovingLeft == false && isMovingRight == false) {
+                if (timeForRelax == true) {
+                    checkRelaxingDirection();
+                }
+                else if (timeForSleep == true) {
+                    AUDIO_CHARACTER_SNORING.play();
+                    checkSleepingDirection();
+                }
             }
         }
+        
 
     }, 300);
 }

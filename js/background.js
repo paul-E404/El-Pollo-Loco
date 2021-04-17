@@ -22,7 +22,7 @@
     }
 
     //Different background layers move at different speeds and in different directions depending on the character's moving direction.
-    if (isMovingRight == true && wallRight == false && reachedBoss == false) {
+    if (isMovingRight == true && wallRight == false && reachedBoss == false && gameLost == false) {
         bg3_ground_x = bg3_ground_x - GAME_SPEED * 0.2;
         bg2_ground_x = bg2_ground_x - GAME_SPEED * 0.4;
         bg1_ground_x = bg1_ground_x - GAME_SPEED;
@@ -40,7 +40,7 @@
         //console.log(character_x);
     }
 
-    if (isMovingLeft == true && wallLeft == false && reachedBoss == false) {
+    if (isMovingLeft == true && wallLeft == false && reachedBoss == false && gameLost == false) {
         bg3_ground_x = bg3_ground_x + GAME_SPEED * 0.2;
         bg2_ground_x = bg2_ground_x + GAME_SPEED * 0.4;
         bg1_ground_x = bg1_ground_x + GAME_SPEED;

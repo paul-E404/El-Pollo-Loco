@@ -108,3 +108,25 @@ body {
     bottom: 0;
     z-index: 1;
 }
+
+.fullscreen-icon {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    cursor: pointer;
+}
+
+.game-description {
+    position: absolute;
+    height: 40px;
+    width: 809px;
+    bottom: -40px;
+    left: -2px;
+    right: -2px;
+    top: 500px;
+    background-color: white;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    font-size: 1.4em;
+}

@@ -1,18 +1,20 @@
+/**
+ * Hides startscreen elements and shows canvas.
+ */
 function startGame() {
-    
+
     document.getElementById('startScreen').classList.add('d-none');
     document.getElementById('start-game-btn').classList.add('d-none');
-    
+
     init();
 }
 
-function restartGame() {
-    /* document.getElementById('restart-game-btn').classList.add('d-none');
-    timeForEndscreen = false;
-    AUDIO_GAME_LOST_MUSIC.pause(); */
- 
-    location.reload();
 
+/**
+ * Reloads the page.
+ */
+function restartGame() {
+    location.reload();
 }
 
 
@@ -30,21 +32,23 @@ function preload() {
     preloadCharakterImages(bossImages);
 }
 
-function init() {
 
-        createChickenList();
-        calculateChickenPosition();
-        calculateChickenImages();
-        checkForRelaxing();
-        checkForRunning();
-        checkForCollision();
-        checkForThrownBottleHit();
-        checkForBossAction();
-        checkForDying();
-        draw();
-        listenForKeys();
-        startTitleSong();
-    
+/**
+ * Starts all important functions to make the game running.
+ */
+function init() {
+    createChickenList();
+    calculateChickenPosition();
+    calculateChickenImages();
+    checkForRelaxing();
+    checkForRunning();
+    checkForCollision();
+    checkForThrownBottleHit();
+    checkForBossAction();
+    checkForDying();
+    draw();
+    listenForKeys();
+    startTitleSong();
 }
 
 
@@ -75,19 +79,25 @@ function draw() {
         }
     }
 
-
     //requestAnimationFrame(function): webbrowser takes the ressources it needs from the graphic card in order to update the frame.
     //This is a less flickering alternative to setInterval.
     requestAnimationFrame(draw);
 }
 
 
+/**
+ * Starts playing the title song in a loop.
+ */
 function startTitleSong() {
     AUDIO_MEXICAN_SONG.volume = 0.3;
     AUDIO_MEXICAN_SONG.play();
     AUDIO_MEXICAN_SONG.loop = true;
 }
 
+
+/**
+ * Starts playing boss intro music and main music.
+ */
 function startBossMusic() {
 
     AUDIO_BOSS_MUSIC_INTRO.volume = 0.8;
@@ -102,6 +112,7 @@ function startBossMusic() {
 
     }, BOSS_INTRO_PLAYING_TIME);
 }
+
 
 /**
  * Collects all relevant informations for positioning a new image object.
@@ -212,7 +223,9 @@ function keyUp() {
 }
 
 
-
+/**
+ * Plays final sounds and manages endscreen issues as soon as character wins the game.
+ */
 function finishGameWon() {
     setTimeout(function () {
         AUDIO_BOSS_DEAD.play();
@@ -233,6 +246,10 @@ function finishGameWon() {
     }, BOSS_DYING_TIME + 5000);
 }
 
+
+/**
+ * Manages sounds and endscreen issues as soon as character loses the game.
+ */
 function finishGameLost() {
 
     AUDIO_MEXICAN_SONG.pause();
@@ -245,22 +262,30 @@ function finishGameLost() {
         AUDIO_GAME_LOST.play();
     }, CHARACTER_DYING_TIME + 1000)
 
-    setTimeout(function() {
+    setTimeout(function () {
+        //It is necessary to pause AUDIO_BOSS_MUSIC several times for the case character is dying when
+        AUDIO_BOSS_MUSIC.pause();
         timeForEndscreen = true;
     }, CHARACTER_DYING_TIME + 4000);
 
-    setTimeout(function() {
+    setTimeout(function () {
+        AUDIO_BOSS_MUSIC.pause();
         AUDIO_GAME_LOST_MUSIC.volume = 0.9;
         AUDIO_GAME_LOST_MUSIC.play();
         AUDIO_GAME_LOST_MUSIC.loop = true;
     }, CHARACTER_DYING_TIME + 5000);
 
-    setTimeout(function() {
-      showRestartButton();
+    setTimeout(function () {
+        showRestartButton();
     }, CHARACTER_DYING_TIME + 7000);
 }
 
 
+/**
+ * Draws different endscreens depending on character's win or lose.
+ * 
+ * @param  {String} status - Character's status when finishing the game.
+ */
 function drawScreen(status) {
     let image;
     if (status == 'won') {
@@ -273,6 +298,18 @@ function drawScreen(status) {
 }
 
 
+/**
+ * Shows restart button on screen.
+ */
 function showRestartButton() {
     document.getElementById('restart-game-btn').classList.remove('d-none');
+}
+
+
+/**
+ * Enlarges canvas to fullscreen.
+ */
+function enlargeToFullscreen() {
+    let canvasWindow = document.getElementById('canvas');
+    canvasWindow.requestFullscreen();
 }
