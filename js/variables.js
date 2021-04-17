@@ -1,3 +1,4 @@
+
 let canvas;
 let ctx;
 
@@ -32,7 +33,7 @@ let characterDyingStarted = new Date().getTime();
 let chickens;
 let chicken_y = 365;
 
-let placedBottles = [2400, 3900, 5500, 6000, 6500, 7300, 7500, 8000, 8500, 8750, 9150, 10250, 10500, 10790, 11000];
+let placedBottles = [2400, 3900, 5500, 6000, 6500, 7300, 7500, 8000, 8500, 860, 9150, 10250, 10300, 10350, 10500];
 let collectedBottles = 20;
 let lastThrowStarted = new Date().getTime();
 let thrown_bottle_x;

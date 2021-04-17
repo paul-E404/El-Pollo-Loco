@@ -1,28 +1,50 @@
+function startGame() {
+    
+    document.getElementById('startScreen').classList.add('d-none');
+    document.getElementById('start-game-btn').classList.add('d-none');
+    
+    init();
+}
+
+function restartGame() {
+    /* document.getElementById('restart-game-btn').classList.add('d-none');
+    timeForEndscreen = false;
+    AUDIO_GAME_LOST_MUSIC.pause(); */
+ 
+    location.reload();
+
+}
+
+
 
 /**
  * Draws the canvas and loads important start-functions.
  */
-function init() {
+function preload() {
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
-    //Length of the playing field without first and last canvas width
     preloadOtherImages(backgroundImages);
     preloadCharakterImages(characterImages);
     preloadOtherImages(objectImages);
     preloadOtherImages(chickenImages);
     preloadCharakterImages(bossImages);
-    createChickenList();
-    calculateChickenPosition();
-    calculateChickenImages();
-    checkForRelaxing();
-    checkForRunning();
-    checkForCollision();
-    checkForThrownBottleHit();
-    checkForBossAction();
-    checkForDying();
-    draw();
-    listenForKeys();
-    startTitleSong();
+}
+
+function init() {
+
+        createChickenList();
+        calculateChickenPosition();
+        calculateChickenImages();
+        checkForRelaxing();
+        checkForRunning();
+        checkForCollision();
+        checkForThrownBottleHit();
+        checkForBossAction();
+        checkForDying();
+        draw();
+        listenForKeys();
+        startTitleSong();
+    
 }
 
 
@@ -31,9 +53,6 @@ function init() {
  * Draws the current background, character images and object images depending on browserspeed.
  */
 function draw() {
-    //Verhindert dass die Hintergrundbilder mehrfach angezeigt werden. Kann ggf. am Ende entfernt werden.
-    /* ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.width, canvas.height); */
     drawBackground();
     drawEnergyBar();
     drawDisplay();
@@ -208,6 +227,10 @@ function finishGameWon() {
     setTimeout(function () {
         timeForEndscreen = true;
     }, BOSS_DYING_TIME + 3000);
+
+    setTimeout(function () {
+        showRestartButton();
+    }, BOSS_DYING_TIME + 5000);
 }
 
 function finishGameLost() {
@@ -221,14 +244,20 @@ function finishGameLost() {
     setTimeout(function () {
         AUDIO_GAME_LOST.play();
     }, CHARACTER_DYING_TIME + 1000)
+
     setTimeout(function() {
         timeForEndscreen = true;
     }, CHARACTER_DYING_TIME + 4000);
+
     setTimeout(function() {
         AUDIO_GAME_LOST_MUSIC.volume = 0.7;
         AUDIO_GAME_LOST_MUSIC.play();
         AUDIO_GAME_LOST_MUSIC.loop = true;
-    }, CHARACTER_DYING_TIME + 5000)
+    }, CHARACTER_DYING_TIME + 5000);
+
+    setTimeout(function() {
+      showRestartButton();
+    }, CHARACTER_DYING_TIME + 7000);
 }
 
 
@@ -241,4 +270,9 @@ function drawScreen(status) {
         image = backgroundImages['screens'][2];
     }
     addBackgroundImage(image, 0, 0, 0);
+}
+
+
+function showRestartButton() {
+    document.getElementById('restart-game-btn').classList.remove('d-none');
 }

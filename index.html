@@ -23,25 +23,32 @@
     <title>El Pollo Loco</title>
 </head>
 
-<body onload="init();">
+<body onload="preload();">
 
     <img class="background-image" src="img/background_dessert.jpg" alt="background-dessert">
 
     <div class="content">
         <div class="canvas-box">
             <div class="controls">
-                <img class="control-icon" src="img/arrow_left.png" alt="arrow-left">
-                <img class="control-icon" src="img/arrow_right.png" alt="arrow-right">
-                <span>WALK</span>
-                <img class="control-icon" src="img/arrow_up.png" alt="arrow-up">
-                <img class="control-icon" src="img/space_button.png" alt="space-button">
-                <span>JUMP</span>
-                <img class="control-icon" src="img/d_button.png" alt="d-button">
-                <span>THROW BOTTLE</span>
-
+                <div class="controls-walk">
+                    <img class="control-icon" src="img/arrow_left.png" alt="arrow-left">
+                    <img class="control-icon" src="img/arrow_right.png" alt="arrow-right">
+                    <span>&nbsp;WALK</span>
+                </div>
+                <div class="controls-jump">
+                    <img class="control-icon" src="img/arrow_up.png" alt="arrow-up">
+                    <img class="control-icon" src="img/space_button1.png" alt="space-button">
+                    <span>&nbsp;JUMP</span>
+                </div>
+                <div class="controls-throw">
+                    <img class="control-icon" src="img/d_button1.png" alt="d-button">
+                    <span>&nbsp;THROW BOTTLE</span>
+                </div>
             </div>
             <canvas id="canvas" width="805" height="500"></canvas>
-            <img class="startScreen" src="img/bg/screens/startscreen.png" alt="startscreen">
+            <img id="startScreen" class="startScreen" src="img/bg/screens/startscreen.png" alt="startscreen">
+            <button onclick="startGame();" type="button" id="start-game-btn" class="btn">START GAME</button>
+            <button onclick="restartGame();" type="button" id="restart-game-btn" class="btn d-none">GO BACK TO START</button>
         </div>
     </div>
 
