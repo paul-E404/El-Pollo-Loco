@@ -52,9 +52,9 @@ body {
 }
 
 #restart-game-btn {
-    top: 385px;
-    left: 275px;
-    width: 250px;
+    top: 76%;
+    left: 35%;
+    width: 30%;
 }
 
 .background-image {
@@ -66,30 +66,59 @@ body {
     opacity: 0.8;
 }
 
-.canvas-box {
-    position: relative;
-    height: 500px;
+.content {
+    /* position: relative; */
+    height: 580px;
+    width: 805px;
     border: 2px solid white;
     border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1;
 }
 
+.canvas-box {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* .canvas {
+    margin-top: 42px;
+} */
+
 .controls {
-    position: absolute;
+    /* position: absolute; */
     height: 40px;
-    width: 809px;
-    top: -40px;
+    width: 100%;
+   /*  top: 0px;
     left: -2px;
     right: -2px;
-    bottom: 500px;
+    bottom: 540px; */
     background-color: white;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
     font-size: 1.4em;
 }
 
 .controls-walk, .controls-jump, .controls-throw {
     display: flex;
     align-items: center;
+}
+
+.controls-walk {
+    width: 20%;
+}
+
+.controls-jump {
+    width: 25%;
+    margin-left: 10%;
+    margin-right: 10%;
 }
 
 .control-icon {
@@ -117,13 +146,13 @@ body {
 }
 
 .game-info {
-    position: absolute;
+  /*   position: absolute; */
     height: 40px;
-    width: 809px;
-    bottom: -40px;
+    width: 100%;
+    /* bottom: 0px;
     left: -2px;
     right: -2px;
-    top: 500px;
+    top: 540px; */
     background-color: white;
     display: flex;
     justify-content: space-evenly;

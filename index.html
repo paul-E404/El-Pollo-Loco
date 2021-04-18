@@ -27,39 +27,39 @@
 
     <img class="background-image" src="img/background_dessert.jpg" alt="background-dessert">
 
-    <div class="content">
-        <div class="canvas-box">
-            
-            <div class="controls">
-                <div class="controls-walk">
-                    <img class="control-icon" src="img/arrow_left.png" alt="arrow-left">
-                    <img class="control-icon" src="img/arrow_right.png" alt="arrow-right">
-                    <span>&nbsp;&nbsp;walk</span>
-                </div>
-                <div class="controls-jump">
-                    <img class="control-icon" src="img/arrow_up.png" alt="arrow-up">
-                    <img class="control-icon" src="img/space_button1.png" alt="space-button">
-                    <span>&nbsp;&nbsp;jump</span>
-                </div>
-                <div class="controls-throw">
-                    <img class="control-icon" src="img/d_button1.png" alt="d-button">
-                    <span>&nbsp;&nbsp;throw</span>
-                </div>
+    <div id="content" class="content">
+
+        <div class="controls">
+            <div class="controls-walk">
+                <img class="control-icon" src="img/arrow_left.png" alt="arrow-left">
+                <img class="control-icon" src="img/arrow_right.png" alt="arrow-right">
+                <span>&nbsp;&nbsp;walk</span>
             </div>
+            <div class="controls-jump">
+                <img class="control-icon" src="img/arrow_up.png" alt="arrow-up">
+                <img class="control-icon" src="img/space_button1.png" alt="space-button">
+                <span>&nbsp;&nbsp;jump</span>
+            </div>
+            <div class="controls-throw">
+                <img class="control-icon" src="img/d_button1.png" alt="d-button">
+                <span>&nbsp;&nbsp;throw</span>
+            </div>
+        </div>
 
+        <div id="canvas-box" class="canvas-box">
             <canvas id="canvas" width="805" height="500"></canvas>
-
             <img id="startScreen" class="startScreen" src="img/bg/screens/startscreen.png" alt="startscreen">
             <button onclick="startGame();" type="button" id="start-game-btn" class="btn">START GAME</button>
-            <button onclick="restartGame();" type="button" id="restart-game-btn" class="btn d-none">GO BACK TO START</button>
-
-            <img onclick="enlargeToFullscreen()" src="img/fullscreen-icon.png" alt="fullscreen-icon" class="fullscreen-icon">
-
-            <div class="game-info">
-                <span id="game-info-text">Help Pepe the Mexican to collect as many bottles as you can!</span>
-            </div>
-
+            <button onclick="restartGame();" type="button" id="restart-game-btn" class="btn d-none">GO BACK TO
+                START</button>
+            <img onclick="toggleFullscreen();" src="img/fullscreen-icon.png" alt="fullscreen-icon" id="fullscreen-icon" class="fullscreen-icon">
+            <img onclick="toggleFullscreen();" src="img/fullscreen-exit-icon.png" alt="fullscreen-exit-icon" id="fullscreen-exit-icon" class="fullscreen-icon d-none">
         </div>
+
+        <div class="game-info">
+            <span id="game-info-text">Help Pepe the Mexican to collect as many bottles as you can!</span>
+        </div>
+
     </div>
 
     <!-- <a href="https://www.vecteezy.com/free-vector/desert">Desert Vectors by Vecteezy</a>  -->

@@ -267,7 +267,7 @@ function finishGameLost() {
         //It is necessary to pause AUDIO_BOSS_MUSIC several times for the case character is dying when boss has already been reached.
         AUDIO_BOSS_MUSIC.pause();
         timeForEndscreen = true;
-        document.getElementById('game-info-text').innerHTML = 'Try it again!';
+        document.getElementById('game-info-text').innerHTML = `Don't give up! Try again!`;
     }, CHARACTER_DYING_TIME + 4000);
 
     setTimeout(function () {
@@ -308,10 +308,58 @@ function showRestartButton() {
 }
 
 
+
 /**
- * Enlarges canvas to fullscreen.
+ * Toggles fullscreen mode.
  */
-function enlargeToFullscreen() {
-    let canvasWindow = document.getElementById('canvas');
-    canvasWindow.requestFullscreen();
+function toggleFullscreen() {
+
+    let fullscreenIcon = document.getElementById('fullscreen-icon');
+    let fullscreenExitIcon = document.getElementById('fullscreen-exit-icon');
+    let content = document.getElementById('content');
+    let canvas = document.getElementById('canvas');
+
+    if (fullscreenActive == false) {
+        enlargeToFullscreen(fullscreenIcon, fullscreenExitIcon, content, canvas);
+        fullscreenActive = true;
+    }
+    else if (fullscreenActive == true) {
+        leaveFullscreen(fullscreenIcon, fullscreenExitIcon, content, canvas);
+        fullscreenActive = false;
+    }
+}
+
+
+
+/**
+ * Enlarges content to fullscreen.
+ */
+ function enlargeToFullscreen(fullscreenIcon, fullscreenExitIcon, content, canvas) {
+
+    fullscreenIcon.classList.add('d-none');
+    fullscreenExitIcon.classList.remove('d-none');
+    
+    content.style.height = "100vh";
+    content.style.width = "100%";
+    content.style.border = 0;
+
+    canvas.style.height = "100%";
+}
+
+
+
+/**
+ * Exits fullscreen mode.
+ */
+function leaveFullscreen(fullscreenIcon, fullscreenExitIcon, content, canvas) {
+
+    fullscreenIcon.classList.remove('d-none');
+    fullscreenExitIcon.classList.add('d-none');
+
+    content.style.height = "580px";
+    content.style.width = "805px";
+    content.style.border = "2px solid white";
+
+    canvas.style.height = "unset";
+
 }

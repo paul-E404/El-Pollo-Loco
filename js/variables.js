@@ -1,6 +1,6 @@
-
 let canvas;
 let ctx;
+let fullscreenActive = false;
 
 let bg_sky_x = -270;
 let bg3_ground_x = -270;   //alle -270
