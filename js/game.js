@@ -10,18 +10,18 @@ function startGame() {
     canvas.classList.remove('d-none');
 
 
-    if(width < 850) {
+    if (width < 850) {
         /* content.requestFullscreen(); */
-     
+
         if (content.requestFullscreen) {
             content.requestFullscreen();
-          } else if (content.msRequestFullscreen) {
+        } else if (content.msRequestFullscreen) {
             content.msRequestFullscreen();
-          } else if (content.mozRequestFullScreen) {
+        } else if (content.mozRequestFullScreen) {
             content.mozRequestFullScreen();
-          } else if (docElm.webkitRequestFullScreen) {
+        } else if (docElm.webkitRequestFullScreen) {
             content.webkitRequestFullScreen();
-          }
+        }
     }
 
     document.getElementById('startScreen').classList.add('d-none');
@@ -69,6 +69,8 @@ function init() {
     checkForDying();
     draw();
     listenForKeys();
+    listenForTouch();
+    preventLongTouchMenu();
     startTitleSong();
 }
 
@@ -245,6 +247,137 @@ function keyUp() {
 
 
 /**
+ * Listens for touch-control-buttons being touched.
+ */
+function listenForTouch() {
+
+    let arrowLeft = document.getElementById('touch-arrow-left');
+
+    arrowLeft.addEventListener("touchstart", leftTouchStart, false);
+    arrowLeft.addEventListener("touchend", leftTouchEnd, false);
+    arrowLeft.addEventListener("touchleave", leftTouchLeave, false)
+
+    function leftTouchStart() {
+        isMovingLeft = true;
+        lastMove = "left";
+    }
+    function leftTouchEnd() {
+        isMovingLeft = false;
+        lastMoveFinished = new Date().getTime();
+    }
+    function leftTouchLeave() {
+        isMovingLeft = false;
+        lastMoveFinished = new Date().getTime();
+    }
+
+
+    let arrowRight = document.getElementById('touch-arrow-right');
+
+    arrowRight.addEventListener("touchstart", rightTouchStart, false);
+    arrowRight.addEventListener("touchend", rightTouchEnd, false);
+    arrowRight.addEventListener("touchleave", rightTouchLeave, false)
+
+    function rightTouchStart() {
+        isMovingRight = true;
+        lastMove = "right";
+    }
+    function rightTouchEnd() {
+        isMovingRight = false;
+        lastMoveFinished = new Date().getTime();
+    }
+    function rightTouchLeave() {
+        isMovingRight = false;
+        lastMoveFinished = new Date().getTime();
+    }
+
+
+    let arrowUp = document.getElementById('touch-arrow-up');
+
+    arrowUp.addEventListener("touchstart", jumpTouchStart, false);
+    arrowUp.addEventListener("touchend", jumpTouchEnd, false);
+
+    function jumpTouchStart() {
+        if (timePassedSinceJump > JUMP_TIME * 2) {
+            lastJumpStarted = new Date().getTime();
+            checkJumpDirection();
+            AUDIO_CHARACTER_JUMPING.play();
+            AUDIO_CHARACTER_SNORING.pause();
+        }
+
+    }
+    function jumpTouchEnd() {
+        lastMoveFinished = new Date().getTime();
+    }
+
+
+    let arrowThrow = document.getElementById('touch-arrow-throw');
+
+    arrowThrow.addEventListener("touchstart", throwTouchStart, false);
+    arrowThrow.addEventListener("touchend", throwTouchEnd, false);
+
+
+    function throwTouchStart() {
+        if (collectedBottles > 0) {
+            //Ensures that a new throw can only be started when the old one has finished
+            if (timePassedSinceThrow > THROW_TIME) {
+                //let timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
+                lastThrowStarted = new Date().getTime();
+                collectedBottles--;
+                if (lastMove == 'left') {
+                    bottleThrowingDirection = 'left';
+                } else if (lastMove == 'right') {
+                    bottleThrowingDirection = 'right';
+                }
+            }
+        }
+
+    }
+    function throwTouchEnd() {
+        lastMoveFinished = new Date().getTime();
+    }
+
+}
+
+
+/* Source: https://stackoverflow.com/questions/3413683/disabling-the-context-menu-on-long-taps-on-android/28748222 */
+/**
+ * Prevents mobile devices from opening a window on touch long.
+ */
+function preventLongTouchMenu() {
+    let arrowLeft = document.getElementById('touch-arrow-left');
+    let arrowRight = document.getElementById('touch-arrow-right');
+    let arrowUp = document.getElementById('touch-arrow-up');
+    let arrowThrow = document.getElementById('touch-arrow-throw');
+    preventLongTouchButton(arrowLeft);
+    preventLongTouchButton(arrowRight);
+    preventLongTouchButton(arrowUp);
+    preventLongTouchButton(arrowThrow);
+}
+
+
+function preventLongTouchButton(node) {
+    node.ontouchstart = absorbEvent_;
+    node.ontouchmove = absorbEvent_;
+    node.ontouchend = absorbEvent_;
+    node.ontouchcancel = absorbEvent_;
+}
+
+function absorbEvent_(event) {
+    var e = event || window.event;
+    e.preventDefault && e.preventDefault();
+    e.stopPropagation && e.stopPropagation();
+    e.cancelBubble = true;
+    e.returnValue = false;
+    return false;
+}
+
+
+
+
+
+
+
+/**
  * Plays final sounds and manages endscreen issues as soon as character wins the game.
  */
 function finishGameWon() {
@@ -388,45 +521,14 @@ function leaveFullscreen(fullscreenIcon, fullscreenExitIcon, content, canvas) {
 
     canvas.style.height = "unset";
 
-    checkSmartphone();
-
 }
 
 
-/* DOESNT WORK PROPERLY */
-function checkSmartphone() {
 
-/*     let fullscreenIcon = document.getElementById('fullscreen-icon');
-    let fullscreenExitIcon = document.getElementById('fullscreen-exit-icon');
-    let content = document.getElementById('content');
-    let controls = document.getElementById('controls');
-    let canvasBox = document.getElementById('canvas-box');
-    let canvas = document.getElementById('canvas');
-    let gameInfo = document.getElementById('game-info');
-    let controlsJump = document.getElementById('controls-jump'); */
-
+function useLandscape() {
     var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 
     if (width < 850) {
-      
         alert("Please use your device in landscape mode for being able to play the game properly!");
-      
-        /*  fullscreenExitIcon.classList.add('d-none');
-        fullscreenExitIcon.classList.add('d-none'); */
-
-        /* content.style.height = "100vh";
-        content.style.width = "100%";
-        content.style.border = 0;
-        content.style.background = "unset";
-        content.style.justifyContent = "flex-start";
-
-        controls.style.height = "8%";
-        controlsJump.style.marginLeft = 0;
-        controlsJump.style.marginRight = 0;
-        canvasBox.style.height = "84%";
-        canvas.style.height = "100%";
-        canvas.style.borderLeft = "2px solid white";
-        canvas.style.borderRight = "2px solid white";
-        gameInfo.style.height = "8%"; */
     }
 }
