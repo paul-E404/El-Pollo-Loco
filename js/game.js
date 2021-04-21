@@ -3,6 +3,23 @@
  */
 function startGame() {
 
+    let width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+    let content = document.getElementById('content');
+
+    if(width < 850) {
+        /* content.requestFullscreen(); */
+     
+        if (content.requestFullscreen) {
+            content.requestFullscreen();
+          } else if (content.msRequestFullscreen) {
+            content.msRequestFullscreen();
+          } else if (content.mozRequestFullScreen) {
+            content.mozRequestFullScreen();
+          } else if (docElm.webkitRequestFullScreen) {
+            content.webkitRequestFullScreen();
+          }
+    }
+
     document.getElementById('startScreen').classList.add('d-none');
     document.getElementById('start-game-btn').classList.add('d-none');
 
@@ -334,11 +351,13 @@ function toggleFullscreen() {
 /**
  * Enlarges content to fullscreen.
  */
- function enlargeToFullscreen(fullscreenIcon, fullscreenExitIcon, content, canvas) {
+function enlargeToFullscreen(fullscreenIcon, fullscreenExitIcon, content, canvas) {
+
+    content.requestFullscreen();
 
     fullscreenIcon.classList.add('d-none');
     fullscreenExitIcon.classList.remove('d-none');
-    
+
     content.style.height = "100vh";
     content.style.width = "100%";
     content.style.border = 0;
@@ -353,6 +372,8 @@ function toggleFullscreen() {
  */
 function leaveFullscreen(fullscreenIcon, fullscreenExitIcon, content, canvas) {
 
+    document.exitFullscreen();
+
     fullscreenIcon.classList.remove('d-none');
     fullscreenExitIcon.classList.add('d-none');
 
@@ -362,4 +383,44 @@ function leaveFullscreen(fullscreenIcon, fullscreenExitIcon, content, canvas) {
 
     canvas.style.height = "unset";
 
+    checkSmartphone();
+
+}
+
+
+/* DOESNT WORK PROPERLY */
+function checkSmartphone() {
+
+    let fullscreenIcon = document.getElementById('fullscreen-icon');
+    let fullscreenExitIcon = document.getElementById('fullscreen-exit-icon');
+    let content = document.getElementById('content');
+    let controls = document.getElementById('controls');
+    let canvasBox = document.getElementById('canvas-box');
+    let canvas = document.getElementById('canvas');
+    let gameInfo = document.getElementById('game-info');
+    let controlsJump = document.getElementById('controls-jump');
+
+    var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+
+    if (width < 850) {
+        //alert("Funktion smartphone() inkl. if Abfrage ausgeführt!");
+        alert("Please use your device in landscape mode for being able to play the game properly!");
+       /*  fullscreenExitIcon.classList.add('d-none');
+        fullscreenExitIcon.classList.add('d-none'); */
+
+        /* content.style.height = "100vh";
+        content.style.width = "100%";
+        content.style.border = 0;
+        content.style.background = "unset";
+        content.style.justifyContent = "flex-start";
+
+        controls.style.height = "8%";
+        controlsJump.style.marginLeft = 0;
+        controlsJump.style.marginRight = 0;
+        canvasBox.style.height = "84%";
+        canvas.style.height = "100%";
+        canvas.style.borderLeft = "2px solid white";
+        canvas.style.borderRight = "2px solid white";
+        gameInfo.style.height = "8%"; */
+    }
 }
