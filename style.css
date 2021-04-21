@@ -65,7 +65,6 @@ body {
 }
 
 .content {
-    /* position: relative; */
     height: 580px;
     width: 805px;
     background-color: white;
@@ -73,7 +72,6 @@ body {
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    /* justify-content: space-between; */
     align-items: center;
     z-index: 1;
 }
@@ -85,29 +83,20 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    order: 2;
 }
 
-/* .canvas {
-    margin-top: 42px;
-} */
-
 .controls {
-    /* position: absolute; */
     height: 40px;
     width: 100%;
-    /*     border-top-left-radius: 5px;
-    border-top-right-radius: 5px; */
-    /*  top: 0px;
-    left: -2px;
-    right: -2px;
-    bottom: 540px; */
     background-color: white;
     display: flex;
     justify-content: center;
     font-size: 1.4em;
+    order: 1;
 }
 
-.controls-walk, .controls-jump, .controls-throw {
+.controls-walk, .controls-jump, .controls-throw, .touch-controls-walk, .touch-controls-jump, .touch-controls-throw {
     display: flex;
     align-items: center;
 }
@@ -122,8 +111,36 @@ body {
     margin-right: 10%;
 }
 
-.control-icon {
+.control-icon, .touch-control-icon {
     height: 90%;
+}
+
+.touch-controls {
+    height: 90px;
+    width: 100%;
+    max-width: 100%;
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    display: none;
+}
+
+.touch-controls-left-hand, .touch-controls-right-hand {
+    display: flex;
+}
+
+
+.touch-controls-walk {
+    height: 90px;
+}
+
+.touch-controls-jump {
+    height: 90px;
+    margin-left: 10px;
+}
+
+.touch-controls-throw {
+    height: 90px;
 }
 
 .startScreen {
@@ -147,18 +164,14 @@ body {
 }
 
 .game-info {
-    /*   position: absolute; */
     height: 40px;
     width: 100%;
-    /* bottom: 0px;
-    left: -2px;
-    right: -2px;
-    top: 540px; */
     background-color: white;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     font-size: 1.4em;
+    order: 3;
 }
 
 .bottom-link {
@@ -174,14 +187,6 @@ body {
 
 @media(max-width: 850px) {
     
-    .content {
-        height: 100vh;
-        width: 100vw;
-        border: 0;
-    }
-    .canvas {
-        height: 100%;
-    }
     #restart-game-btn {
         height: 40px;
         font-size: 20px;
@@ -195,25 +200,24 @@ body {
         font-size: 20px;
     }
     .startScreen {
-        object-position: 60% 60%;
+        object-position: 10% 60%;
     }
     .content {
         height: 100vh;
         width: 100%;
         border: 0;
         background-color: unset;
-        justify-content: flex-start;
+        justify-content: space-between;
     }
     .controls {
-        height: 8%;
-        font-size: 1.2em !important;
+        display: none;
     }
     .controls-jump {
         margin-left: 0;
         margin-right: 0;
     }
     .canvas-box {
-        height: 84%;
+        height: calc(100% - 90px);
     }
     .canvas {
         height: 100%;
@@ -221,10 +225,15 @@ body {
         border-right: 2px white solid;
     }
     .game-info {
-        height: 8%;
-        font-size: 1.2em !important;
-    }
+       /*  height: 8%;
+        font-size: 1.2em !important; */
+        display: none;
+    } 
     #fullscreen-icon {
         display: none;
+    }
+    .touch-controls {
+        display: flex !important;
+        order: 3;
     }
 }

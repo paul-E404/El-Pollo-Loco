@@ -35,7 +35,7 @@
                 <img class="control-icon" src="img/arrow_right.png" alt="arrow-right">
                 <span>&nbsp;&nbsp;walk</span>
             </div>
-            <div id="controls-jump" class="controls-jump">
+            <div class="controls-jump">
                 <img class="control-icon" src="img/arrow_up.png" alt="arrow-up">
                 <img class="control-icon" src="img/space_button1.png" alt="space-button">
                 <span>&nbsp;&nbsp;jump</span>
@@ -46,14 +46,39 @@
             </div>
         </div>
 
+        <div id="touch-controls" class="touch-controls">
+            <div class="touch-controls-left-hand">
+                <div class="touch-controls-walk">
+                    <img class="touch-control-icon" src="img/arrow_left.png" alt="arrow-left">
+                </div>
+
+                <div id="touch-controls-jump" class="touch-controls-jump">
+                    <img class="touch-control-icon" src="img/arrow_up.png" alt="arrow-up">
+                </div>
+            </div>
+            <div class="touch-controls-right-hand">
+                <div class="touch-controls-throw">
+                    <img class="touch-control-icon" src="img/arrow_throw.png" alt="arrow-throw">
+                </div>
+
+                <div class="touch-controls-walk">
+                    <img class="touch-control-icon" src="img/arrow_right.png" alt="arrow-right">
+                </div>
+            </div>
+        </div>
+
+
+
         <div id="canvas-box" class="canvas-box">
-            <canvas id="canvas" class="canvas" width="805" height="500"></canvas>
+            <canvas id="canvas" class="canvas d-none" width="805" height="500"></canvas>
             <img id="startScreen" class="startScreen" src="img/bg/screens/startscreen.png" alt="startscreen">
             <button onclick="startGame();" type="button" id="start-game-btn" class="btn">START GAME</button>
             <button onclick="restartGame();" type="button" id="restart-game-btn" class="btn d-none">GO BACK TO
                 START</button>
-            <img onclick="toggleFullscreen();" src="img/fullscreen-icon.png" alt="fullscreen-icon" id="fullscreen-icon" class="fullscreen-icon">
-            <img onclick="toggleFullscreen();" src="img/fullscreen-exit-icon.png" alt="fullscreen-exit-icon" id="fullscreen-exit-icon" class="fullscreen-icon d-none">
+            <img onclick="toggleFullscreen();" src="img/fullscreen-icon.png" alt="fullscreen-icon" id="fullscreen-icon"
+                class="fullscreen-icon">
+            <img onclick="toggleFullscreen();" src="img/fullscreen-exit-icon.png" alt="fullscreen-exit-icon"
+                id="fullscreen-exit-icon" class="fullscreen-icon d-none">
         </div>
 
         <div id="game-info" class="game-info">

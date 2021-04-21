@@ -5,6 +5,10 @@ function startGame() {
 
     let width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
     let content = document.getElementById('content');
+    let canvas = document.getElementById('canvas');
+
+    canvas.classList.remove('d-none');
+
 
     if(width < 850) {
         /* content.requestFullscreen(); */
@@ -361,6 +365,7 @@ function enlargeToFullscreen(fullscreenIcon, fullscreenExitIcon, content, canvas
     content.style.height = "100vh";
     content.style.width = "100%";
     content.style.border = 0;
+    content.style.backgroundColor = "unset";
 
     canvas.style.height = "100%";
 }
@@ -391,21 +396,22 @@ function leaveFullscreen(fullscreenIcon, fullscreenExitIcon, content, canvas) {
 /* DOESNT WORK PROPERLY */
 function checkSmartphone() {
 
-    let fullscreenIcon = document.getElementById('fullscreen-icon');
+/*     let fullscreenIcon = document.getElementById('fullscreen-icon');
     let fullscreenExitIcon = document.getElementById('fullscreen-exit-icon');
     let content = document.getElementById('content');
     let controls = document.getElementById('controls');
     let canvasBox = document.getElementById('canvas-box');
     let canvas = document.getElementById('canvas');
     let gameInfo = document.getElementById('game-info');
-    let controlsJump = document.getElementById('controls-jump');
+    let controlsJump = document.getElementById('controls-jump'); */
 
     var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 
     if (width < 850) {
-        //alert("Funktion smartphone() inkl. if Abfrage ausgeführt!");
+      
         alert("Please use your device in landscape mode for being able to play the game properly!");
-       /*  fullscreenExitIcon.classList.add('d-none');
+      
+        /*  fullscreenExitIcon.classList.add('d-none');
         fullscreenExitIcon.classList.add('d-none'); */
 
         /* content.style.height = "100vh";
