@@ -116,7 +116,7 @@ function draw() {
  * Starts playing the title song in a loop.
  */
 function startTitleSong() {
-    AUDIO_MEXICAN_SONG.volume = 0.3;
+    AUDIO_MEXICAN_SONG.volume = 0.1;
     AUDIO_MEXICAN_SONG.play();
     AUDIO_MEXICAN_SONG.loop = true;
 }
@@ -127,7 +127,7 @@ function startTitleSong() {
 function startBossMusic() {
 
     AUDIO_BOSS_MUSIC_INTRO.volume = 0.8;
-    AUDIO_BOSS_MUSIC.volume = 0.4;
+    AUDIO_BOSS_MUSIC.volume = 0.2;
 
     AUDIO_BOSS_MUSIC_INTRO.play();
 

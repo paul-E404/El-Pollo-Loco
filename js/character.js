@@ -23,7 +23,8 @@ function checkForRunning() {
 
 /**
  * Iterates through the array with the running images.
- * Calculation with modulo makes iteration from 0 to the length of the array possible
+ * Calculation with modulo makes iteration from 0 to the length of the array possible.
+ * 
  * @param  {Object} currentImages - Running images with right or left animation.
  */
 function showRunningImages(currentImages) {
@@ -36,18 +37,16 @@ function showRunningImages(currentImages) {
     }
 }
 
-
 /**
  * Checks regularly if enough time has passed for the animation of relax images or even sleep images.
  */
 function checkForRelaxing() {
 
     setInterval(function () {
-
         let currentTime = new Date().getTime();
         let timePassedSinceLastMove = currentTime - lastMoveFinished;
-        let timeForRelax = timePassedSinceLastMove > JUMP_TIME * 2 && timePassedSinceLastMove < JUMP_TIME * 20;
-        let timeForSleep = timePassedSinceLastMove > JUMP_TIME * 20;
+        let timeForRelax = timePassedSinceLastMove > JUMP_TIME * 2 && timePassedSinceLastMove < JUMP_TIME * 15;
+        let timeForSleep = timePassedSinceLastMove > JUMP_TIME * 15;
 
         if (gameLost != true) {
             if (isMovingLeft == false && isMovingRight == false) {
@@ -60,11 +59,8 @@ function checkForRelaxing() {
                 }
             }
         }
-        
-
     }, 300);
 }
-
 
 /**
  * Decides which relax images are needed (right or left) depending on the direction of last move.
@@ -80,10 +76,10 @@ function checkRelaxingDirection() {
     }
 }
 
-
 /**
  * Iterates through the array with the relax images.
- * Calculation with modulo makes iteration from 0 to the length of the array possible
+ * Calculation with modulo makes iteration from 0 to the length of the array possible.
+ * 
  * @param  {Object} currentImages - Relaxing images with right or left animation.
  */
 function relax(currentImages) {
@@ -91,7 +87,6 @@ function relax(currentImages) {
     currentCharacterImage = currentImages[index];
     character_idle_index++;
 }
-
 
 /**
  * Decides which sleep images are needed (right or left) depending on the direction of last move.
@@ -107,10 +102,10 @@ function checkSleepingDirection() {
     }
 }
 
-
 /**
  * Iterates through the array with the sleep images.
- * Calculation with modulo makes iteration from 0 to the length of the array possible
+ * Calculation with modulo makes iteration from 0 to the length of the array possible.
+ * 
  * @param  {Object} currentImages - Sleeping images with right or left animation.
  */
 function sleep(currentImages) {
@@ -118,7 +113,6 @@ function sleep(currentImages) {
     currentCharacterImage = currentImages[index];
     character_idle_index++;
 }
-
 
 /**
  * Draws the current character image.
@@ -135,12 +129,12 @@ function updateCharacter() {
     }
 }
 
-
 /**
  * Regulates if the character goes up or down.
  */
 function checkCharacterJumpHeight() {
-    timePassedSinceJump = new Date().getTime() - lastJumpStarted;
+    let currentTime = new Date().getTime();
+    timePassedSinceJump = currentTime - lastJumpStarted;
     //Check rising of the character
     if (timePassedSinceJump < JUMP_TIME) {
         character_y = character_y - 10;
@@ -150,7 +144,6 @@ function checkCharacterJumpHeight() {
         character_y = character_y + 10;
     }
 }
-
 
 /**
  * Decides which jump images are needed (right or left) depending on the direction of last move.
@@ -165,7 +158,6 @@ function checkJumpDirection() {
         animateJump(currentImages);
     }
 }
-
 
 /**
  * Iterates through the jump images during the time of one full jump.
@@ -183,96 +175,125 @@ function animateJump(currentImages) {
     }, JUMP_TIME * 2 / (currentImages.length * 10) * 25);
 }
 
-
 /**
- * 
+ * Checks if character is currently colliding with objects or enemies.
  */
 function checkForCollision() {
-
-
-    let counter = 0;
 
     //when character is dying he must no longer collide
     if (characterDead != true) {
         setInterval(function () {
 
+            //calculate character's image axis
             let character_image_width = 100;
             let character_image_width_half = character_image_width / 2;
             let character_axis = character_x + character_image_width_half;
 
             //Collision of character with chicken
-            for (let i = 0; i < chickens.length; i++) {
-                let chicken = chickens[i];
-                if (chicken.position_x < (character_axis + character_image_width_half) && chicken.position_x > (character_axis - character_image_width_half)) {
-                    if (character_y > 0 && character_y < 800) {
-                        checkCollisionDirection();
-                        //Prevent character from falling sleep
-                        lastMoveFinished = new Date().getTime();
-                        AUDIO_CHARACTER_SNORING.pause();
-                        if(chicken.type == "brown" && chicken.scale == 0.7) {
-                            console.log("Sonderfall erreicht!");
-                            //reduce extra energy
-                            character_energy = character_energy - 20;
-                            reduceCharacterEnergy();
-                        }
-                        reduceCharacterEnergy();
-                    }
-
-                }
-            }
-
+            characterChickenCollision(character_image_width_half, character_axis);
+           
             //Collision of character with bottles (collection)
-            for (let i = 0; i < placedBottles.length; i++) {
-                if (placedBottles[i] < (character_axis + character_image_width_half / 3) && placedBottles[i] > (character_axis - character_image_width_half)) {
-                    if (character_y > -40) {
-                        placedBottles.splice(i, 1);
-                        collectedBottles++;
-                        AUDIO_BOTTLE_COLLECT.play();
-                    }
-                }
-            }
-
+            characterBottleCollision(character_image_width_half, character_axis);
+           
             //Collision of character with boss
-            let boss_image_width = 285;
-            let boss_image_width_half = boss_image_width / 2;
-            let boss_axis = boss_x + boss_image_width_half;
-
-            //console.log("boss_axis", boss_axis, "character_axis", character_axis);
-            let timePassed = new Date().getTime() - timeWhenBossReached;
-            if (timePassed > BOSS_INTRO_PLAYING_TIME) {
-                
-                if (character_axis < (boss_axis + boss_image_width_half) && character_axis > (boss_axis - boss_image_width_half)) {
-                    if (boss_y > 0 && boss_y < 800 && character_y > 0 && character_y < 500) {
-                        console.log("Kollision mit BOSS! Nr.:", counter);
-                        counter++;
-                        checkCollisionDirection();
-                        //Prevent character from falling sleep
-                        lastMoveFinished = new Date().getTime();
-                        AUDIO_CHARACTER_SNORING.pause();
-                        reduceCharacterEnergy();
-                    }
-                }
-            }
-
+            characterBossCollision(character_axis);
 
         }, 100);
     }
 
 }
 
+/**
+ * Calculates collision and its effects between character and chicken (yellow and brown).
+ * 
+ * @param  {number} character_image_width_half - Half width of character's image.
+ * @param  {number} character_axis - Vertical middle of character's image.
+ */
+function characterChickenCollision(character_image_width_half, character_axis) {
 
-function checkCollisionDirection() {
-    if (lastMove == "right") {
-        let currentImages = characterImages.hurt[1];
-        collision(currentImages);
-    }
-    else {
-        let currentImages = characterImages.hurt[0];
-        collision(currentImages);
+    for (let i = 0; i < chickens.length; i++) {
+        let chicken = chickens[i];
+        if (chicken.position_x < (character_axis + character_image_width_half) && chicken.position_x > (character_axis - character_image_width_half)) {
+            if (character_y > 0 && character_y < 800) {
+                checkCollisionDirection();
+                //Prevent character from falling asleep
+                lastMoveFinished = new Date().getTime();
+                AUDIO_CHARACTER_SNORING.pause();
+                //biggest and most dangerous crying brown chicken in town
+                if(chicken.type == "brown" && chicken.scale == 0.7) {
+                    //collision with that monster reduces extra energy
+                    character_energy = character_energy - 20;
+                    reduceCharacterEnergy();
+                }
+                reduceCharacterEnergy();
+            }
+        }
     }
 }
 
-function collision(currentImages) {
+/**
+ * Calculates collision and its effects between character and placed bottles.
+ * 
+ * @param  {number} character_image_width_half - Half width of character's image.
+ * @param  {number} character_axis - Vertical middle of character's image.
+ */
+function characterBottleCollision(character_image_width_half, character_axis) {
+    for (let i = 0; i < placedBottles.length; i++) {
+        if (placedBottles[i] < (character_axis + character_image_width_half / 3) && placedBottles[i] > (character_axis - character_image_width_half)) {
+            if (character_y > -40) {
+                placedBottles.splice(i, 1);
+                collectedBottles++;
+                AUDIO_BOTTLE_COLLECT.play();
+            }
+        }
+    }
+}
+
+/**
+ * Calculates collision and its effects between character and boss.
+ * 
+ * @param  {number} character_axis - Vertical middle of character's image.
+ */
+function characterBossCollision(character_axis) {
+    let boss_image_width = 285;
+    let boss_image_width_half = boss_image_width / 2;
+    let boss_axis = boss_x + boss_image_width_half;
+
+    let timePassed = new Date().getTime() - timeWhenBossReached;
+
+    if (timePassed > BOSS_INTRO_PLAYING_TIME) {
+        if (character_axis < (boss_axis + boss_image_width_half) && character_axis > (boss_axis - boss_image_width_half)) {
+            if (boss_y > 0 && boss_y < 800 && character_y > 0 && character_y < 500) {
+                checkCollisionDirection();
+                //Prevent character from falling sleep
+                lastMoveFinished = new Date().getTime();
+                AUDIO_CHARACTER_SNORING.pause();
+                reduceCharacterEnergy();
+            }
+        }
+    }
+}
+
+/**
+ * Checks character's last move direction in order to show the correct hurt images.
+ */
+function checkCollisionDirection() {
+    if (lastMove == "right") {
+        let currentImages = characterImages.hurt[1];
+        showCollisionImages(currentImages);
+    }
+    else {
+        let currentImages = characterImages.hurt[0];
+        showCollisionImages(currentImages);
+    }
+}
+
+/**
+ * Shows character's hurt images when he is colliding with an enemy.
+ * 
+ * @param  {Object} currentImages - Hurt images with right or left direction.
+ */
+function showCollisionImages(currentImages) {
     let index = character_hurt_index % currentImages.length;
     currentCharacterImage = currentImages[index];
     character_hurt_index++;
@@ -282,7 +303,9 @@ function collision(currentImages) {
     }
 }
 
-
+/**
+ * Regulates character's loss of energy and its effects.
+ */
 function reduceCharacterEnergy() {
 
     //prevents the dying animation from being shown more than once
@@ -296,7 +319,6 @@ function reduceCharacterEnergy() {
         //character dies
         if (character_energy <= 0) {
             characterDyingStarted = new Date().getTime();
-
             characterDead = true;
             checkDyingDirection();
             lastJumpStarted = new Date().getTime();
@@ -305,11 +327,7 @@ function reduceCharacterEnergy() {
             finishGameLost();
         }
     }
-
 }
-
-
-
 
 /**
  * Checks regularly if the character is currently dead.
@@ -340,7 +358,9 @@ function calculateDyingPosition() {
 
 }
 
-
+/**
+ * Checks character's last move direction in order to show the correct dying images.
+ */
 function checkDyingDirection() {
 
     let currentImages;
@@ -354,67 +374,26 @@ function checkDyingDirection() {
 
     showDyingImages(currentImages);
 
-
 }
 
-
+/**
+ * Animates character's death.
+ * 
+ * @param  {Object} currentImages - Dying images with right or left direction.
+ */
 function showDyingImages(currentImages) {
-
-    console.log("showDyingImages() wurde aufgerufen!", currentImages);
-
-
-    /*     setTimeout(function () {
-            currentCharacterImage = currentImages[0];
-            console.log("Erstes Interval");
-            console.log("currentCharacterImage", currentCharacterImage);
-        }, 100);
-        setTimeout(function () {
-            currentCharacterImage = currentImages[1];
-            console.log("Zweites Interval");
-            console.log("currentCharacterImage", currentCharacterImage);
-        }, 300);
-        setTimeout(function () {
-            currentCharacterImage = currentImages[2];
-            console.log("Drittes Interval");
-            console.log("currentCharacterImage", currentCharacterImage);
-        }, 500);
-        setTimeout(function () {
-            currentCharacterImage = currentImages[3];
-            console.log("Viertes Interval");
-            console.log("currentCharacterImage", currentCharacterImage);
-        }, 700);
-        setTimeout(function () {
-            currentCharacterImage = currentImages[4];
-            console.log("Fünftes Interval");
-            console.log("currentCharacterImage", currentCharacterImage);
-        }, 900);
-        setTimeout(function () {
-            currentCharacterImage = currentImages[5];
-            console.log("Sechstes Interval");
-            console.log("currentCharacterImage", currentCharacterImage);
-        }, 1000);
-        setTimeout(function () {
-            currentCharacterImage = currentImages[6];
-            console.log("Siebtes Interval");
-            console.log("currentCharacterImage", currentCharacterImage);
-        }, 1100); */
-
 
     setTimeout(function () {
         currentCharacterImage = currentImages[0];
-
     }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 1);
     setTimeout(function () {
         currentCharacterImage = currentImages[1];
-
     }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 20);
     setTimeout(function () {
         currentCharacterImage = currentImages[2];
-
     }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 40);
     setTimeout(function () {
         currentCharacterImage = currentImages[3];
-
     }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 50);
     setTimeout(function () {
         currentCharacterImage = currentImages[4];
