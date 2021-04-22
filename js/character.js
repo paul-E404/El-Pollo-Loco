@@ -21,7 +21,6 @@ function checkForRunning() {
     }, 100);
 }
 
-
 /**
  * Iterates through the array with the running images.
  * Calculation with modulo makes iteration from 0 to the length of the array possible

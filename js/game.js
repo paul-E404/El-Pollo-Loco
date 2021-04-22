@@ -9,19 +9,8 @@ function startGame() {
 
     canvas.classList.remove('d-none');
 
-
     if (width < 850) {
-        /* content.requestFullscreen(); */
-
-        if (content.requestFullscreen) {
-            content.requestFullscreen();
-        } else if (content.msRequestFullscreen) {
-            content.msRequestFullscreen();
-        } else if (content.mozRequestFullScreen) {
-            content.mozRequestFullScreen();
-        } else if (docElm.webkitRequestFullScreen) {
-            content.webkitRequestFullScreen();
-        }
+        fullScreenForMobile(content);
     }
 
     document.getElementById('startScreen').classList.add('d-none');
@@ -30,6 +19,22 @@ function startGame() {
     init();
 }
 
+/**
+ * Enlarges content to fullscreen mode.
+ * 
+ * @param  {Object} content - Content container with canvas and control display.
+ */
+function fullScreenForMobile(content) {
+    if (content.requestFullscreen) {
+        content.requestFullscreen();
+    } else if (content.msRequestFullscreen) {
+        content.msRequestFullscreen();
+    } else if (content.mozRequestFullScreen) {
+        content.mozRequestFullScreen();
+    } else if (content.webkitRequestFullScreen) {
+        content.webkitRequestFullScreen();
+    }
+}
 
 /**
  * Reloads the page.
@@ -37,7 +42,6 @@ function startGame() {
 function restartGame() {
     location.reload();
 }
-
 
 
 /**
@@ -52,7 +56,6 @@ function preload() {
     preloadOtherImages(chickenImages);
     preloadCharakterImages(bossImages);
 }
-
 
 /**
  * Starts all important functions to make the game running.
@@ -75,30 +78,32 @@ function init() {
 }
 
 
-
 /**
- * Draws the current background, character images and object images depending on browserspeed.
+ * Draws the current background, character images, enemies and object images depending on browserspeed.
  */
 function draw() {
+
     drawBackground();
     drawEnergyBar();
     drawDisplay();
     drawBottles();
     drawChicken();
+
     let timePassed = new Date().getTime() - timeWhenBossReached;
     if (reachedBoss == true && timePassed > BOSS_INTRO_PLAYING_TIME && gameLost == false) {
         updateBoss();
     }
+
     drawThrownBottle();
     drawBrokenBottle();
     updateCharacter();
 
     if (timeForEndscreen == true) {
         if (gameWon == true) {
-            drawScreen('won');
+            drawEndScreen('won');
         }
         else if (gameLost == true) {
-            drawScreen('lost');
+            drawEndScreen('lost');
         }
     }
 
@@ -106,7 +111,6 @@ function draw() {
     //This is a less flickering alternative to setInterval.
     requestAnimationFrame(draw);
 }
-
 
 /**
  * Starts playing the title song in a loop.
@@ -117,9 +121,8 @@ function startTitleSong() {
     AUDIO_MEXICAN_SONG.loop = true;
 }
 
-
 /**
- * Starts playing boss intro music and main music.
+ * Plays boss intro music and boss main music.
  */
 function startBossMusic() {
 
@@ -136,7 +139,6 @@ function startBossMusic() {
     }, BOSS_INTRO_PLAYING_TIME);
 }
 
-
 /**
  * Collects all relevant informations for positioning a new image object.
  * 
@@ -151,236 +153,11 @@ function addObject(image, start_x, start_y, scale) {
     }
 }
 
-
-/**
- * Listens for keys being pressed or released.
- */
-function listenForKeys() {
-    //e steht für event
-    //Das Event (Keyboardevent) ist ein JSON, in dem sich alle Informationen zu einer gedrückten Taste befinden.
-    //Um sich das komplette Event (JSON) anzeigen zu lassen
-    //console.log(e);
-    keyDown();
-    keyUp();
-}
-
-
-/**
- * Listens for keys being pressed.
- */
-function keyDown() {
-    //If a special key is pressed
-    document.addEventListener('keydown', function (e) {
-
-        //user can no longer make any movements when game is lost
-        if (gameLost != true) {
-            //e.key bedeutet, ich möchte von dem JSON Event des keys namens "code" den value und dieser ist "ArrowRight" etc.
-            let key = e.code; // z.B. "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
-
-            if (key == "ArrowRight") {
-                isMovingRight = true;
-                lastMove = "right";
-            }
-            if (key == "ArrowLeft") {
-                isMovingLeft = true;
-                lastMove = "left";
-            }
-
-            //Erst wenn die JUMP TIME vorüber ist, darf ein neuer Sprung begonnen werden.
-            //Daher muss die Zeit seit dem letzten Sprung größer als die Sprungzeit sein (also außerhalb dieser Zeit liegen).
-            //JUMP_TIME * 2, da wir JUMP_TIME hochspringen und JUMP_TIME runterfallen (ein Sprung).
-            if ((key == "Space" || key == "ArrowUp") && timePassedSinceJump > JUMP_TIME * 2) {
-                lastJumpStarted = new Date().getTime();         //Unix Timestamp
-                checkJumpDirection();
-                AUDIO_CHARACTER_JUMPING.play();
-                AUDIO_CHARACTER_SNORING.pause();
-            }
-
-
-            if (key == "KeyD") {
-                if (collectedBottles > 0) {
-                    //Ensures that a new throw can only be started when the old one has finished
-                    if (timePassedSinceThrow > THROW_TIME) {
-                        //let timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
-                        lastThrowStarted = new Date().getTime();
-                        collectedBottles--;
-                        if (lastMove == 'left') {
-                            bottleThrowingDirection = 'left';
-                        } else if (lastMove == 'right') {
-                            bottleThrowingDirection = 'right';
-                        }
-                    }
-                }
-            }
-        }
-
-
-    });
-}
-
-
-/**
- * Listens for keys being released.
- */
-function keyUp() {
-    //If a special key is released
-    document.addEventListener('keyup', function (e) {
-        let key = e.code;
-        if (key == "ArrowRight") {
-            isMovingRight = false;
-            lastMoveFinished = new Date().getTime();
-            /* character_x = character_x + 5; */
-        }
-        if (key == "ArrowLeft") {
-            isMovingLeft = false;
-            lastMoveFinished = new Date().getTime();
-            /* character_x = character_x - 5; */
-        }
-        if (key == "Space" || key == "ArrowUp") {
-            lastMoveFinished = new Date().getTime();
-        }
-        if (key == "KeyD") {
-            lastMoveFinished = new Date().getTime();
-        }
-    });
-}
-
-
-/**
- * Listens for touch-control-buttons being touched.
- */
-function listenForTouch() {
-
-    let arrowLeft = document.getElementById('touch-arrow-left');
-
-    arrowLeft.addEventListener("touchstart", leftTouchStart, false);
-    arrowLeft.addEventListener("touchend", leftTouchEnd, false);
-    arrowLeft.addEventListener("touchleave", leftTouchLeave, false)
-
-    function leftTouchStart() {
-        isMovingLeft = true;
-        lastMove = "left";
-    }
-    function leftTouchEnd() {
-        isMovingLeft = false;
-        lastMoveFinished = new Date().getTime();
-    }
-    function leftTouchLeave() {
-        isMovingLeft = false;
-        lastMoveFinished = new Date().getTime();
-    }
-
-
-    let arrowRight = document.getElementById('touch-arrow-right');
-
-    arrowRight.addEventListener("touchstart", rightTouchStart, false);
-    arrowRight.addEventListener("touchend", rightTouchEnd, false);
-    arrowRight.addEventListener("touchleave", rightTouchLeave, false)
-
-    function rightTouchStart() {
-        isMovingRight = true;
-        lastMove = "right";
-    }
-    function rightTouchEnd() {
-        isMovingRight = false;
-        lastMoveFinished = new Date().getTime();
-    }
-    function rightTouchLeave() {
-        isMovingRight = false;
-        lastMoveFinished = new Date().getTime();
-    }
-
-
-    let arrowUp = document.getElementById('touch-arrow-up');
-
-    arrowUp.addEventListener("touchstart", jumpTouchStart, false);
-    arrowUp.addEventListener("touchend", jumpTouchEnd, false);
-
-    function jumpTouchStart() {
-        if (timePassedSinceJump > JUMP_TIME * 2) {
-            lastJumpStarted = new Date().getTime();
-            checkJumpDirection();
-            AUDIO_CHARACTER_JUMPING.play();
-            AUDIO_CHARACTER_SNORING.pause();
-        }
-
-    }
-    function jumpTouchEnd() {
-        lastMoveFinished = new Date().getTime();
-    }
-
-
-    let arrowThrow = document.getElementById('touch-arrow-throw');
-
-    arrowThrow.addEventListener("touchstart", throwTouchStart, false);
-    arrowThrow.addEventListener("touchend", throwTouchEnd, false);
-
-
-    function throwTouchStart() {
-        if (collectedBottles > 0) {
-            //Ensures that a new throw can only be started when the old one has finished
-            if (timePassedSinceThrow > THROW_TIME) {
-                //let timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
-                lastThrowStarted = new Date().getTime();
-                collectedBottles--;
-                if (lastMove == 'left') {
-                    bottleThrowingDirection = 'left';
-                } else if (lastMove == 'right') {
-                    bottleThrowingDirection = 'right';
-                }
-            }
-        }
-
-    }
-    function throwTouchEnd() {
-        lastMoveFinished = new Date().getTime();
-    }
-
-}
-
-
-/* Source: https://stackoverflow.com/questions/3413683/disabling-the-context-menu-on-long-taps-on-android/28748222 */
-/**
- * Prevents mobile devices from opening a window on touch long.
- */
-function preventLongTouchMenu() {
-    let arrowLeft = document.getElementById('touch-arrow-left');
-    let arrowRight = document.getElementById('touch-arrow-right');
-    let arrowUp = document.getElementById('touch-arrow-up');
-    let arrowThrow = document.getElementById('touch-arrow-throw');
-    preventLongTouchButton(arrowLeft);
-    preventLongTouchButton(arrowRight);
-    preventLongTouchButton(arrowUp);
-    preventLongTouchButton(arrowThrow);
-}
-
-
-function preventLongTouchButton(node) {
-    node.ontouchstart = absorbEvent_;
-    node.ontouchmove = absorbEvent_;
-    node.ontouchend = absorbEvent_;
-    node.ontouchcancel = absorbEvent_;
-}
-
-function absorbEvent_(event) {
-    var e = event || window.event;
-    e.preventDefault && e.preventDefault();
-    e.stopPropagation && e.stopPropagation();
-    e.cancelBubble = true;
-    e.returnValue = false;
-    return false;
-}
-
-
-
-
-
-
-
 /**
  * Plays final sounds and manages endscreen issues as soon as character wins the game.
  */
 function finishGameWon() {
+
     setTimeout(function () {
         AUDIO_BOSS_DEAD.play();
         AUDIO_EXPLOSION.play();
@@ -399,8 +176,8 @@ function finishGameWon() {
     setTimeout(function () {
         showRestartButton();
     }, BOSS_DYING_TIME + 5000);
-}
 
+}
 
 /**
  * Manages sounds and endscreen issues as soon as character loses the game.
@@ -436,13 +213,12 @@ function finishGameLost() {
     }, CHARACTER_DYING_TIME + 7000);
 }
 
-
 /**
  * Draws different endscreens depending on character's win or lose.
  * 
  * @param  {String} status - Character's status when finishing the game.
  */
-function drawScreen(status) {
+function drawEndScreen(status) {
     let image;
     if (status == 'won') {
         image = backgroundImages['screens'][1];
@@ -453,15 +229,12 @@ function drawScreen(status) {
     addBackgroundImage(image, 0, 0, 0);
 }
 
-
 /**
  * Shows restart button on screen.
  */
 function showRestartButton() {
     document.getElementById('restart-game-btn').classList.remove('d-none');
 }
-
-
 
 /**
  * Toggles fullscreen mode.
@@ -483,8 +256,6 @@ function toggleFullscreen() {
     }
 }
 
-
-
 /**
  * Enlarges content to fullscreen.
  */
@@ -499,11 +270,9 @@ function enlargeToFullscreen(fullscreenIcon, fullscreenExitIcon, content, canvas
     content.style.width = "100%";
     content.style.border = 0;
     content.style.backgroundColor = "unset";
-
     canvas.style.height = "100%";
+
 }
-
-
 
 /**
  * Exits fullscreen mode.
@@ -518,13 +287,13 @@ function leaveFullscreen(fullscreenIcon, fullscreenExitIcon, content, canvas) {
     content.style.height = "580px";
     content.style.width = "805px";
     content.style.border = "2px solid white";
-
     canvas.style.height = "unset";
 
 }
 
-
-
+/**
+ * Shows an info to play the game in landscape mode when device's width is less than 850px.
+ */
 function useLandscape() {
     var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 

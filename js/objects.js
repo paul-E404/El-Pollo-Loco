@@ -2,15 +2,15 @@
  * Draws character's current energy bar.
  */
 function drawEnergyBar() {
+
     ctx.fillStyle = "rgba(224, 0, 82, 0.8)";
     ctx.fillRect(60, 37, 2 * character_energy, 20);
-
+    //white transparent border for energy bar
     ctx.fillStyle = "white"
     ctx.globalAlpha = 0.3;
     ctx.fillRect(55, 32, 210, 30);
     ctx.globalAlpha = 1;
 }
-
 
 /**
  * Draws display, including energy bar and number of collected bottles.
@@ -20,7 +20,6 @@ function drawDisplay() {
     let heart = objectImages.display[0];
     let bottle = objectImages.display[1];
 
-
     addObject(heart, 10, 0, 0.5);
     addObject(bottle, 280, 15, 0.4);
 
@@ -28,7 +27,6 @@ function drawDisplay() {
     ctx.fillStyle = "brown";
     ctx.fillText("x " + collectedBottles, 330, 58);
 }
-
 
 /**
  * Draws all placed bottles in the game.
@@ -40,9 +38,8 @@ function drawBottles() {
     }
 }
 
-
 /**
- * Corrects the bottles' position when background is moving.
+ * Corrects the bottles' horizontal position when background is moving.
  * 
  * @param  {boolean} movingDirection - Moving direction of the character.
  */
@@ -59,19 +56,14 @@ function correctBottlesPosition(movingDirection) {
     }
 }
 
-
 /**
  * Draws the graph of the thrown bottle by simulating gravity.
  */
 function drawThrownBottle() {
-   
     timePassedSinceThrow = new Date().getTime() - lastThrowStarted;
     let gravity = Math.pow(9.81, timePassedSinceThrow / 200);
-
     throwBottle(timePassedSinceThrow, gravity);
-    
 }
-
 
 /**
  * Animates bottle throw depending on character's viewing direction.
@@ -81,7 +73,7 @@ function drawThrownBottle() {
  */
 function throwBottle(timePassedSinceThrow, gravity) {
     if (bottleThrowingDirection == 'left') {
-        throwBottleToTheLeft(timePassedSinceThrow, gravity);
+        throwBottleToTheLeft(timePassedSinceThrow, gravity); 
     }
     else if (bottleThrowingDirection == 'right') {
         throwBottleToTheRight(timePassedSinceThrow, gravity);
@@ -91,7 +83,7 @@ function throwBottle(timePassedSinceThrow, gravity) {
 /**
  * Animates bottle throw to the left.
  * 
-* @param  {number} timePassedSinceThrow - Time passed since last bottle throw.
+ * @param  {number} timePassedSinceThrow - Time passed since last bottle throw.
  * @param  {number} gravity - Additional vertical distance for the thrown bottle by simulating gravity.
  */
 function throwBottleToTheLeft(timePassedSinceThrow, gravity) {
@@ -117,9 +109,8 @@ function throwBottleToTheRight(timePassedSinceThrow, gravity) {
     if (timePassedSinceThrow < 100) {
         currentCharacterImage = characterImages.throw[1][0];
         AUDIO_BOTTLE_THROW.play();
-    }
+    } 
 }
-
 
 /**
  * Shows rotation of the thrown bottle before gravity pulls it down.
@@ -139,14 +130,12 @@ function rotateBottle(thrown_bottle_x, thrown_bottle_y) {
     }
 }
 
-
 /**
  * Draws broken bottle (sauce).
  */
 function drawBrokenBottle() {
     addObject(currentSauceImage, broken_bottle_x, broken_bottle_y, 0.25);
 }
-
 
 /**
  * Animates sauce when boss is hit and bottle breaks.
@@ -160,7 +149,6 @@ function animateBottleBreak() {
             currentSauceImage = objectImages.sauce[i];
         }, BOTTLE_BREAK_TIME / (objectImages.sauce.length + 2) * (i + 1));
     }
-
     //Finish animation: sauce disappears
     setTimeout(function () {
         //removes last image

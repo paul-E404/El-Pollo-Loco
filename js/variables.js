@@ -3,11 +3,11 @@ let ctx;
 let fullscreenActive = false;
 
 let bg_sky_x = -270;
-let bg3_ground_x = -270;   //alle -270
+let bg3_ground_x = -270;
 let bg2_ground_x = -270;
 let bg1_ground_x = -270;
-let bg_ground_x_min = -10;    //Verhindert, dass character unendlich nach links laufen kann
-let bg_ground_x_max;        //Verhindert, dass character unendlich nach rechts laufen kann
+let bg_ground_x_min = -10;   //Prevents the character from being able to walk to the left or right endlessly.
+let bg_ground_x_max;
 let bg_element_y = 0;
 let cloud_offset = 0;
 let wallRight;
@@ -69,9 +69,9 @@ let gameLost = false;
 let timeForEndscreen = false;
 
 
+// ------------------- Game config ------------------- //
 
-// ------------------- Game config
-//Kostanten werden groß und mit Unterstrich geschrieben. Eine Konstante ist eine Variable, die sich über das ganze Spiel nicht ändert.
+//CONSTANTS
 const PLAYING_FIELD_LENGTH = 15;
 const JUMP_TIME = 400;
 const GAME_SPEED = 7;
@@ -84,11 +84,13 @@ const BOSS_DYING_TIME = 4000;
 const CHARACTER_DYING_TIME = 500;
 const BOSS_INTRO_PLAYING_TIME = 9000;
 
+//MUSIC
 const AUDIO_MEXICAN_SONG = new Audio('audio/mexican_song.mp3');
 const AUDIO_BOSS_MUSIC_INTRO = new Audio ('audio/boss_music_intro.mp3');
 const AUDIO_BOSS_MUSIC = new Audio ('audio/boss_music2.mp3');
 const AUDIO_GAME_LOST_MUSIC = new Audio ('audio/game_lost_music.mp3');
 
+//SOUNDS
 const AUDIO_CHARACTER_RUNNING = new Audio('audio/character_running.mp3');
 const AUDIO_CHARACTER_JUMPING = new Audio('audio/character_jumping.mp3');
 const AUDIO_CHARACTER_SNORING = new Audio('audio/character_snoring.mp3');
@@ -209,7 +211,7 @@ let characterImages = {
     ]
 };
 
-
+//Image Object with all boss images
 let bossImages = {
     walk: [
         ['img/enemies/boss/walk/Gl-1.png',
@@ -265,7 +267,6 @@ let bossImages = {
     ]
 }
 
-
 //Image Object with all background images
 let backgroundImages = {
     ground: [
@@ -310,7 +311,6 @@ let chickenImages = {
         'img/enemies/chicken_brown/CB-dead.png'
     ]
 }
-
 
 //Image Object with all object images
 let objectImages = {

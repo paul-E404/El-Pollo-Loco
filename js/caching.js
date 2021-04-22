@@ -1,8 +1,18 @@
+/* IMAGE CACHING EXPLANATION - german */
 //Ziel dieser Funktion ist es, jeden Pfadeintrag des Objektes characterImages durch das entsprechende Bildobjekt zu ersetzen und es dadurch vorzuladen.
 //Gibt jedes Element des Objekts "characterImages" aus, d.h. den Pfad.
 //x ist die Anzahl der Elemente im Objekt
 //y ist die Wahl zwischen left und right
 //z ist die Anzahl der Elemente in einem spezifischen Array, z.B. 6 Elemente im Array walk-left (da dort 6 Bilder vorhanden).
+
+
+/* IMAGE CACHING EXPLANATION - englisch */
+// The aim of this function is to replace every path entry of the characterImages object with the corresponding image object and thereby preload it.
+// Outputs every element of the "characterImages" object, i.e. the path.
+// x is the number of elements in the object
+// y is the choice between left and right
+// z is the number of elements in a specific array, e.g. 6 elements in the walk-left array (since there are 6 images there).
+
 
 /**
  * IMAGE CACHING 
@@ -39,6 +49,7 @@ function preloadOtherImages(obj) {
         for (let y = 0; y < obj[Object.keys(obj)[x]].length; y++) {
             //Catch every entry (img-path) in backgroundImages object
             let path = obj[Object.keys(obj)[x]][y];
+            //Creates an image using the current path
             let image = new Image();
             image.src = path;
             //Save entries with img-Objects back to backgroundImages object
