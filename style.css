@@ -15,7 +15,6 @@ body {
 /* 
 * Inspiration for button design was taken from https://jsfiddle.net/volcanicpixels/udXXA/. 
 */
-
 .btn {
     position: absolute;
     height: 60px;
@@ -129,7 +128,6 @@ body {
     display: flex;
 }
 
-
 .touch-controls-walk {
     height: 90px;
 }
@@ -181,9 +179,8 @@ body {
     text-decoration: none;
 }
 
+
 /* RESPONSIVE DESIGN */
-
-
 
 @media(max-width: 850px) {
     
