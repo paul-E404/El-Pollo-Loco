@@ -18,7 +18,6 @@
     }
 }
 
-
 /**
  * Creates an array with all chicken enemy objects in the game.
  */
@@ -50,7 +49,7 @@ function createChickenList() {
  * @param  {string} type - The chicken's type.
  * @param  {number} position_x - The chicken's horizontal position.
  * @param  {number} position_y - The chicken's vertical position.
- * @param  {number} scale - Factor for chicken's image.
+ * @param  {number} scale - Factor for chicken's image size.
  * @param  {number} extra_speed - Variable summand for extra speed.
  * @returns {Object} - Chicken enemy object.
  */
@@ -91,7 +90,7 @@ function createChicken(type, position_x, position_y, scale, extra_speed) {
 }
 
 /**
- * Separates yellow and brown chickens in two differenz arrays
+ * Separates yellow and brown chickens in two different arrays.
  */
 function calculateChickenImages() {
     
@@ -116,16 +115,19 @@ function calculateChickenImages() {
  * Iterates through yellow chicken's images depending on its speed.
  */
 function calculateYellowChickenImages(yellowChickens) {
+
     for (let i = 0; i < yellowChickens.length; i++) {
+
         let chicken_yellow_image_index = 0;
         let yellowChicken = yellowChickens[i];
         let chickenSpeed = Math.round(1000 / yellowChicken.speed);
-        console.log(chickenSpeed);
+
         setInterval(function() {
             let index = chicken_yellow_image_index % chickenImages.yellow.length;
             yellowChicken.img = chickenImages.yellow[index];
             chicken_yellow_image_index++;
         }, chickenSpeed)
+
     }
 }
 
@@ -133,17 +135,20 @@ function calculateYellowChickenImages(yellowChickens) {
  * Iterates through brown chicken's images depending on its speed.
  */
 function calculateBrownChickenImages(brownChickens) {
+
     for (let i = 0; i < brownChickens.length; i++) {
+
         let chicken_brown_image_index = 0;
         let brownChicken = brownChickens[i];
         let chickenSpeed = Math.round(1000 / brownChicken.speed);
-        console.log(chickenSpeed);
+
         setInterval(function() {
             let index = chicken_brown_image_index % chickenImages.brown.length;
             brownChicken.img = chickenImages.brown[index];
             chicken_brown_image_index++;
         }, chickenSpeed)
     }
+    
 }
 
 /**

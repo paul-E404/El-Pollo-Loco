@@ -69,6 +69,7 @@ let gameLost = false;
 let timeForEndscreen = false;
 
 
+
 // ------------------- Game config ------------------- //
 
 //CONSTANTS
