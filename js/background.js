@@ -50,7 +50,8 @@ function enterBossArea() {
     timeWhenBossReached = new Date().getTime();
     AUDIO_MEXICAN_SONG.pause();
     startBossMusic();
-    document.getElementById('game-info-text').innerHTML = 'Trow bottles by pressing D!';
+
+    document.getElementById('game-info-text').innerHTML = 'Throw bottles by pressing D!';
 }
 
 /**

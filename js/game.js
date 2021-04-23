@@ -70,6 +70,7 @@ function init() {
     checkForThrownBottleHit();
     checkForBossAction();
     checkForDying();
+    checkForHopelessSituation();
     draw();
     listenForKeys();
     listenForTouch();
@@ -198,7 +199,12 @@ function finishGameLost() {
         //It is necessary to pause AUDIO_BOSS_MUSIC several times for the case character is dying when boss has already been reached.
         AUDIO_BOSS_MUSIC.pause();
         timeForEndscreen = true;
-        document.getElementById('game-info-text').innerHTML = `Don't give up! Try again!`;
+        if (hopelessSituation) {
+            document.getElementById('game-info-text').innerHTML = `No bottles left. You lost. Try again!`;  
+        }
+        else {
+            document.getElementById('game-info-text').innerHTML = `Don't give up! Try again!`;
+        }
     }, CHARACTER_DYING_TIME + 4000);
 
     setTimeout(function () {
@@ -209,6 +215,7 @@ function finishGameLost() {
     }, CHARACTER_DYING_TIME + 5000);
 
     setTimeout(function () {
+        AUDIO_BOSS_MUSIC.pause();
         showRestartButton();
     }, CHARACTER_DYING_TIME + 7000);
 }

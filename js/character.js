@@ -191,10 +191,10 @@ function checkForCollision() {
 
             //Collision of character with chicken
             characterChickenCollision(character_image_width_half, character_axis);
-           
+
             //Collision of character with bottles (collection)
             characterBottleCollision(character_image_width_half, character_axis);
-           
+
             //Collision of character with boss
             characterBossCollision(character_axis);
 
@@ -220,7 +220,7 @@ function characterChickenCollision(character_image_width_half, character_axis) {
                 lastMoveFinished = new Date().getTime();
                 AUDIO_CHARACTER_SNORING.pause();
                 //biggest and most dangerous crying brown chicken in town
-                if(chicken.type == "brown" && chicken.scale == 0.7) {
+                if (chicken.type == "brown" && chicken.scale == 0.7) {
                     //collision with that monster reduces extra energy
                     character_energy = character_energy - 20;
                     reduceCharacterEnergy();
@@ -400,3 +400,39 @@ function showDyingImages(currentImages) {
     }, CHARACTER_DYING_TIME / (currentImages.length * 10) * 60);
 
 }
+
+/**
+ * Brings character into a hopeless situation when he reaches the boss and has no bottles left to throw.
+ */
+function checkForHopelessSituation() {
+    
+    setInterval(function () {
+
+        if (reachedBoss == true && collectedBottles == 0 && bossDead == false && characterDead == false && gameLost == false && boss_energy > 0) {
+            setTimeout(function () {
+                console.log("reachedBoss", reachedBoss, "collectedBottles", collectedBottles, "bossDead", bossDead, "characterDead", characterDead);
+                hopelessSituation = true;
+            }, THROW_TIME);
+            console.log("Das hier bitte nur einmal!");
+            noBottlesLeft();
+        }
+    }, 1000);
+
+}
+
+/**
+ * Let character die and lose the game in the hopeless situation.
+ */
+function noBottlesLeft() {
+    if (hopelessSituation == true) {
+        character_energy = 0;
+        characterDyingStarted = new Date().getTime();
+        characterDead = true;
+        checkDyingDirection();
+        lastJumpStarted = new Date().getTime();
+        gameLost = true;
+        finishGameLost();
+        hopelessSituation = false;
+    }
+}
+
