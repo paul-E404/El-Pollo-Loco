@@ -15,6 +15,7 @@ body {
 /* 
 * Inspiration for button design was taken from https://jsfiddle.net/volcanicpixels/udXXA/. 
 */
+
 .btn {
     position: absolute;
     height: 60px;
@@ -139,10 +140,10 @@ body {
 }
 
 .touch-controls {
-    height: 90px;
+    height: 70px;
     width: 100%;
     max-width: 100%;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.9);
     display: flex;
     justify-content: space-between;
     display: none;
@@ -153,18 +154,18 @@ body {
 }
 
 .touch-controls-walk {
-    height: 90px;
+    height: 70px;
     cursor: pointer;
 }
 
 .touch-controls-jump {
-    height: 90px;
+    height: 70px;
     margin-left: 10px;
     cursor: pointer;
 }
 
 .touch-controls-throw {
-    height: 90px;
+    height: 70px;
     cursor: pointer;
 }
 
@@ -223,11 +224,9 @@ body {
     text-decoration: none;
 }
 
-
 /* RESPONSIVE DESIGN */
 
 @media(max-width: 850px) {
-    
     #restart-game-btn {
         height: 40px;
         font-size: 20px;
@@ -266,15 +265,21 @@ body {
         border-right: 2px white solid;
     }
     .game-info {
-       /*  height: 8%;
+        /*  height: 8%;
         font-size: 1.2em !important; */
-        display: none;
-    } 
+        /* display: none; */
+        order: 2;
+        height: 20px;
+        font-size: 16px;
+    }
     #fullscreen-icon {
         display: none;
     }
     .touch-controls {
         display: flex !important;
         order: 3;
+    }
+    #legal-notice-link {
+        z-index: 1;
     }
 }
