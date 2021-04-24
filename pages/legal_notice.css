@@ -2,7 +2,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     height: 100vh;
-    overflow: hidden;
+    overflow: auto;
     font-size: 14px;
     display: flex;
     flex-direction: column;

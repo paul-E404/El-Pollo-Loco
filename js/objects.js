@@ -21,11 +21,17 @@ function drawDisplay() {
     let bottle = objectImages.display[1];
 
     addObject(heart, 10, 0, 0.5);
-    addObject(bottle, 280, 15, 0.4);
+
+    ctx.fillStyle = "white"
+    ctx.globalAlpha = 0.5;
+    ctx.fillRect(310, 32, 78, 30);
+    ctx.globalAlpha = 1;
 
     ctx.font = "28px sans-serif";
     ctx.fillStyle = "brown";
     ctx.fillText("x " + collectedBottles, 330, 58);
+
+    addObject(bottle, 280, 15, 0.4);
 }
 
 /**

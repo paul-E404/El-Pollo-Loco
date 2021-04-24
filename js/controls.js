@@ -95,29 +95,6 @@ function listenForTouch() {
         arrowThrow[i].addEventListener("touchend", throwTouchEnd, false);
     }
 
-
-
-    //select control buttons
-    /* let arrowLeft = document.getElementById('touch-arrow-left');
-    let arrowRight = document.getElementById('touch-arrow-right');
-    let arrowUp = document.getElementById('touch-arrow-up');
-    let arrowThrow = document.getElementById('touch-arrow-throw'); */
-
-    //add event listener (touch)
-    /* arrowLeft.addEventListener("touchstart", leftTouchStart, false);
-    arrowLeft.addEventListener("touchend", leftTouchEnd, false);
-    arrowLeft.addEventListener("touchleave", leftTouchLeave, false);
-
-    arrowRight.addEventListener("touchstart", rightTouchStart, false);
-    arrowRight.addEventListener("touchend", rightTouchEnd, false);
-    arrowRight.addEventListener("touchleave", rightTouchLeave, false);
-
-    arrowUp.addEventListener("touchstart", jumpTouchStart, false);
-    arrowUp.addEventListener("touchend", jumpTouchEnd, false);
-
-    arrowThrow.addEventListener("touchstart", throwTouchStart, false);
-    arrowThrow.addEventListener("touchend", throwTouchEnd, false); */
-
     //define touch functions
     //For reasons of clarity, I didn't put the start- and finish-functions directly into addEventListener-functions.
     function leftTouchStart() {
@@ -220,14 +197,26 @@ function startThrow() {
  * Prevents mobile devices from opening a window on touch long.
  */
 function preventLongTouchMenu() {
-    let arrowLeft = document.getElementById('touch-arrow-left');
-    let arrowRight = document.getElementById('touch-arrow-right');
-    let arrowUp = document.getElementById('touch-arrow-up');
-    let arrowThrow = document.getElementById('touch-arrow-throw');
-    preventLongTouchButton(arrowLeft);
-    preventLongTouchButton(arrowRight);
-    preventLongTouchButton(arrowUp);
-    preventLongTouchButton(arrowThrow);
+    let arrowLeft = document.getElementsByClassName('touch-arrow-left');
+    let arrowRight = document.getElementsByClassName('touch-arrow-right');
+    let arrowUp = document.getElementsByClassName('touch-arrow-up');
+    let arrowThrow = document.getElementsByClassName('touch-arrow-throw');
+
+    for (let i = 0; i < arrowLeft.length; i++) {
+        preventLongTouchButton(arrowLeft[i]);
+    }
+
+    for (let i = 0; i < arrowRight.length; i++) {
+        preventLongTouchButton(arrowRight[i]);
+    }
+
+    for (let i = 0; i < arrowUp.length; i++) {
+        preventLongTouchButton(arrowUp[i]);
+    }
+
+    for (let i = 0; i < arrowThrow.length; i++) {
+        preventLongTouchButton(arrowThrow[i]);
+    }
 }
 
 function preventLongTouchButton(node) {
@@ -261,7 +250,6 @@ function showTouchControls() {
     showTouchBtn.classList.add('d-none');
     hideTouchBtn.classList.remove('d-none');
 
-    
 }
 
 /**
