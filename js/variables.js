@@ -5,7 +5,7 @@ let fullscreenActive = false;
 let bg_sky_x = -270;
 let bg3_ground_x = -270;
 let bg2_ground_x = -270;
-let bg1_ground_x = -11000;
+let bg1_ground_x = -270;
 let bg_ground_x_min = -10;   //Prevents the character from being able to walk to the left or right endlessly.
 let bg_ground_x_max;
 let bg_element_y = 0;
@@ -35,7 +35,7 @@ let chickens;
 let chicken_y = 365;
 
 let placedBottles = [2400, 3900, 5500, 6000, 6500, 7300, 7500, 8000, 8500, 8060, 9150, 9450, 9700, 10350, 10500];
-let collectedBottles = 10;
+let collectedBottles = 0;
 let lastThrowStarted = new Date().getTime();
 let thrown_bottle_x;
 let thrown_bottle_y;

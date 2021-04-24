@@ -68,14 +68,43 @@ function keyUp() {
  */
 function listenForTouch() {
 
+    let arrowLeft = document.getElementsByClassName('touch-arrow-left');
+    let arrowRight = document.getElementsByClassName('touch-arrow-right');
+    let arrowUp = document.getElementsByClassName('touch-arrow-up');
+    let arrowThrow = document.getElementsByClassName('touch-arrow-throw');
+
+    for (let i = 0; i < arrowLeft.length; i++) {
+        arrowLeft[i].addEventListener("touchstart", leftTouchStart, false);
+        arrowLeft[i].addEventListener("touchend", leftTouchEnd, false);
+        arrowLeft[i].addEventListener("touchleave", leftTouchLeave, false);
+    }
+
+    for (let i = 0; i < arrowRight.length; i++) {
+        arrowRight[i].addEventListener("touchstart", rightTouchStart, false);
+        arrowRight[i].addEventListener("touchend", rightTouchEnd, false);
+        arrowRight[i].addEventListener("touchleave", rightTouchLeave, false);
+    }
+
+    for (let i = 0; i < arrowUp.length; i++) {
+        arrowUp[i].addEventListener("touchstart", jumpTouchStart, false);
+        arrowUp[i].addEventListener("touchend", jumpTouchEnd, false);
+    }
+
+    for (let i = 0; i < arrowThrow.length; i++) {
+        arrowThrow[i].addEventListener("touchstart", throwTouchStart, false);
+        arrowThrow[i].addEventListener("touchend", throwTouchEnd, false);
+    }
+
+
+
     //select control buttons
-    let arrowLeft = document.getElementById('touch-arrow-left');
+    /* let arrowLeft = document.getElementById('touch-arrow-left');
     let arrowRight = document.getElementById('touch-arrow-right');
     let arrowUp = document.getElementById('touch-arrow-up');
-    let arrowThrow = document.getElementById('touch-arrow-throw');
+    let arrowThrow = document.getElementById('touch-arrow-throw'); */
 
     //add event listener (touch)
-    arrowLeft.addEventListener("touchstart", leftTouchStart, false);
+    /* arrowLeft.addEventListener("touchstart", leftTouchStart, false);
     arrowLeft.addEventListener("touchend", leftTouchEnd, false);
     arrowLeft.addEventListener("touchleave", leftTouchLeave, false);
 
@@ -87,7 +116,7 @@ function listenForTouch() {
     arrowUp.addEventListener("touchend", jumpTouchEnd, false);
 
     arrowThrow.addEventListener("touchstart", throwTouchStart, false);
-    arrowThrow.addEventListener("touchend", throwTouchEnd, false);
+    arrowThrow.addEventListener("touchend", throwTouchEnd, false); */
 
     //define touch functions
     //For reasons of clarity, I didn't put the start- and finish-functions directly into addEventListener-functions.
@@ -215,4 +244,39 @@ function absorbEvent_(event) {
     e.cancelBubble = true;
     e.returnValue = false;
     return false;
+}
+
+/**
+ * Shows touch buttons for tablet use.
+ */
+function showTouchControls() {
+   
+    let touchTabletLeft = document.getElementById('touch-tablet-left');
+    let touchTabletRight = document.getElementById('touch-tablet-right');
+    let showTouchBtn = document.getElementById('show-touch-btn');
+    let hideTouchBtn = document.getElementById('hide-touch-btn');
+    
+    touchTabletLeft.classList.remove('d-none');
+    touchTabletRight.classList.remove('d-none');
+    showTouchBtn.classList.add('d-none');
+    hideTouchBtn.classList.remove('d-none');
+
+    
+}
+
+/**
+ * Hides touch buttons for tablet use.
+ */
+ function hideTouchControls() {
+   
+    let touchTabletLeft = document.getElementById('touch-tablet-left');
+    let touchTabletRight = document.getElementById('touch-tablet-right');
+    let showTouchBtn = document.getElementById('show-touch-btn');
+    let hideTouchBtn = document.getElementById('hide-touch-btn');
+    
+    touchTabletLeft.classList.add('d-none');
+    touchTabletRight.classList.add('d-none');
+    showTouchBtn.classList.remove('d-none');
+    hideTouchBtn.classList.add('d-none');
+    
 }

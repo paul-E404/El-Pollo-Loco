@@ -4,12 +4,12 @@ body {
     margin: 0;
     height: 100vh;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
 }
 
 .d-none {
-    display: none;
+    display: none !important;
 }
 
 /* 
@@ -90,7 +90,7 @@ body {
     width: 100%;
     background-color: white;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     font-size: 1.4em;
     order: 1;
 }
@@ -101,17 +101,41 @@ body {
 }
 
 .controls-walk {
-    width: 20%;
+    width: 5%;
 }
 
 .controls-jump {
-    width: 25%;
+    width: 15%;
     margin-left: 10%;
     margin-right: 10%;
 }
 
 .control-icon, .touch-control-icon {
     height: 90%;
+}
+
+#show-touch-btn {
+    height: 96%;
+    font-size: 14px;
+    background: linear-gradient(rgb(227, 243, 136), rgb(178, 245, 55), rgb(127, 226, 46));
+    border: 2px solid rgb(64, 140, 202);
+    border-radius: 4px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: rgb(7, 64, 110);
+    line-height: 16px;
+    cursor: pointer;
+}
+
+#hide-touch-btn {
+    height: 96%;
+    font-size: 14px;
+    background: linear-gradient(rgb(245, 131, 55), rgb(245, 68, 55), rgb(212, 61, 50));
+    border: 2px solid rgb(150, 20, 11);
+    border-radius: 4px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
+    line-height: 16px;
+    cursor: pointer;
 }
 
 .touch-controls {
@@ -130,15 +154,18 @@ body {
 
 .touch-controls-walk {
     height: 90px;
+    cursor: pointer;
 }
 
 .touch-controls-jump {
     height: 90px;
     margin-left: 10px;
+    cursor: pointer;
 }
 
 .touch-controls-throw {
     height: 90px;
+    cursor: pointer;
 }
 
 .startScreen {
@@ -170,6 +197,23 @@ body {
     align-items: center;
     font-size: 1.4em;
     order: 3;
+}
+
+.touch-tablet-box {
+    width: 100px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    border: 2px solid white;
+    box-shadow: 0 0 10px white;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.touch-tablet-box img {
+    width: 90%;
+    cursor: pointer;
 }
 
 .bottom-link {

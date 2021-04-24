@@ -29,9 +29,14 @@
 
     <img class="background-image" src="img/background_dessert.jpg" alt="background-dessert">
 
+    <div id="touch-tablet-left" class="touch-tablet-box d-none">
+        <img id="touch-arrow-up" class="touch-arrow-up" src="img/arrow_up.png" alt="arrow-up">
+        <img id="touch-arrow-left" class="touch-arrow-left" src="img/arrow_left.png" alt="arrow-left">
+    </div>
+
     <div id="content" class="content">
 
-        <div id="controls" class="controls">
+        <div id="keyboard-controls" class="controls">
             <div class="controls-walk">
                 <img class="control-icon" src="img/arrow_left.png" alt="arrow-left">
                 <img class="control-icon" src="img/arrow_right.png" alt="arrow-right">
@@ -46,25 +51,27 @@
                 <img class="control-icon" src="img/d_button1.png" alt="d-button">
                 <span>&nbsp;&nbsp;throw</span>
             </div>
+            <button onclick="showTouchControls();" id="show-touch-btn" type="button">SHOW <b>TOUCH</b><br>CONTROLS</button>
+            <button onclick="hideTouchControls();" id="hide-touch-btn" type="button" class="d-none">HIDE <b>TOUCH</b><br>CONTROLS</button>
         </div>
 
         <div id="touch-controls" class="touch-controls">
             <div class="touch-controls-left-hand">
                 <div class="touch-controls-walk">
-                    <img id="touch-arrow-left" class="touch-control-icon" src="img/arrow_left.png" alt="arrow-left">
+                    <img id="touch-arrow-left" class="touch-arrow-left touch-control-icon" src="img/arrow_left.png" alt="arrow-left">
                 </div>
 
                 <div id="touch-controls-jump" class="touch-controls-jump">
-                    <img id="touch-arrow-up" class="touch-control-icon" src="img/arrow_up.png" alt="arrow-up">
+                    <img id="touch-arrow-up" class="touch-arrow-up touch-control-icon" src="img/arrow_up.png" alt="arrow-up">
                 </div>
             </div>
             <div class="touch-controls-right-hand">
                 <div class="touch-controls-throw">
-                    <img id="touch-arrow-throw" class="touch-control-icon" src="img/arrow_throw_bottle.png" alt="arrow-throw">
+                    <img id="touch-arrow-throw" class="touch-arrow-throw touch-control-icon" src="img/arrow_throw_bottle.png" alt="arrow-throw">
                 </div>
 
                 <div class="touch-controls-walk">
-                    <img id="touch-arrow-right" class="touch-control-icon" src="img/arrow_right.png" alt="arrow-right">
+                    <img id="touch-arrow-right" class="touch-arrow-right touch-control-icon" src="img/arrow_right.png" alt="arrow-right">
                 </div>
             </div>
         </div>
@@ -89,7 +96,11 @@
 
     </div>
 
-    <!-- <a href="https://www.vecteezy.com/free-vector/desert">Desert Vectors by Vecteezy</a>  -->
+    <div id="touch-tablet-right" class="touch-tablet-box d-none">
+        <img id="touch-arrow-throw" class="touch-arrow-throw" src="img/arrow_throw_bottle.png" alt="arrow-throw">
+        <img id="touch-arrow-right" class="touch-arrow-right" src="img/arrow_right.png" alt="arrow-right">
+    </div>
+
     <a class="bottom-link" href="./pages/legal_notice.html">Legal Notice</a>
 
 </body>
