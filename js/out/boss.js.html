@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: boss.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: boss.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>//Variable for clearing the setInterval() in the checkForBossAction() function. Otherwise you cannot change the bossSpeed variable.
+let timer;
+
+/**
+ * Regulates boss action depending on its physical status.
+ */
+function checkForBossAction() {
+
+    timer = setInterval(function () {
+
+        let currentTime = new Date().getTime();
+        let timePassedSinceLastHit = currentTime - lastHitStarted;
+
+        if (timePassedSinceLastHit > BOSS_HIT_TIME) {
+
+            if (firstBossHit == true) {
+                bossAttack();
+            }
+            else if (bossAlmostDead == true) {
+                bossAttackFinal();
+            }
+            else if (bossDead == true) {
+                AUDIO_BOSS_MUSIC.pause();
+                bossDying();
+                gameWon = true;
+            }
+            else if (bossWalk == true) {
+                bossWalking();
+            }
+        }
+    }, bossSpeed);
+
+}
+
+/**
+ * Draws the current boss images.
+ */
+ function updateBoss() {
+
+    let boss_image = currentBossImage;
+
+    if (boss_image.complete) {
+        ctx.drawImage(boss_image, boss_x, boss_y, boss_image.width * 0.3, boss_image.height * 0.3);
+    }
+    drawBossEnergy();
+}
+
+/**
+ * Draws boss energy bar.
+ */
+function drawBossEnergy() {
+
+    ctx.fillStyle = "rgba(255, 80, 0, 0.8)";
+    ctx.fillRect(boss_x + 60, boss_y, 2 * boss_energy, 20);
+
+    //yellow border around energy bar
+    ctx.fillStyle = "yellow"
+    ctx.globalAlpha = 0.3;
+    ctx.fillRect(boss_x + 55, boss_y - 5, 210, 30);
+    ctx.globalAlpha = 1;
+
+    let boss_icon = objectImages.display[2];
+    addObject(boss_icon, boss_x + 10, boss_y - 25, 0.45);
+}
+
+/**
+ * Animates angry boss as soon as it has been hit for the first time.
+ */
+function bossAttack() {
+
+    //first step: clear old setInterval() with old boss speed
+    clearInterval(timer);
+    //second step: increase boss speed
+    bossSpeed = 250;
+    //third step: start new interval
+    checkForBossAction();
+
+    let index = boss_attack_index % bossImages.attack[0].length;
+
+    bossAttackLeft(index);
+    bossAttackRight(index);
+    bossMovingUpAndDown(index);
+
+    boss_attack_index++;
+}
+
+/**
+ * Animates angry boss as soon as it has been hit for the first time (left route).
+ * 
+ * @param  {number} index - Index of current bossImages array.
+ */
+function bossAttackLeft(index) {
+    if (boss_x >= 430 &amp;&amp; bossMovingLeft == true) {
+        currentBossImage = bossImages.attack[0][index];
+        boss_x = boss_x - 10;
+        if (boss_x &lt;= 430) {
+            bossMovingLeft = false;
+            bossMovingRight = true;
+        }
+    }
+}
+
+/**
+ * Animates angry boss as soon as it has been hit for the first time (right route).
+ * 
+ * @param  {number} index - Index of current bossImages array.
+ */
+function bossAttackRight(index) {
+    if (boss_x &lt;= 540 &amp;&amp; bossMovingRight == true) {
+        currentBossImage = bossImages.attack[1][index];
+        boss_x = boss_x + 10;
+        if (boss_x >= 540) {
+            bossMovingLeft = true;
+            bossMovingRight = false;
+        }
+    }
+}
+
+/**
+ * Let the boss move up and down alternately.
+ * 
+ * @param  {number} index - Index of current bossImages array.
+ */
+function bossMovingUpAndDown(index) {
+    //if index is an even number
+    if (index % 2 == 0) {
+        boss_y = boss_y + 5;
+    }
+    //if index is an odd number
+    else {
+        boss_y = boss_y - 5;
+    }
+}
+
+/**
+ * Changes boss animation from angry to totally angry as soon as it has been hit for several times.
+ */
+function bossAttackFinal() {
+
+    //first step: clear old setInterval() with old boss speed
+    clearInterval(timer);
+    //second step: increase boss speed
+    bossSpeed = 100;
+    //third step: start new interval
+    checkForBossAction();
+
+    let index = boss_angry_index % bossImages.angry[0].length;
+
+    bossAttackFinalLeft(index);
+    bossAttackFinalRight(index);
+    bossMovingUpAndDown(index);
+
+    boss_angry_index++;
+}
+
+/**
+ * Animates totally angry boss (left route).
+ * 
+ * @param  {number} index - Index of current bossImages array.
+ */
+function bossAttackFinalLeft(index) {
+    if (boss_x >= 280 &amp;&amp; bossMovingLeft == true) {
+        currentBossImage = bossImages.angry[0][index];
+        boss_x = boss_x - 20;
+        if (boss_x &lt;= 280) {
+            bossMovingLeft = false;
+            bossMovingRight = true;
+        }
+    }
+}
+
+/**
+ * Animates totally angry boss (right route).
+ * 
+ * @param  {number} index - Index of current bossImages array.
+ */
+function bossAttackFinalRight(index) {
+    if (boss_x &lt;= 540 &amp;&amp; bossMovingRight == true) {
+        currentBossImage = bossImages.angry[1][index];
+        boss_x = boss_x + 20;
+        if (boss_x >= 540) {
+            bossMovingLeft = true;
+            bossMovingRight = false;
+        }
+    }
+}
+
+/**
+ * Regulates boss dying animation (position and images).
+ */
+function bossDying() {
+
+    //first step: clear old setInterval() with old boss speed
+    clearInterval(timer);
+    //second step: increase boss speed
+    bossSpeed = 50;
+    //thrid step: start new interval
+    checkForBossAction();
+
+    let timePassed = new Date().getTime() - bossDyingStarted;
+    let gravity = Math.pow(9.81, (timePassed * 0.5) / 500);
+
+    //regulate vertical boss position
+    boss_y = boss_y - 25 + gravity;
+
+    checkBossDyingDirection();
+}
+
+
+/**
+ * Chooses the correct images depending on the boss last move (left or right).
+ */
+function checkBossDyingDirection() {
+    if (bossMovingLeft == true) {
+        currentImages = bossImages.dead[0];
+    }
+    else if (bossMovingRight == true) {
+        currentImages = bossImages.dead[1];
+    }
+    showBossDyingImages(currentImages);
+}
+
+/**
+ * Shows the correct boss dying images.
+ * 
+ * @param  {Object} currentImages - Boss dying images with right or left direction.
+ */
+function showBossDyingImages(currentImages) {
+
+    //boss falling up
+    if (bossFallingUp == true) {
+        if (boss_y > 80) {
+            currentBossImage = currentImages[0];
+        }
+        if (boss_y &lt;= 80 &amp;&amp; boss_y > 40) {
+            currentBossImage = currentImages[1];
+        }
+        if (boss_y &lt;= 40) {
+            bossFallingUp = false;
+        }
+    }
+
+    //boss falling down
+    if (bossFallingUp == false) {
+        currentBossImage = currentImages[2];
+        //stop bossDying() function
+        if (boss_y >= 800) {
+            bossDead = false;
+        }
+    }
+}
+
+/**
+ * Animates dafault boss movements.
+ */
+function bossWalking() {
+
+    let index = boss_walk_index % bossImages.walk[0].length;
+
+    bossWalkingLeft(index);
+    bossWalkingRight(index);
+    bossMovingUpAndDown(index);
+
+    boss_walk_index++;
+}
+
+/**
+ * Animates dafault boss movements (left route).
+ * 
+ * @param  {number} index - Index of current bossImages array.
+ */
+function bossWalkingLeft(index) {
+    if (boss_x >= 485 &amp;&amp; bossMovingLeft == true) {
+        currentBossImage = bossImages.walk[0][index];
+        boss_x = boss_x - 5;
+        if (boss_x &lt; 485) {
+            bossMovingLeft = false;
+            bossMovingRight = true;
+        }
+    }
+}
+
+/**
+ * Animates dafault boss movements (right route).
+ * 
+ * @param  {number} index - Index of current bossImages array.
+ */
+function bossWalkingRight(index) {
+    if (boss_x &lt;= 515 &amp;&amp; bossMovingRight == true) {
+        currentBossImage = bossImages.walk[1][index];
+        boss_x = boss_x + 5;
+        if (boss_x == 520) {
+            bossMovingLeft = true;
+            bossMovingRight = false;
+        }
+    }
+}
+
+/**
+ * Checks axial collision of thrown bottle with boss.
+ */
+function checkForThrownBottleHit() {
+
+    setInterval(function () {
+
+        //calculate axes of boss and thrown bottle images for a central collision
+        let boss_image_width = 285;
+        let boss_image_width_half = boss_image_width / 2;
+        let boss_x_axis = boss_x + boss_image_width_half;
+
+        let boss_image_height = 275;
+        let boss_image_height_half = boss_image_height / 2;
+        let boss_y_axis = boss_y + boss_image_height_half;
+
+        let thrown_bottle_image_width = 20;
+        let thrown_bottle_image_width_half = thrown_bottle_image_width / 2;
+        let thrown_bottle_x_axis = thrown_bottle_x + thrown_bottle_image_width_half;
+
+        let thrown_bottle_image_height = 72;
+        let thrown_bottle_image_height_half = thrown_bottle_image_height / 2;
+        let thrown_bottle_y_axis = thrown_bottle_y + thrown_bottle_image_height_half;
+
+        //calculate hit intervals
+        let horizontal_collision = thrown_bottle_x_axis &lt; (boss_x_axis + boss_image_width_half) &amp;&amp; thrown_bottle_x_axis > (boss_x_axis - boss_image_width_half);
+        let vertical_collision = thrown_bottle_y_axis &lt; (boss_y_axis + boss_image_height_half) &amp;&amp; thrown_bottle_y_axis > (boss_y_axis - boss_image_height_half / 2);
+
+        let timePassed = new Date().getTime() - timeWhenBossReached;
+
+        if (reachedBoss == true &amp;&amp; timePassed > BOSS_INTRO_PLAYING_TIME) {
+            //make sure that boss is not already dying
+            let timePassed = new Date().getTime() - bossDyingStarted;
+            if (timePassed > BOSS_DYING_TIME) {
+                //check for hit
+                if (horizontal_collision) {
+                    if (vertical_collision) {
+                        reduceBossEnergy();
+                        lastHitStarted = new Date().getTime();
+                        broken_bottle_x = thrown_bottle_x;
+                        broken_bottle_y = thrown_bottle_y;
+                        animateBottleBreak();
+                        checkBossHitDirection();
+                    }
+                }
+            }
+        }
+    }, 50);
+}
+
+/**
+ * Reduces boss energy bar and accordingly changes boss status for checkForBossAction() function.
+ */
+function reduceBossEnergy() {
+
+    if (boss_energy >= 5) {
+        boss_energy = boss_energy - 5;
+    }
+    if (boss_energy &lt; 100 &amp;&amp; boss_energy > 40) {
+        AUDIO_BOSS_HIT.play();
+        bossWalk = false;
+        firstBossHit = true;
+    }
+    if (boss_energy &lt;= 40 &amp;&amp; boss_energy > 0) {
+        AUDIO_BOSS_HIT.pause();
+        AUDIO_BOSS_ANGRY.play();
+        firstBossHit = false;
+        bossAlmostDead = true;
+    }
+    else if (boss_energy == 0) {
+        AUDIO_BOSS_ANGRY.pause();
+        bossDead = true;
+        bossAlmostDead = false;
+        bossDyingStarted = new Date().getTime();
+        finishGameWon();
+    }
+}
+
+/**
+ * Checks boss current direction when hit in order to show the correct boss hurt images.
+ */
+function checkBossHitDirection() {
+    currentTime = new Date().getTime();
+    let timePassedSinceLastHit = currentTime - lastHitStarted;
+
+    if (timePassedSinceLastHit &lt;= BOSS_HIT_TIME) {
+        if (bossMovingRight == true) {
+            currentImages = bossImages.hurt[1];
+            animateBossHit(currentImages);
+        }
+        else if (bossMovingLeft == true) {
+            currentImages = bossImages.hurt[0];
+            animateBossHit(currentImages);
+        }
+    }
+}
+
+/**
+ * Animates boss when hit.
+ * 
+ * @param  {Object} currentImages - Boss hurt images with right or left direction.
+ */
+function animateBossHit(currentImages) {
+
+    setTimeout(function () {
+        currentBossImage = currentImages[0];
+    }, BOSS_HIT_TIME / (currentImages.length * 30) * 1);
+    setTimeout(function () {
+        currentBossImage = currentImages[1];
+    }, BOSS_HIT_TIME / (currentImages.length * 30) * 11);
+    setTimeout(function () {
+        currentBossImage = currentImages[0];
+    }, BOSS_HIT_TIME / (currentImages.length * 30) * 21);
+    setTimeout(function () {
+        currentBossImage = currentImages[1];
+    }, BOSS_HIT_TIME / (currentImages.length * 30) * 31);
+    setTimeout(function () {
+        currentBossImage = currentImages[0];
+    }, BOSS_HIT_TIME / (currentImages.length * 30) * 41);
+    setTimeout(function () {
+        currentBossImage = currentImages[1];
+    }, BOSS_HIT_TIME / (currentImages.length * 30) * 51);
+
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addObject">addObject</a></li><li><a href="global.html#animateBossHit">animateBossHit</a></li><li><a href="global.html#animateBottleBreak">animateBottleBreak</a></li><li><a href="global.html#animateJump">animateJump</a></li><li><a href="global.html#bossAttack">bossAttack</a></li><li><a href="global.html#bossAttackFinal">bossAttackFinal</a></li><li><a href="global.html#bossAttackFinalLeft">bossAttackFinalLeft</a></li><li><a href="global.html#bossAttackFinalRight">bossAttackFinalRight</a></li><li><a href="global.html#bossAttackLeft">bossAttackLeft</a></li><li><a href="global.html#bossAttackRight">bossAttackRight</a></li><li><a href="global.html#bossDying">bossDying</a></li><li><a href="global.html#bossMovingUpAndDown">bossMovingUpAndDown</a></li><li><a href="global.html#bossWalking">bossWalking</a></li><li><a href="global.html#bossWalkingLeft">bossWalkingLeft</a></li><li><a href="global.html#bossWalkingRight">bossWalkingRight</a></li><li><a href="global.html#calculateBrownChickenImages">calculateBrownChickenImages</a></li><li><a href="global.html#calculateChickenImages">calculateChickenImages</a></li><li><a href="global.html#calculateChickenPosition">calculateChickenPosition</a></li><li><a href="global.html#calculateDyingPosition">calculateDyingPosition</a></li><li><a href="global.html#calculateYellowChickenImages">calculateYellowChickenImages</a></li><li><a href="global.html#characterBossCollision">characterBossCollision</a></li><li><a href="global.html#characterBottleCollision">characterBottleCollision</a></li><li><a href="global.html#characterChickenCollision">characterChickenCollision</a></li><li><a href="global.html#checkBossDyingDirection">checkBossDyingDirection</a></li><li><a href="global.html#checkBossHitDirection">checkBossHitDirection</a></li><li><a href="global.html#checkCharacterJumpHeight">checkCharacterJumpHeight</a></li><li><a href="global.html#checkCollisionDirection">checkCollisionDirection</a></li><li><a href="global.html#checkDyingDirection">checkDyingDirection</a></li><li><a href="global.html#checkForBossAction">checkForBossAction</a></li><li><a href="global.html#checkForCollision">checkForCollision</a></li><li><a href="global.html#checkForDying">checkForDying</a></li><li><a href="global.html#checkForHopelessSituation">checkForHopelessSituation</a></li><li><a href="global.html#checkForRelaxing">checkForRelaxing</a></li><li><a href="global.html#checkForRunning">checkForRunning</a></li><li><a href="global.html#checkForThrownBottleHit">checkForThrownBottleHit</a></li><li><a href="global.html#checkJumpDirection">checkJumpDirection</a></li><li><a href="global.html#checkRelaxingDirection">checkRelaxingDirection</a></li><li><a href="global.html#checkSleepingDirection">checkSleepingDirection</a></li><li><a href="global.html#correctBottlesPosition">correctBottlesPosition</a></li><li><a href="global.html#correctChickenPosition">correctChickenPosition</a></li><li><a href="global.html#createChicken">createChicken</a></li><li><a href="global.html#createChickenList">createChickenList</a></li><li><a href="global.html#draw">draw</a></li><li><a href="global.html#drawBackground">drawBackground</a></li><li><a href="global.html#drawBossEnergy">drawBossEnergy</a></li><li><a href="global.html#drawBottles">drawBottles</a></li><li><a href="global.html#drawBrokenBottle">drawBrokenBottle</a></li><li><a href="global.html#drawChicken">drawChicken</a></li><li><a href="global.html#drawDisplay">drawDisplay</a></li><li><a href="global.html#drawEndScreen">drawEndScreen</a></li><li><a href="global.html#drawEnergyBar">drawEnergyBar</a></li><li><a href="global.html#drawGround">drawGround</a></li><li><a href="global.html#drawSky">drawSky</a></li><li><a href="global.html#drawThrownBottle">drawThrownBottle</a></li><li><a href="global.html#enlargeToFullscreen">enlargeToFullscreen</a></li><li><a href="global.html#enterBossArea">enterBossArea</a></li><li><a href="global.html#finishGameLost">finishGameLost</a></li><li><a href="global.html#finishGameWon">finishGameWon</a></li><li><a href="global.html#finishWalkLeft">finishWalkLeft</a></li><li><a href="global.html#finishWalkRight">finishWalkRight</a></li><li><a href="global.html#fullScreenForMobile">fullScreenForMobile</a></li><li><a href="global.html#hideTouchControls">hideTouchControls</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#keyDown">keyDown</a></li><li><a href="global.html#keyUp">keyUp</a></li><li><a href="global.html#leaveFullscreen">leaveFullscreen</a></li><li><a href="global.html#listenForKeys">listenForKeys</a></li><li><a href="global.html#listenForTouch">listenForTouch</a></li><li><a href="global.html#moveBackgroundToTheLeft">moveBackgroundToTheLeft</a></li><li><a href="global.html#moveBackgroundToTheRight">moveBackgroundToTheRight</a></li><li><a href="global.html#noBottlesLeft">noBottlesLeft</a></li><li><a href="global.html#preload">preload</a></li><li><a href="global.html#preloadCharakterImages">preloadCharakterImages</a></li><li><a href="global.html#preloadOtherImages">preloadOtherImages</a></li><li><a href="global.html#preventLongTouchMenu">preventLongTouchMenu</a></li><li><a href="global.html#reduceBossEnergy">reduceBossEnergy</a></li><li><a href="global.html#reduceCharacterEnergy">reduceCharacterEnergy</a></li><li><a href="global.html#relax">relax</a></li><li><a href="global.html#restartGame">restartGame</a></li><li><a href="global.html#rotateBottle">rotateBottle</a></li><li><a href="global.html#showBossDyingImages">showBossDyingImages</a></li><li><a href="global.html#showCollisionImages">showCollisionImages</a></li><li><a href="global.html#showDyingImages">showDyingImages</a></li><li><a href="global.html#showRestartButton">showRestartButton</a></li><li><a href="global.html#showRunningImages">showRunningImages</a></li><li><a href="global.html#showTouchControls">showTouchControls</a></li><li><a href="global.html#sleep">sleep</a></li><li><a href="global.html#startBossMusic">startBossMusic</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#startJump">startJump</a></li><li><a href="global.html#startThrow">startThrow</a></li><li><a href="global.html#startTitleSong">startTitleSong</a></li><li><a href="global.html#startWalkLeft">startWalkLeft</a></li><li><a href="global.html#startWalkRight">startWalkRight</a></li><li><a href="global.html#throwBottle">throwBottle</a></li><li><a href="global.html#throwBottleToTheLeft">throwBottleToTheLeft</a></li><li><a href="global.html#throwBottleToTheRight">throwBottleToTheRight</a></li><li><a href="global.html#toggleFullscreen">toggleFullscreen</a></li><li><a href="global.html#updateBoss">updateBoss</a></li><li><a href="global.html#updateCharacter">updateCharacter</a></li><li><a href="global.html#useLandscape">useLandscape</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Jun 28 2021 17:09:11 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

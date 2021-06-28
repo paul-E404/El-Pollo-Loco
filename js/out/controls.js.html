@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controls.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controls.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Listens for keys being pressed or released.
+ */
+function listenForKeys() {
+    //e stands for event
+    //The event (keyboardevent) is a JSON which contains all information about a pressed key.
+    //To see the full event (JSON), log out:
+    //console.log(e);
+    keyDown();
+    keyUp();
+}
+
+/**
+ * Listens for keys being pressed.
+ */
+function keyDown() {
+    //If a special key is pressed
+    document.addEventListener('keydown', function (e) {
+
+        //user can no longer make any movements when game is lost
+        if (gameLost != true) {
+            //e.code bedeutet, ich möchte von dem JSON Event des keys namens "code" den value und dieser ist "ArrowRight" etc.
+            let key = e.code; // z.B. "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
+
+            if (key == "ArrowRight") {
+                startWalkRight();
+            }
+            if (key == "ArrowLeft") {
+                startWalkLeft();
+            }
+            //Not until jump time is over, a new jump can be started.
+            //So the time since last jump has to be longer than jump time.
+            //JUMP_TIME * 2 => character jumps one JUMP_TIME up and falls one JUMP_TIME down.
+            if ((key == "Space" || key == "ArrowUp") &amp;&amp; timePassedSinceJump > JUMP_TIME * 2) {
+                startJump();
+            }
+            if (key == "KeyD") {
+                startThrow();
+            }
+        }
+    });
+}
+
+/**
+ * Listens for keys being released.
+ */
+function keyUp() {
+    //If a special key is released
+    document.addEventListener('keyup', function (e) {
+        let key = e.code;
+        if (key == "ArrowRight") {
+            finishWalkRight();
+        }
+        if (key == "ArrowLeft") {
+            finishWalkLeft();
+        }
+        if (key == "Space" || key == "ArrowUp") {
+            lastMoveFinished = new Date().getTime();
+        }
+        if (key == "KeyD") {
+            lastMoveFinished = new Date().getTime();
+        }
+    });
+}
+
+/**
+ * Listens for touch-control-buttons being touched.
+ */
+function listenForTouch() {
+
+    let arrowLeft = document.getElementsByClassName('touch-arrow-left');
+    let arrowRight = document.getElementsByClassName('touch-arrow-right');
+    let arrowUp = document.getElementsByClassName('touch-arrow-up');
+    let arrowThrow = document.getElementsByClassName('touch-arrow-throw');
+
+    for (let i = 0; i &lt; arrowLeft.length; i++) {
+        arrowLeft[i].addEventListener("touchstart", leftTouchStart, false);
+        arrowLeft[i].addEventListener("touchend", leftTouchEnd, false);
+        arrowLeft[i].addEventListener("touchleave", leftTouchLeave, false);
+    }
+
+    for (let i = 0; i &lt; arrowRight.length; i++) {
+        arrowRight[i].addEventListener("touchstart", rightTouchStart, false);
+        arrowRight[i].addEventListener("touchend", rightTouchEnd, false);
+        arrowRight[i].addEventListener("touchleave", rightTouchLeave, false);
+    }
+
+    for (let i = 0; i &lt; arrowUp.length; i++) {
+        arrowUp[i].addEventListener("touchstart", jumpTouchStart, false);
+        arrowUp[i].addEventListener("touchend", jumpTouchEnd, false);
+    }
+
+    for (let i = 0; i &lt; arrowThrow.length; i++) {
+        arrowThrow[i].addEventListener("touchstart", throwTouchStart, false);
+        arrowThrow[i].addEventListener("touchend", throwTouchEnd, false);
+    }
+
+    //define touch functions
+    //For reasons of clarity, I didn't put the start- and finish-functions directly into addEventListener-functions.
+    function leftTouchStart() {
+        startWalkLeft();
+    }
+    function leftTouchEnd() {
+        finishWalkLeft();
+    }
+    function leftTouchLeave() {
+        finishWalkLeft();
+    }
+    function rightTouchStart() {
+        startWalkRight();
+    }
+    function rightTouchEnd() {
+        finishWalkRight();
+    }
+    function rightTouchLeave() {
+        finishWalkRight();
+    }
+    function jumpTouchStart() {
+        if (timePassedSinceJump > JUMP_TIME * 2) {
+            startJump();
+        }
+    }
+    function jumpTouchEnd() {
+        lastMoveFinished = new Date().getTime();
+    }
+    function throwTouchStart() {
+        startThrow();
+    }
+    function throwTouchEnd() {
+        lastMoveFinished = new Date().getTime();
+    }
+    
+}
+
+/**
+ * Controls the character to go to the right.
+ */
+function startWalkRight() {
+    isMovingRight = true;
+    lastMove = "right";
+}
+
+/**
+ * Controls the character to finish walking to the right. 
+ */
+function finishWalkRight() {
+    isMovingRight = false;
+    lastMoveFinished = new Date().getTime();
+}
+
+/**
+ * Controls the character to go to the left.
+ */
+function startWalkLeft() {
+    isMovingLeft = true;
+    lastMove = "left";
+}
+
+/**
+ * Controls the character to finish walking to the left. 
+ */
+function finishWalkLeft() {
+    isMovingLeft = false;
+    lastMoveFinished = new Date().getTime();
+}
+
+/**
+ * Controls the character to start a jump.
+ */
+function startJump() {
+    lastJumpStarted = new Date().getTime();         //Unix Timestamp
+    checkJumpDirection();
+    AUDIO_CHARACTER_JUMPING.play();
+    AUDIO_CHARACTER_SNORING.pause();
+}
+
+/**
+ * Controls the character to start throwing a bottle.
+ */
+function startThrow() {
+    if (collectedBottles > 0) {
+        //Ensures that a new throw can only be started when the old one has finished.
+        if (timePassedSinceThrow > THROW_TIME) {
+            lastThrowStarted = new Date().getTime();
+            collectedBottles--;
+            if (lastMove == 'left') {
+                bottleThrowingDirection = 'left';
+            } else if (lastMove == 'right') {
+                bottleThrowingDirection = 'right';
+            }
+        }
+    }
+}
+
+/* Source: https://stackoverflow.com/questions/3413683/disabling-the-context-menu-on-long-taps-on-android/28748222 */
+/**
+ * Prevents mobile devices from opening a window on touch long.
+ */
+function preventLongTouchMenu() {
+    let arrowLeft = document.getElementsByClassName('touch-arrow-left');
+    let arrowRight = document.getElementsByClassName('touch-arrow-right');
+    let arrowUp = document.getElementsByClassName('touch-arrow-up');
+    let arrowThrow = document.getElementsByClassName('touch-arrow-throw');
+
+    for (let i = 0; i &lt; arrowLeft.length; i++) {
+        preventLongTouchButton(arrowLeft[i]);
+    }
+
+    for (let i = 0; i &lt; arrowRight.length; i++) {
+        preventLongTouchButton(arrowRight[i]);
+    }
+
+    for (let i = 0; i &lt; arrowUp.length; i++) {
+        preventLongTouchButton(arrowUp[i]);
+    }
+
+    for (let i = 0; i &lt; arrowThrow.length; i++) {
+        preventLongTouchButton(arrowThrow[i]);
+    }
+}
+
+function preventLongTouchButton(node) {
+    node.ontouchstart = absorbEvent_;
+    node.ontouchmove = absorbEvent_;
+    node.ontouchend = absorbEvent_;
+    node.ontouchcancel = absorbEvent_;
+}
+
+function absorbEvent_(event) {
+    var e = event || window.event;
+    e.preventDefault &amp;&amp; e.preventDefault();
+    e.stopPropagation &amp;&amp; e.stopPropagation();
+    e.cancelBubble = true;
+    e.returnValue = false;
+    return false;
+}
+
+/**
+ * Shows touch buttons for tablet use.
+ */
+function showTouchControls() {
+   
+    let touchTabletLeft = document.getElementById('touch-tablet-left');
+    let touchTabletRight = document.getElementById('touch-tablet-right');
+    let showTouchBtn = document.getElementById('show-touch-btn');
+    let hideTouchBtn = document.getElementById('hide-touch-btn');
+    
+    touchTabletLeft.classList.remove('d-none');
+    touchTabletRight.classList.remove('d-none');
+    showTouchBtn.classList.add('d-none');
+    hideTouchBtn.classList.remove('d-none');
+
+}
+
+/**
+ * Hides touch buttons for tablet use.
+ */
+ function hideTouchControls() {
+   
+    let touchTabletLeft = document.getElementById('touch-tablet-left');
+    let touchTabletRight = document.getElementById('touch-tablet-right');
+    let showTouchBtn = document.getElementById('show-touch-btn');
+    let hideTouchBtn = document.getElementById('hide-touch-btn');
+    
+    touchTabletLeft.classList.add('d-none');
+    touchTabletRight.classList.add('d-none');
+    showTouchBtn.classList.remove('d-none');
+    hideTouchBtn.classList.add('d-none');
+    
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addObject">addObject</a></li><li><a href="global.html#animateBossHit">animateBossHit</a></li><li><a href="global.html#animateBottleBreak">animateBottleBreak</a></li><li><a href="global.html#animateJump">animateJump</a></li><li><a href="global.html#bossAttack">bossAttack</a></li><li><a href="global.html#bossAttackFinal">bossAttackFinal</a></li><li><a href="global.html#bossAttackFinalLeft">bossAttackFinalLeft</a></li><li><a href="global.html#bossAttackFinalRight">bossAttackFinalRight</a></li><li><a href="global.html#bossAttackLeft">bossAttackLeft</a></li><li><a href="global.html#bossAttackRight">bossAttackRight</a></li><li><a href="global.html#bossDying">bossDying</a></li><li><a href="global.html#bossMovingUpAndDown">bossMovingUpAndDown</a></li><li><a href="global.html#bossWalking">bossWalking</a></li><li><a href="global.html#bossWalkingLeft">bossWalkingLeft</a></li><li><a href="global.html#bossWalkingRight">bossWalkingRight</a></li><li><a href="global.html#calculateBrownChickenImages">calculateBrownChickenImages</a></li><li><a href="global.html#calculateChickenImages">calculateChickenImages</a></li><li><a href="global.html#calculateChickenPosition">calculateChickenPosition</a></li><li><a href="global.html#calculateDyingPosition">calculateDyingPosition</a></li><li><a href="global.html#calculateYellowChickenImages">calculateYellowChickenImages</a></li><li><a href="global.html#characterBossCollision">characterBossCollision</a></li><li><a href="global.html#characterBottleCollision">characterBottleCollision</a></li><li><a href="global.html#characterChickenCollision">characterChickenCollision</a></li><li><a href="global.html#checkBossDyingDirection">checkBossDyingDirection</a></li><li><a href="global.html#checkBossHitDirection">checkBossHitDirection</a></li><li><a href="global.html#checkCharacterJumpHeight">checkCharacterJumpHeight</a></li><li><a href="global.html#checkCollisionDirection">checkCollisionDirection</a></li><li><a href="global.html#checkDyingDirection">checkDyingDirection</a></li><li><a href="global.html#checkForBossAction">checkForBossAction</a></li><li><a href="global.html#checkForCollision">checkForCollision</a></li><li><a href="global.html#checkForDying">checkForDying</a></li><li><a href="global.html#checkForHopelessSituation">checkForHopelessSituation</a></li><li><a href="global.html#checkForRelaxing">checkForRelaxing</a></li><li><a href="global.html#checkForRunning">checkForRunning</a></li><li><a href="global.html#checkForThrownBottleHit">checkForThrownBottleHit</a></li><li><a href="global.html#checkJumpDirection">checkJumpDirection</a></li><li><a href="global.html#checkRelaxingDirection">checkRelaxingDirection</a></li><li><a href="global.html#checkSleepingDirection">checkSleepingDirection</a></li><li><a href="global.html#correctBottlesPosition">correctBottlesPosition</a></li><li><a href="global.html#correctChickenPosition">correctChickenPosition</a></li><li><a href="global.html#createChicken">createChicken</a></li><li><a href="global.html#createChickenList">createChickenList</a></li><li><a href="global.html#draw">draw</a></li><li><a href="global.html#drawBackground">drawBackground</a></li><li><a href="global.html#drawBossEnergy">drawBossEnergy</a></li><li><a href="global.html#drawBottles">drawBottles</a></li><li><a href="global.html#drawBrokenBottle">drawBrokenBottle</a></li><li><a href="global.html#drawChicken">drawChicken</a></li><li><a href="global.html#drawDisplay">drawDisplay</a></li><li><a href="global.html#drawEndScreen">drawEndScreen</a></li><li><a href="global.html#drawEnergyBar">drawEnergyBar</a></li><li><a href="global.html#drawGround">drawGround</a></li><li><a href="global.html#drawSky">drawSky</a></li><li><a href="global.html#drawThrownBottle">drawThrownBottle</a></li><li><a href="global.html#enlargeToFullscreen">enlargeToFullscreen</a></li><li><a href="global.html#enterBossArea">enterBossArea</a></li><li><a href="global.html#finishGameLost">finishGameLost</a></li><li><a href="global.html#finishGameWon">finishGameWon</a></li><li><a href="global.html#finishWalkLeft">finishWalkLeft</a></li><li><a href="global.html#finishWalkRight">finishWalkRight</a></li><li><a href="global.html#fullScreenForMobile">fullScreenForMobile</a></li><li><a href="global.html#hideTouchControls">hideTouchControls</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#keyDown">keyDown</a></li><li><a href="global.html#keyUp">keyUp</a></li><li><a href="global.html#leaveFullscreen">leaveFullscreen</a></li><li><a href="global.html#listenForKeys">listenForKeys</a></li><li><a href="global.html#listenForTouch">listenForTouch</a></li><li><a href="global.html#moveBackgroundToTheLeft">moveBackgroundToTheLeft</a></li><li><a href="global.html#moveBackgroundToTheRight">moveBackgroundToTheRight</a></li><li><a href="global.html#noBottlesLeft">noBottlesLeft</a></li><li><a href="global.html#preload">preload</a></li><li><a href="global.html#preloadCharakterImages">preloadCharakterImages</a></li><li><a href="global.html#preloadOtherImages">preloadOtherImages</a></li><li><a href="global.html#preventLongTouchMenu">preventLongTouchMenu</a></li><li><a href="global.html#reduceBossEnergy">reduceBossEnergy</a></li><li><a href="global.html#reduceCharacterEnergy">reduceCharacterEnergy</a></li><li><a href="global.html#relax">relax</a></li><li><a href="global.html#restartGame">restartGame</a></li><li><a href="global.html#rotateBottle">rotateBottle</a></li><li><a href="global.html#showBossDyingImages">showBossDyingImages</a></li><li><a href="global.html#showCollisionImages">showCollisionImages</a></li><li><a href="global.html#showDyingImages">showDyingImages</a></li><li><a href="global.html#showRestartButton">showRestartButton</a></li><li><a href="global.html#showRunningImages">showRunningImages</a></li><li><a href="global.html#showTouchControls">showTouchControls</a></li><li><a href="global.html#sleep">sleep</a></li><li><a href="global.html#startBossMusic">startBossMusic</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#startJump">startJump</a></li><li><a href="global.html#startThrow">startThrow</a></li><li><a href="global.html#startTitleSong">startTitleSong</a></li><li><a href="global.html#startWalkLeft">startWalkLeft</a></li><li><a href="global.html#startWalkRight">startWalkRight</a></li><li><a href="global.html#throwBottle">throwBottle</a></li><li><a href="global.html#throwBottleToTheLeft">throwBottleToTheLeft</a></li><li><a href="global.html#throwBottleToTheRight">throwBottleToTheRight</a></li><li><a href="global.html#toggleFullscreen">toggleFullscreen</a></li><li><a href="global.html#updateBoss">updateBoss</a></li><li><a href="global.html#updateCharacter">updateCharacter</a></li><li><a href="global.html#useLandscape">useLandscape</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Jun 28 2021 17:09:11 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

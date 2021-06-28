@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: background.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: background.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Draws and changes the current background including sky and ground.
+ * This is important to make the character seem moving.
+ */
+function drawBackground() {
+
+    //clouds always move, independent of the character's movement.
+    cloud_offset = cloud_offset + CLOUD_SPEED;
+
+    //Defines start and end of the area in which the character is able to move.
+    let wallLeft = bg1_ground_x >= bg_ground_x_min;
+    bg_ground_x_max = (PLAYING_FIELD_LENGTH - 3) * (-1000);
+    wallRight = bg1_ground_x &lt;= bg_ground_x_max;
+
+    //when character reaches the end of the game the background should stop moving
+    if (wallRight == true &amp;&amp; bossMusicStarted == false) {
+        enterBossArea();
+    }
+
+    //Different background layers move at different speeds and in different directions depending on the character's moving direction.
+    if (isMovingRight == true &amp;&amp; wallRight == false &amp;&amp; reachedBoss == false &amp;&amp; gameLost == false) {
+        moveBackgroundToTheLeft();
+    }
+
+    //within boss area, the character changes his horizontal position - not the background any more
+    else if (isMovingRight == true &amp;&amp; reachedBoss == true &amp;&amp; character_x &lt; 660) {
+        character_x = character_x + GAME_SPEED;
+    }
+
+    //Different background layers move at different speeds and in different directions depending on the character's moving direction.
+    if (isMovingLeft == true &amp;&amp; wallLeft == false &amp;&amp; reachedBoss == false &amp;&amp; gameLost == false) {
+        moveBackgroundToTheRight();
+    }
+
+    //within boss area, the character changes his horizontal position - not the background any more
+    else if (isMovingLeft == true &amp;&amp; reachedBoss == true &amp;&amp; character_x > -25) {
+        character_x = character_x - GAME_SPEED;
+    }
+
+    drawSky();
+    drawGround();
+}
+
+/**
+ * Changes all variables regarding boss area as soon as character enters.
+ */
+function enterBossArea() {
+    bossMusicStarted = true;
+    reachedBoss = true;
+    timeWhenBossReached = new Date().getTime();
+    AUDIO_MEXICAN_SONG.pause();
+    startBossMusic();
+
+    document.getElementById('game-info-text').innerHTML = 'Throw bottles by pressing D!';
+}
+
+/**
+ * Moves background images to the left.
+ */
+function moveBackgroundToTheLeft() {
+    bg3_ground_x = bg3_ground_x - GAME_SPEED * 0.2;
+    bg2_ground_x = bg2_ground_x - GAME_SPEED * 0.4;
+    bg1_ground_x = bg1_ground_x - GAME_SPEED;
+
+    correctChickenPosition(isMovingRight);
+    correctBottlesPosition(isMovingRight);
+
+    bg_sky_x = bg_sky_x - GAME_SPEED * 0.1;
+}
+
+/**
+ * Moves background images to the left.
+ */
+function moveBackgroundToTheRight() {
+    bg3_ground_x = bg3_ground_x + GAME_SPEED * 0.2;
+    bg2_ground_x = bg2_ground_x + GAME_SPEED * 0.4;
+    bg1_ground_x = bg1_ground_x + GAME_SPEED;
+
+    correctChickenPosition(isMovingLeft);
+    correctBottlesPosition(isMovingLeft);
+
+    bg_sky_x = bg_sky_x + GAME_SPEED * 0.1;
+}
+
+/**
+ * Draws sky and clouds.
+ */
+function drawSky() {
+    for (let i = 0; i &lt; PLAYING_FIELD_LENGTH; i++) {
+        if (reachedBoss == false || gameWon == true) {
+            addBackgroundImage(backgroundImages.sky[0], bg_sky_x, bg_element_y, i);
+        }
+        //when boss area is reached sunny sky changes to stormy sky
+        else if (reachedBoss == true) {
+            addBackgroundImage(backgroundImages.sky[3], 0, 0, i);
+        }
+    }
+    //chlouds
+    for (let i = 0; i &lt; PLAYING_FIELD_LENGTH; i = i + 2) {
+        addBackgroundImage(backgroundImages.sky[1], bg_sky_x - cloud_offset, bg_element_y, i);
+        addBackgroundImage(backgroundImages.sky[2], bg_sky_x - cloud_offset, bg_element_y, i + 1);
+    }
+}
+
+/**
+ * Draws the three ground layers.
+ */
+function drawGround() {
+    //back layer
+    for (let i = 0; i &lt; PLAYING_FIELD_LENGTH; i = i + 2) {
+        addBackgroundImage(backgroundImages.ground[0], bg3_ground_x, bg_element_y, i);
+        addBackgroundImage(backgroundImages.ground[1], bg3_ground_x, bg_element_y, i + 1);
+    }
+    //middle layer
+    for (let i = 0; i &lt; PLAYING_FIELD_LENGTH; i = i + 2) {
+        addBackgroundImage(backgroundImages.ground[2], bg2_ground_x, bg_element_y, i);
+        addBackgroundImage(backgroundImages.ground[3], bg2_ground_x, bg_element_y, i + 1);
+    }
+    //front layer
+    for (let i = 0; i &lt; PLAYING_FIELD_LENGTH; i = i + 2) {
+        addBackgroundImage(backgroundImages.ground[4], bg1_ground_x, bg_element_y, i);
+        addBackgroundImage(backgroundImages.ground[5], bg1_ground_x, bg_element_y, i + 1);
+    }
+}
+
+/* 
+* Draws a background image.
+*/
+function addBackgroundImage(image, bg_element_x, bg_element_y, scale) {
+    if (image.complete) {
+        ctx.drawImage(image, bg_element_x + canvas.width * scale, bg_element_y, canvas.width, canvas.height);
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addObject">addObject</a></li><li><a href="global.html#animateBossHit">animateBossHit</a></li><li><a href="global.html#animateBottleBreak">animateBottleBreak</a></li><li><a href="global.html#animateJump">animateJump</a></li><li><a href="global.html#bossAttack">bossAttack</a></li><li><a href="global.html#bossAttackFinal">bossAttackFinal</a></li><li><a href="global.html#bossAttackFinalLeft">bossAttackFinalLeft</a></li><li><a href="global.html#bossAttackFinalRight">bossAttackFinalRight</a></li><li><a href="global.html#bossAttackLeft">bossAttackLeft</a></li><li><a href="global.html#bossAttackRight">bossAttackRight</a></li><li><a href="global.html#bossDying">bossDying</a></li><li><a href="global.html#bossMovingUpAndDown">bossMovingUpAndDown</a></li><li><a href="global.html#bossWalking">bossWalking</a></li><li><a href="global.html#bossWalkingLeft">bossWalkingLeft</a></li><li><a href="global.html#bossWalkingRight">bossWalkingRight</a></li><li><a href="global.html#calculateBrownChickenImages">calculateBrownChickenImages</a></li><li><a href="global.html#calculateChickenImages">calculateChickenImages</a></li><li><a href="global.html#calculateChickenPosition">calculateChickenPosition</a></li><li><a href="global.html#calculateDyingPosition">calculateDyingPosition</a></li><li><a href="global.html#calculateYellowChickenImages">calculateYellowChickenImages</a></li><li><a href="global.html#characterBossCollision">characterBossCollision</a></li><li><a href="global.html#characterBottleCollision">characterBottleCollision</a></li><li><a href="global.html#characterChickenCollision">characterChickenCollision</a></li><li><a href="global.html#checkBossDyingDirection">checkBossDyingDirection</a></li><li><a href="global.html#checkBossHitDirection">checkBossHitDirection</a></li><li><a href="global.html#checkCharacterJumpHeight">checkCharacterJumpHeight</a></li><li><a href="global.html#checkCollisionDirection">checkCollisionDirection</a></li><li><a href="global.html#checkDyingDirection">checkDyingDirection</a></li><li><a href="global.html#checkForBossAction">checkForBossAction</a></li><li><a href="global.html#checkForCollision">checkForCollision</a></li><li><a href="global.html#checkForDying">checkForDying</a></li><li><a href="global.html#checkForHopelessSituation">checkForHopelessSituation</a></li><li><a href="global.html#checkForRelaxing">checkForRelaxing</a></li><li><a href="global.html#checkForRunning">checkForRunning</a></li><li><a href="global.html#checkForThrownBottleHit">checkForThrownBottleHit</a></li><li><a href="global.html#checkJumpDirection">checkJumpDirection</a></li><li><a href="global.html#checkRelaxingDirection">checkRelaxingDirection</a></li><li><a href="global.html#checkSleepingDirection">checkSleepingDirection</a></li><li><a href="global.html#correctBottlesPosition">correctBottlesPosition</a></li><li><a href="global.html#correctChickenPosition">correctChickenPosition</a></li><li><a href="global.html#createChicken">createChicken</a></li><li><a href="global.html#createChickenList">createChickenList</a></li><li><a href="global.html#draw">draw</a></li><li><a href="global.html#drawBackground">drawBackground</a></li><li><a href="global.html#drawBossEnergy">drawBossEnergy</a></li><li><a href="global.html#drawBottles">drawBottles</a></li><li><a href="global.html#drawBrokenBottle">drawBrokenBottle</a></li><li><a href="global.html#drawChicken">drawChicken</a></li><li><a href="global.html#drawDisplay">drawDisplay</a></li><li><a href="global.html#drawEndScreen">drawEndScreen</a></li><li><a href="global.html#drawEnergyBar">drawEnergyBar</a></li><li><a href="global.html#drawGround">drawGround</a></li><li><a href="global.html#drawSky">drawSky</a></li><li><a href="global.html#drawThrownBottle">drawThrownBottle</a></li><li><a href="global.html#enlargeToFullscreen">enlargeToFullscreen</a></li><li><a href="global.html#enterBossArea">enterBossArea</a></li><li><a href="global.html#finishGameLost">finishGameLost</a></li><li><a href="global.html#finishGameWon">finishGameWon</a></li><li><a href="global.html#finishWalkLeft">finishWalkLeft</a></li><li><a href="global.html#finishWalkRight">finishWalkRight</a></li><li><a href="global.html#fullScreenForMobile">fullScreenForMobile</a></li><li><a href="global.html#hideTouchControls">hideTouchControls</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#keyDown">keyDown</a></li><li><a href="global.html#keyUp">keyUp</a></li><li><a href="global.html#leaveFullscreen">leaveFullscreen</a></li><li><a href="global.html#listenForKeys">listenForKeys</a></li><li><a href="global.html#listenForTouch">listenForTouch</a></li><li><a href="global.html#moveBackgroundToTheLeft">moveBackgroundToTheLeft</a></li><li><a href="global.html#moveBackgroundToTheRight">moveBackgroundToTheRight</a></li><li><a href="global.html#noBottlesLeft">noBottlesLeft</a></li><li><a href="global.html#preload">preload</a></li><li><a href="global.html#preloadCharakterImages">preloadCharakterImages</a></li><li><a href="global.html#preloadOtherImages">preloadOtherImages</a></li><li><a href="global.html#preventLongTouchMenu">preventLongTouchMenu</a></li><li><a href="global.html#reduceBossEnergy">reduceBossEnergy</a></li><li><a href="global.html#reduceCharacterEnergy">reduceCharacterEnergy</a></li><li><a href="global.html#relax">relax</a></li><li><a href="global.html#restartGame">restartGame</a></li><li><a href="global.html#rotateBottle">rotateBottle</a></li><li><a href="global.html#showBossDyingImages">showBossDyingImages</a></li><li><a href="global.html#showCollisionImages">showCollisionImages</a></li><li><a href="global.html#showDyingImages">showDyingImages</a></li><li><a href="global.html#showRestartButton">showRestartButton</a></li><li><a href="global.html#showRunningImages">showRunningImages</a></li><li><a href="global.html#showTouchControls">showTouchControls</a></li><li><a href="global.html#sleep">sleep</a></li><li><a href="global.html#startBossMusic">startBossMusic</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#startJump">startJump</a></li><li><a href="global.html#startThrow">startThrow</a></li><li><a href="global.html#startTitleSong">startTitleSong</a></li><li><a href="global.html#startWalkLeft">startWalkLeft</a></li><li><a href="global.html#startWalkRight">startWalkRight</a></li><li><a href="global.html#throwBottle">throwBottle</a></li><li><a href="global.html#throwBottleToTheLeft">throwBottleToTheLeft</a></li><li><a href="global.html#throwBottleToTheRight">throwBottleToTheRight</a></li><li><a href="global.html#toggleFullscreen">toggleFullscreen</a></li><li><a href="global.html#updateBoss">updateBoss</a></li><li><a href="global.html#updateCharacter">updateCharacter</a></li><li><a href="global.html#useLandscape">useLandscape</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Jun 28 2021 17:09:11 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: chickens.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: chickens.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Corrects the chickens' position when background is moving.
+ * 
+ * @param  {boolean} movingDirection - Moving direction of the character.
+ */
+ function correctChickenPosition(movingDirection) {
+    if (movingDirection == isMovingRight) {
+        for (let i = 0; i &lt; chickens.length; i++) {
+            let chicken = chickens[i];
+            chicken.position_x = chicken.position_x - GAME_SPEED;
+        }
+    }
+    else if (movingDirection == isMovingLeft) {
+        for (let i = 0; i &lt; chickens.length; i++) {
+            let chicken = chickens[i];
+            chicken.position_x = chicken.position_x + GAME_SPEED;
+        }
+    }
+}
+
+/**
+ * Creates an array with all chicken enemy objects in the game.
+ */
+function createChickenList() {
+    chickens = [
+        createChicken("yellow", canvas.width + 400, chicken_y, 0.4, 0),
+        createChicken("yellow", canvas.width * 3 + 400, chicken_y, 0.4, 0),
+        createChicken("yellow", canvas.width * 3 + 800, chicken_y, 0.4, 0),
+        createChicken("yellow", canvas.width * 6 + 400, chicken_y, 0.4, -1),
+        createChicken("brown", canvas.width * 6 + 600, chicken_y - 25, 0.5, 5),
+        createChicken("yellow", canvas.width * 6 + 800, chicken_y, 0.4, 0),
+        createChicken("yellow", canvas.width * 9 + 400, chicken_y, 0.4, 0),
+        createChicken("brown", canvas.width * 9 + 600, chicken_y - 25, 0.5, 5),
+        createChicken("yellow", canvas.width * 9 + 800, chicken_y, 0.4, 0),
+        createChicken("yellow", canvas.width * 10 + 500, chicken_y, 0.4, 0),
+        createChicken("yellow", canvas.width * 11 + 100, chicken_y, 0.4, 5),
+        createChicken("yellow", canvas.width * 12 + 800, chicken_y, 0.4, 5),
+        createChicken("yellow", canvas.width * 13 + 300, chicken_y, 0.4, 5),
+        createChicken("yellow", canvas.width * 14 + 800, chicken_y, 0.4, 10),
+        createChicken("brown", canvas.width * 30 + 500, chicken_y - 50, 0.6, 20),
+        createChicken("brown", canvas.width * 40 + 500, chicken_y - 50, 0.6, 20),
+        createChicken("brown", canvas.width * 50 + 500, chicken_y - 60, 0.7, 25)
+    ];
+}
+
+/**
+ * Creates a chicken enemy object.
+ * 
+ * @param  {string} type - The chicken's type.
+ * @param  {number} position_x - The chicken's horizontal position.
+ * @param  {number} position_y - The chicken's vertical position.
+ * @param  {number} scale - Factor for chicken's image size.
+ * @param  {number} extra_speed - Variable summand for extra speed.
+ * @returns {Object} - Chicken enemy object.
+ */
+function createChicken(type, position_x, position_y, scale, extra_speed) {
+    return {
+        "type": type,
+        "img": chickenImages[type][0],
+        "position_x": position_x,
+        "position_y": position_y,
+        "scale": scale,
+        "speed": MIN_CHICKEN_SPEED + Math.random() * 8 + extra_speed
+    };
+}
+
+/**
+ * Changes the position of every chicken enemy regularly depending on its individual speed.
+ * Plays chickens sounds when chickens enter the visible canvas.
+ */
+ function calculateChickenPosition() {
+    setInterval(function () {
+        for (let i = 0; i &lt; chickens.length; i++) {
+            let chicken = chickens[i];
+            chicken.position_x = chicken.position_x - chicken.speed;
+
+            if (chicken.position_x > 0 &amp;&amp; chicken.position_x &lt; canvas.width) {
+                if(chicken.type == "yellow") {
+                    AUDIO_CHICKEN_CROWD.play();
+                }
+                if(chicken.type == "brown" &amp;&amp; chicken.scale == 0.7) {
+                    AUDIO_CHICKEN_SCREAM.play();
+                }
+                if(chicken.type == "brown" &amp;&amp; chicken.scale !== 0.7) {
+                    AUDIO_CHICKEN_SINGLE.play();
+                }
+            }
+        }
+    }, 50);
+}
+
+/**
+ * Separates yellow and brown chickens in two different arrays.
+ */
+function calculateChickenImages() {
+    
+    let yellowChickens = [];
+    let brownChickens = [];
+
+    for (let i = 0; i &lt; chickens.length; i++) {
+        let chicken = chickens[i];
+        if (chicken.type == 'yellow') {
+            yellowChickens.push(chicken);
+        }
+        else if (chicken.type == 'brown') {
+            brownChickens.push(chicken);
+        }
+    }
+
+    calculateYellowChickenImages(yellowChickens);
+    calculateBrownChickenImages(brownChickens);
+}
+
+/**
+ * Iterates through yellow chicken's images depending on its speed.
+ */
+function calculateYellowChickenImages(yellowChickens) {
+
+    for (let i = 0; i &lt; yellowChickens.length; i++) {
+
+        let chicken_yellow_image_index = 0;
+        let yellowChicken = yellowChickens[i];
+        let chickenSpeed = Math.round(1000 / yellowChicken.speed);
+
+        setInterval(function() {
+            let index = chicken_yellow_image_index % chickenImages.yellow.length;
+            yellowChicken.img = chickenImages.yellow[index];
+            chicken_yellow_image_index++;
+        }, chickenSpeed)
+
+    }
+}
+
+/**
+ * Iterates through brown chicken's images depending on its speed.
+ */
+function calculateBrownChickenImages(brownChickens) {
+
+    for (let i = 0; i &lt; brownChickens.length; i++) {
+
+        let chicken_brown_image_index = 0;
+        let brownChicken = brownChickens[i];
+        let chickenSpeed = Math.round(1000 / brownChicken.speed);
+
+        setInterval(function() {
+            let index = chicken_brown_image_index % chickenImages.brown.length;
+            brownChicken.img = chickenImages.brown[index];
+            chicken_brown_image_index++;
+        }, chickenSpeed)
+    }
+    
+}
+
+/**
+ * Draws all chicken enemy objects.
+ */
+function drawChicken() {
+    for (let i = 0; i &lt; chickens.length; i++) {
+        let chicken = chickens[i];
+        addObject(chicken.img, chicken.position_x, chicken.position_y, chicken.scale);
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addObject">addObject</a></li><li><a href="global.html#animateBossHit">animateBossHit</a></li><li><a href="global.html#animateBottleBreak">animateBottleBreak</a></li><li><a href="global.html#animateJump">animateJump</a></li><li><a href="global.html#bossAttack">bossAttack</a></li><li><a href="global.html#bossAttackFinal">bossAttackFinal</a></li><li><a href="global.html#bossAttackFinalLeft">bossAttackFinalLeft</a></li><li><a href="global.html#bossAttackFinalRight">bossAttackFinalRight</a></li><li><a href="global.html#bossAttackLeft">bossAttackLeft</a></li><li><a href="global.html#bossAttackRight">bossAttackRight</a></li><li><a href="global.html#bossDying">bossDying</a></li><li><a href="global.html#bossMovingUpAndDown">bossMovingUpAndDown</a></li><li><a href="global.html#bossWalking">bossWalking</a></li><li><a href="global.html#bossWalkingLeft">bossWalkingLeft</a></li><li><a href="global.html#bossWalkingRight">bossWalkingRight</a></li><li><a href="global.html#calculateBrownChickenImages">calculateBrownChickenImages</a></li><li><a href="global.html#calculateChickenImages">calculateChickenImages</a></li><li><a href="global.html#calculateChickenPosition">calculateChickenPosition</a></li><li><a href="global.html#calculateDyingPosition">calculateDyingPosition</a></li><li><a href="global.html#calculateYellowChickenImages">calculateYellowChickenImages</a></li><li><a href="global.html#characterBossCollision">characterBossCollision</a></li><li><a href="global.html#characterBottleCollision">characterBottleCollision</a></li><li><a href="global.html#characterChickenCollision">characterChickenCollision</a></li><li><a href="global.html#checkBossDyingDirection">checkBossDyingDirection</a></li><li><a href="global.html#checkBossHitDirection">checkBossHitDirection</a></li><li><a href="global.html#checkCharacterJumpHeight">checkCharacterJumpHeight</a></li><li><a href="global.html#checkCollisionDirection">checkCollisionDirection</a></li><li><a href="global.html#checkDyingDirection">checkDyingDirection</a></li><li><a href="global.html#checkForBossAction">checkForBossAction</a></li><li><a href="global.html#checkForCollision">checkForCollision</a></li><li><a href="global.html#checkForDying">checkForDying</a></li><li><a href="global.html#checkForHopelessSituation">checkForHopelessSituation</a></li><li><a href="global.html#checkForRelaxing">checkForRelaxing</a></li><li><a href="global.html#checkForRunning">checkForRunning</a></li><li><a href="global.html#checkForThrownBottleHit">checkForThrownBottleHit</a></li><li><a href="global.html#checkJumpDirection">checkJumpDirection</a></li><li><a href="global.html#checkRelaxingDirection">checkRelaxingDirection</a></li><li><a href="global.html#checkSleepingDirection">checkSleepingDirection</a></li><li><a href="global.html#correctBottlesPosition">correctBottlesPosition</a></li><li><a href="global.html#correctChickenPosition">correctChickenPosition</a></li><li><a href="global.html#createChicken">createChicken</a></li><li><a href="global.html#createChickenList">createChickenList</a></li><li><a href="global.html#draw">draw</a></li><li><a href="global.html#drawBackground">drawBackground</a></li><li><a href="global.html#drawBossEnergy">drawBossEnergy</a></li><li><a href="global.html#drawBottles">drawBottles</a></li><li><a href="global.html#drawBrokenBottle">drawBrokenBottle</a></li><li><a href="global.html#drawChicken">drawChicken</a></li><li><a href="global.html#drawDisplay">drawDisplay</a></li><li><a href="global.html#drawEndScreen">drawEndScreen</a></li><li><a href="global.html#drawEnergyBar">drawEnergyBar</a></li><li><a href="global.html#drawGround">drawGround</a></li><li><a href="global.html#drawSky">drawSky</a></li><li><a href="global.html#drawThrownBottle">drawThrownBottle</a></li><li><a href="global.html#enlargeToFullscreen">enlargeToFullscreen</a></li><li><a href="global.html#enterBossArea">enterBossArea</a></li><li><a href="global.html#finishGameLost">finishGameLost</a></li><li><a href="global.html#finishGameWon">finishGameWon</a></li><li><a href="global.html#finishWalkLeft">finishWalkLeft</a></li><li><a href="global.html#finishWalkRight">finishWalkRight</a></li><li><a href="global.html#fullScreenForMobile">fullScreenForMobile</a></li><li><a href="global.html#hideTouchControls">hideTouchControls</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#keyDown">keyDown</a></li><li><a href="global.html#keyUp">keyUp</a></li><li><a href="global.html#leaveFullscreen">leaveFullscreen</a></li><li><a href="global.html#listenForKeys">listenForKeys</a></li><li><a href="global.html#listenForTouch">listenForTouch</a></li><li><a href="global.html#moveBackgroundToTheLeft">moveBackgroundToTheLeft</a></li><li><a href="global.html#moveBackgroundToTheRight">moveBackgroundToTheRight</a></li><li><a href="global.html#noBottlesLeft">noBottlesLeft</a></li><li><a href="global.html#preload">preload</a></li><li><a href="global.html#preloadCharakterImages">preloadCharakterImages</a></li><li><a href="global.html#preloadOtherImages">preloadOtherImages</a></li><li><a href="global.html#preventLongTouchMenu">preventLongTouchMenu</a></li><li><a href="global.html#reduceBossEnergy">reduceBossEnergy</a></li><li><a href="global.html#reduceCharacterEnergy">reduceCharacterEnergy</a></li><li><a href="global.html#relax">relax</a></li><li><a href="global.html#restartGame">restartGame</a></li><li><a href="global.html#rotateBottle">rotateBottle</a></li><li><a href="global.html#showBossDyingImages">showBossDyingImages</a></li><li><a href="global.html#showCollisionImages">showCollisionImages</a></li><li><a href="global.html#showDyingImages">showDyingImages</a></li><li><a href="global.html#showRestartButton">showRestartButton</a></li><li><a href="global.html#showRunningImages">showRunningImages</a></li><li><a href="global.html#showTouchControls">showTouchControls</a></li><li><a href="global.html#sleep">sleep</a></li><li><a href="global.html#startBossMusic">startBossMusic</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#startJump">startJump</a></li><li><a href="global.html#startThrow">startThrow</a></li><li><a href="global.html#startTitleSong">startTitleSong</a></li><li><a href="global.html#startWalkLeft">startWalkLeft</a></li><li><a href="global.html#startWalkRight">startWalkRight</a></li><li><a href="global.html#throwBottle">throwBottle</a></li><li><a href="global.html#throwBottleToTheLeft">throwBottleToTheLeft</a></li><li><a href="global.html#throwBottleToTheRight">throwBottleToTheRight</a></li><li><a href="global.html#toggleFullscreen">toggleFullscreen</a></li><li><a href="global.html#updateBoss">updateBoss</a></li><li><a href="global.html#updateCharacter">updateCharacter</a></li><li><a href="global.html#useLandscape">useLandscape</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Jun 28 2021 17:09:11 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
